@@ -1,0 +1,6 @@
+<% if @stock_opname.present? %>
+  $("#so_form").html("<%= j(render 'so_form', stock_opname: @stock_opname) %>")
+<% else %>
+  if ($('#stock_opname_office_id').val() != '')
+    $("#start-now").attr("disabled", false)
+<% end %>

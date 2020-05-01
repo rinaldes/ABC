@@ -1,0 +1,539 @@
+wb = xlsx_package.workbook
+wb.use_autowidth = true 
+styles = wb.styles
+title = styles.add_style(:sz => 14, :b => true, :alignment => { :horizontal => :center })
+bold = styles.add_style(:b => true)
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+green = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "93e731")
+orange = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "e79f31")
+yellow = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "FFFF66")
+white_blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "95c7ce")
+blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "18d1ec")
+grey = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "988d7c")
+alp = {}
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+grand_total_cash = 0
+grand_total_debit_amt = 0
+grand_total_credit_amt = 0
+grand_total_koperasi = 0
+grand_total_dp_masuk = 0
+grand_total_dp_keluar = 0
+grand_total_transfer_amt = 0
+grand_total_voucher_amt = 0
+grand_total_total = 0
+grand_total_qty = 0
+grand_total_net_sales = 0
+grand_total_cash_value = 0
+grand_total_jasa_kado = 0
+grand_total_dp_masuk = 0
+grand_total_dp_keluar = 0
+grand_total_btp_masuk = 0
+grand_total_btp_keluar = 0
+grand_total_tombokan = 0
+grand_total_lain_lain = 0
+grand_total_pembulatan = 0
+grand_total_total_setor = 0
+grand_total_seharusnya = 0
+grand_total_pct = {}
+grand_total_total_biaya = 0
+
+Branch.all.each_with_index do |branch, i|
+	wb.add_worksheet(name: "#{branch.office_name} - #{branch.description}") do |sheet|
+		grand_total_setor_per_week = {}
+    grand_total_seharusnya_per_week = {}
+		fieldnya, setor, biaya, setor_field, biaya_field = [], [], [], [], []
+		lokasi_setor = 0
+		setor_per_week, seharusnya_per_week, total_biaya_per_week = {}, {}, {}
+		str_c, bya_c = (EdcBankAccount.count*3-1), (PettyCashType.where("name !='Cash In'").count-1)
+		("A".."V").each do |kolom|
+			fieldnya << ''
+		end
+		str_c.times do 
+			setor << ""
+		end
+		bya_c.times do
+			biaya << ""
+		end
+		EdcBankAccount.all.each do |edc_bank_account|
+      setor_field << edc_bank_account.bank_name
+      setor_per_week[edc_bank_account.id.to_s] = 0
+      seharusnya_per_week[edc_bank_account.id.to_s] = 0
+      grand_total_seharusnya_per_week[edc_bank_account.id.to_s] = 0
+      grand_total_setor_per_week[edc_bank_account.id.to_s] = 0
+    end
+    PettyCashType.where("name !='Cash In'").each do |pct|
+      biaya_field << pct.name
+      total_biaya_per_week[pct.id.to_s] = 0
+      grand_total_pct[pct.id.to_s] = 0
+    end
+		kolom_judul1 = ["HARI", "TANGGAL", "OMSET HARIAN", "", "", "", "", "", "", "", "TOTAL", "NO EOD", "QTY", "NET SALES", "FINANCIAL", "", "", "", "", "", "", "", "", "", "SETOR"]+ setor +["TOTAL SETOR", "SEHARUSNYA", "SELISIH SETOR DAN SEHARUSNYA", "TGL SETOR", "BIAYA"]+ biaya +["TOTAL BIAYA", "SELISIH SETOR DENGAN TOTAL BIAYA", "KETERANGAN"]
+		kolom_judul2 = ["", "", "CASH", "DEBIT CARD", "CREDIT CARD", "KOPERASI", "DP MASUK", "DP KELUAR", "TRANSFER", "VOUCHER", "", "", "", "", "CASH VALUE", "JASA KADO", "DP MASUK", "DP KELUAR", "BTP MASUK", "BTP KELUAR", "VOUCHER", "TOMBOKAN", "LAIN-LAIN", "PEMBULATAN"] + setor_field + ["", "", "", ""] + biaya_field + ["", "", ""]
+		kolom_judul3 = []
+		sheet.merge_cells "A1:X1"
+		sheet.merge_cells "Y1:#{alp[32+str_c+bya_c]}1"
+		kolom_judul1.each_with_index do |kolom, ii|
+			unless ("OMSET HARIAN FINANCIAL SETOR BIAYA ").include? (kolom.to_s + " ")
+				sheet.merge_cells "#{alp[ii]}4:#{alp[ii]}6"
+			else
+				case kolom
+				when "OMSET HARIAN"
+					sheet.merge_cells "C4:J4"
+				when "FINANCIAL"
+					sheet.merge_cells "O4:X4"
+				when "SETOR"
+					sheet.merge_cells "Y4:#{alp[ii+str_c]}4"
+					lokasi_setor = ii
+				when "BIAYA"
+					sheet.merge_cells "#{alp[ii]}4:#{alp[ii+bya_c]}4"
+				end
+			end
+		end
+		EdcBankAccount.all.each_with_index do |edc_bank_account, ii|
+			sheet.merge_cells "#{alp[lokasi_setor*(ii+1)]}5:#{alp[lokasi_setor*(ii+1)+2]}5"
+		end
+		(lokasi_setor).times do
+			kolom_judul3 << ""
+		end
+		EdcBankAccount.all.each do |edc_bank_account|
+			kolom_judul3 += ["Setor", "Seharusnya", "Selisih"]
+		end
+		(PettyCashType.where("name !='Cash In'").count+4).times do
+			kolom_judul3 << ""
+		end
+		sheet.add_row ["LAPORAN OMSET HARIAN".upcase, ''] + fieldnya + ["LAPORAN SETORAN OMSET DAN LAPORAN BIAYA"], style: title, :widths=>[:ignore]
+		sheet.add_row ["Toko", ": #{branch.description.titleize}"] + fieldnya + ["Toko", ": #{branch.description.titleize}"]
+		sheet.add_row ["Periode", ": #{@tanggal}"] + fieldnya + ["Periode", ": #{@tanggal}"]
+
+		sheet.add_row kolom_judul1, style: white_blue
+		sheet.add_row kolom_judul2, style: white_blue
+		sheet.add_row kolom_judul3, style: white_blue
+		week = 1
+    cash_per_week = 0
+    debit_amt_per_week = 0
+    credit_amt_per_week = 0
+    koperasi_per_week = 0
+    dp_masuk_per_week = 0
+    dp_keluar_per_week = 0
+    transfer_amt_per_week = 0
+    voucher_amt_per_week = 0
+    total_per_week = 0
+    qty_per_week = 0
+    net_sales_per_week = 0
+    cash_value_per_week = 0
+    jasa_kado_per_week = 0
+    dp_masuk_per_week = 0
+    dp_keluar_per_week = 0
+    btp_masuk_per_week = 0
+    btp_keluar_per_week = 0
+    tombokan_per_week = 0
+    lain_lain_per_week = 0
+    pembulatan_per_week = 0
+    total_setor_per_week = 0
+    total_seharusnya_per_week = 0
+    selisih_per_week = 0
+    total_total_biaya_per_week = 0
+    "#{@tahunnya}-#{sprintf('%02d', @bulannya)}-01".to_datetime.day.upto("#{@tahunnya}-#{sprintf('%02d', @bulannya)}-01".to_datetime.end_of_month.day).each{|date|
+      date = "#{@tahunnya}-#{sprintf('%02d', @bulannya)}-#{date}".to_date
+      current_sod_eod = SodEod.where("sod_eod_date='#{date.strftime('%Y-%m-%d')}' AND office_id=#{branch.id}").last
+      sales_dets = SalesDetail.where("store_id=#{branch.id} AND transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'").joins(:sale)
+      sales = Sale.where("store_id=#{branch.id} AND transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'")
+      voucher_amt = sales.map(&:voucher_amt).compact.sum rescue 0
+      transfer_amt = sales.map(&:transfer_amt).compact.sum rescue 0
+      dp_keluar = sales.dp_keluar rescue 0
+      dp_masuk = sales.dp_masuk rescue 0
+      koperasi = sales.koperasi rescue 0
+      credit_amt = sales.map(&:credit_amt).compact.sum rescue 0
+      debit_amt = sales.map(&:debit_amt).compact.sum rescue 0
+      cash_value = sales.map{|sale|sale.total_price.to_f-sale.total_disocunt.to_f}.compact.sum rescue 0
+      jasa_kado = sales.map(&:jasa_kado).compact.sum rescue 0
+      dp_masuk = sales.map(&:dp_masuk).compact.sum rescue 0
+      dp_keluar = sales.map(&:dp_keluar).compact.sum rescue 0
+      tombokan = current_sod_eod.tombokan.to_f rescue 0
+      lain_lain = current_sod_eod.lain_lain.to_f rescue 0
+      btp_masuk = sales.map(&:btp_masuk).compact.sum rescue 0
+      btp_keluar = sales.map(&:btp_keluar).compact.sum rescue 0
+      cash = sales.map(&:payment_cash).compact.sum rescue 0
+      total = voucher_amt + transfer_amt + dp_keluar + dp_masuk + koperasi + credit_amt + debit_amt + (sales.map(&:payment_cash).compact.sum rescue 0)
+      pembulatan = cash_value + tombokan + (current_sod_eod.lain_lain.to_f rescue 0) - (cash_value+jasa_kado+dp_masuk-dp_keluar+(sales.map(&:btp_masuk).compact.sum rescue 0))
+      qty = sales_dets.map(&:quantity).sum
+      net_sales = sales.map(&:total_price).compact.sum rescue 0
+      cash_per_week += cash
+      debit_amt_per_week += debit_amt
+      credit_amt_per_week += credit_amt
+      koperasi_per_week += koperasi
+      dp_masuk_per_week += dp_masuk
+      dp_keluar_per_week += dp_keluar
+      btp_masuk_per_week += btp_masuk
+      transfer_amt_per_week += transfer_amt
+      voucher_amt_per_week += voucher_amt
+      total_per_week += total
+      qty_per_week += qty
+      net_sales_per_week += net_sales
+      cash_value_per_week += cash_value
+      jasa_kado_per_week += jasa_kado
+      dp_masuk_per_week += dp_masuk
+      dp_keluar_per_week += dp_keluar
+      btp_masuk_per_week += btp_masuk
+      btp_keluar_per_week += btp_keluar
+      tombokan_per_week += tombokan
+      lain_lain_per_week += lain_lain
+      pembulatan_per_week += pembulatan
+      edc_field, petty_field = [], []
+      total_setor = 0
+			seharusnya = 0
+			selisih_setor = 0
+			cash_at_bank = nil
+			EdcBankAccount.all.each{|edc_bank_account|
+			  cash_at_bank = CashAtBank.find_by_sod_eod_id_and_edc_bank_account_id(current_sod_eod.id, edc_bank_account.id) rescue nil
+			  edc_field << (cash_at_bank.saving_amount rescue 0)
+			  edc_field << (cash_at_bank.required_amount rescue 0)
+			  edc_field << ((cash_at_bank.saving_amount - cash_at_bank.required_amount) rescue 0)
+			  total_setor += (cash_at_bank.saving_amount rescue 0)
+			  seharusnya += (cash_at_bank.required_amount rescue 0)
+			  selisih_setor += (cash_at_bank.saving_amount - cash_at_bank.required_amount rescue 0)
+			  setor_per_week[edc_bank_account.id.to_s] += (cash_at_bank.saving_amount rescue 0)
+			  seharusnya_per_week[edc_bank_account.id.to_s] += (cash_at_bank.required_amount rescue 0)
+			}
+			total_seharusnya_per_week += seharusnya
+			total_setor_per_week += total_setor
+			selisih_per_week += selisih_setor
+			total_biaya = 0
+			PettyCashType.where("name !='Cash In'").each{|pct|
+			  biaya = CashOut.where("cash_out_type='#{pct.name.upcase}' AND time BETWEEN '#{date} 00:00:00' AND '#{date} 23:59:59'").map(&:amount).sum
+			  petty_field << biaya
+			  total_biaya += biaya
+			  total_biaya_per_week[pct.id.to_s] += biaya
+			}
+			total_total_biaya_per_week += total_biaya
+
+      sheet.add_row [(date.strftime('%A').to_s + (current_sod_eod.id rescue nil).to_s), date.strftime('%d/%m/%y'), cash, debit_amt, credit_amt, koperasi, dp_masuk, dp_keluar, transfer_amt, voucher_amt, total, "#{('A'..'Z').to_a[i]}#{sprintf('%03d', i+1)}-#{date.strftime('%m/%d')}", qty, net_sales, cash_value, jasa_kado, dp_masuk, dp_keluar, btp_masuk, (sales.map(&:btp_keluar).compact.sum rescue 0), voucher_amt, tombokan, lain_lain, pembulatan] + edc_field + [total_setor, seharusnya, selisih_setor, (cash_at_bank rescue '')] + petty_field + [total_biaya, (total_setor - total_biaya), ""]
+			if date.strftime('%A') == 'Sunday' || date.day == date.end_of_month.day
+				edc_field2, petty_field2 = [], []
+				EdcBankAccount.all.each{|edc_bank_account|
+			    edc_field2 << setor_per_week[edc_bank_account.id.to_s]
+			    edc_field2 << seharusnya_per_week[edc_bank_account.id.to_s]
+			    edc_field2 << setor_per_week[edc_bank_account.id.to_s] - seharusnya_per_week[edc_bank_account.id.to_s]
+			    grand_total_setor_per_week[edc_bank_account.id.to_s] += setor_per_week[edc_bank_account.id.to_s]
+			    setor_per_week[edc_bank_account.id.to_s] = 0
+			    grand_total_seharusnya_per_week[edc_bank_account.id.to_s] += seharusnya_per_week[edc_bank_account.id.to_s]
+			    seharusnya_per_week[edc_bank_account.id.to_s] = 0
+			  }
+			  PettyCashType.where("name !='Cash In'").each{|pct|
+		      petty_field2 << total_biaya_per_week[pct.id.to_s]
+		      grand_total_pct[pct.id.to_s] += total_biaya_per_week[pct.id.to_s]
+		      total_biaya_per_week[pct.id.to_s] = 0
+		    }
+
+  			sheet.add_row [("M#{week}"), "", cash_per_week, debit_amt_per_week, credit_amt_per_week, koperasi_per_week, dp_masuk_per_week, dp_keluar_per_week, transfer_amt_per_week, voucher_amt_per_week, total_per_week, "", qty_per_week, net_sales_per_week, cash_value_per_week, jasa_kado_per_week, dp_masuk_per_week, dp_keluar_per_week, btp_masuk_per_week, btp_keluar_per_week, voucher_amt_per_week, tombokan_per_week, lain_lain_per_week, pembulatan_per_week] + edc_field2 + [total_setor_per_week, total_seharusnya_per_week, selisih_per_week, ""] + petty_field2 + [total_total_biaya_per_week, (total_setor_per_week - total_total_biaya_per_week), ""], style: bold
+  			total_total_biaya_per_week = 0
+		    grand_total_cash += cash_per_week
+		    grand_total_debit_amt += debit_amt_per_week
+		    cash_per_week = 0
+		    debit_amt_per_week = 0
+		    grand_total_credit_amt += credit_amt_per_week
+		    credit_amt_per_week = 0
+		    grand_total_koperasi += koperasi_per_week
+		    koperasi_per_week = 0
+		    grand_total_dp_masuk += dp_masuk_per_week
+		    dp_masuk_per_week = 0
+		    grand_total_dp_keluar += dp_keluar_per_week
+		    dp_keluar_per_week = 0
+		    grand_total_transfer_amt += transfer_amt_per_week
+		    transfer_amt_per_week = 0
+		    grand_total_voucher_amt += voucher_amt_per_week
+		    voucher_amt_per_week = 0
+		    grand_total_total += total_per_week
+		    total_per_week = 0
+		    grand_total_qty += qty_per_week
+		    qty_per_week = 0
+		    grand_total_net_sales += net_sales_per_week
+		    net_sales_per_week = 0
+		    grand_total_cash_value += cash_value_per_week
+		    cash_value_per_week = 0
+		    grand_total_jasa_kado += jasa_kado_per_week
+		    jasa_kado_per_week = 0
+		    grand_total_dp_masuk += dp_masuk_per_week
+		    dp_masuk_per_week = 0
+		    grand_total_dp_keluar += dp_keluar_per_week
+		    dp_keluar_per_week = 0
+		    grand_total_btp_masuk += btp_masuk_per_week
+		    btp_masuk_per_week = 0
+		    grand_total_btp_keluar += btp_keluar_per_week
+		    btp_keluar_per_week = 0
+		    grand_total_tombokan += tombokan_per_week
+		    tombokan_per_week = 0
+		    grand_total_lain_lain += lain_lain_per_week
+		    lain_lain_per_week = 0
+		    grand_total_pembulatan += pembulatan_per_week
+		    pembulatan_per_week = 0
+		    grand_total_total_setor += total_setor_per_week
+		    total_setor_per_week = 0
+		    grand_total_seharusnya += total_seharusnya_per_week
+		    selisih_per_week = 0
+		    week += 1
+		  end
+		}
+		edc_field3, petty_field3 = [], []
+		EdcBankAccount.all.each{|edc_bank_account|
+		  edc_field3 << grand_total_setor_per_week[edc_bank_account.id.to_s]
+		  edc_field3 << grand_total_seharusnya_per_week[edc_bank_account.id.to_s]
+		  edc_field3 << grand_total_setor_per_week[edc_bank_account.id.to_s] - grand_total_seharusnya_per_week[edc_bank_account.id.to_s]
+		}
+		PettyCashType.where("name !='Cash In'").each{|pct|
+		  petty_field3 << grand_total_pct[pct.id.to_s]
+		  grand_total_total_biaya += grand_total_pct[pct.id.to_s]
+		}
+		sheet.add_row ["GRAND TOTAL", grand_total_cash, grand_total_debit_amt, grand_total_credit_amt, grand_total_koperasi, grand_total_dp_masuk, grand_total_dp_keluar, grand_total_transfer_amt, grand_total_voucher_amt, grand_total_total, "", grand_total_qty, grand_total_net_sales, grand_total_cash_value, grand_total_jasa_kado, grand_total_dp_masuk, grand_total_dp_keluar, grand_total_btp_masuk, grand_total_btp_keluar, grand_total_voucher_amt, grand_total_tombokan, grand_total_lain_lain, grand_total_pembulatan] + edc_field3 + [grand_total_total_setor, grand_total_seharusnya, grand_total_total_setor-grand_total_seharusnya, ""] + petty_field3 + [grand_total_total_biaya, (grand_total_total_setor - grand_total_total_biaya), ""], style: bold
+	end
+end
+
+wb.add_worksheet(name: "GLOBAL") do |sheet|
+	grand_total_setor_per_week = {}
+  grand_total_seharusnya_per_week = {}
+  fieldnya, setor, biaya, setor_field, biaya_field = [], [], [], [], []
+  lokasi_setor = 0
+  setor_per_week, seharusnya_per_week, total_biaya_per_week = {}, {}, {}
+  str_c, bya_c = (EdcBankAccount.count*3-1), (PettyCashType.where("name !='Cash In'").count-1)
+  ("A".."V").each do |kolom|
+    fieldnya << ''
+  end
+  str_c.times do 
+    setor << ""
+  end
+  bya_c.times do
+    biaya << ""
+  end
+  EdcBankAccount.all.each do |edc_bank_account|
+    setor_field << edc_bank_account.bank_name
+    setor_per_week[edc_bank_account.id.to_s] = 0
+    seharusnya_per_week[edc_bank_account.id.to_s] = 0
+    grand_total_seharusnya_per_week[edc_bank_account.id.to_s] = 0
+    grand_total_setor_per_week[edc_bank_account.id.to_s] = 0
+  end
+  PettyCashType.where("name !='Cash In'").each do |pct|
+    biaya_field << pct.name
+    total_biaya_per_week[pct.id.to_s] = 0
+    grand_total_pct[pct.id.to_s] = 0
+  end
+  kolom_judul1 = ["HARI", "TANGGAL", "OMSET HARIAN", "", "", "", "", "", "", "", "TOTAL", "NO EOD", "QTY", "NET SALES", "FINANCIAL", "", "", "", "", "", "", "", "", "", "SETOR"]+ setor +["TOTAL SETOR", "SEHARUSNYA", "SELISIH SETOR DAN SEHARUSNYA", "TGL SETOR", "BIAYA"]+ biaya +["TOTAL BIAYA", "SELISIH SETOR DENGAN TOTAL BIAYA", "KETERANGAN"]
+  kolom_judul2 = ["", "", "CASH", "DEBIT CARD", "CREDIT CARD", "KOPERASI", "DP MASUK", "DP KELUAR", "TRANSFER", "VOUCHER", "", "", "", "", "CASH VALUE", "JASA KADO", "DP MASUK", "DP KELUAR", "BTP MASUK", "BTP KELUAR", "VOUCHER", "TOMBOKAN", "LAIN-LAIN", "PEMBULATAN"] + setor_field + ["", "", "", ""] + biaya_field + ["", "", ""]
+  kolom_judul3 = []
+  sheet.merge_cells "A1:X1"
+  sheet.merge_cells "Y1:#{alp[32+str_c+bya_c]}1"
+  kolom_judul1.each_with_index do |kolom, ii|
+    unless ("OMSET HARIAN FINANCIAL SETOR BIAYA ").include? (kolom.to_s + " ")
+      sheet.merge_cells "#{alp[ii]}4:#{alp[ii]}6"
+    else
+      case kolom
+      when "OMSET HARIAN"
+        sheet.merge_cells "C4:J4"
+      when "FINANCIAL"
+        sheet.merge_cells "O4:X4"
+      when "SETOR"
+        sheet.merge_cells "Y4:#{alp[ii+str_c]}4"
+        lokasi_setor = ii
+      when "BIAYA"
+        sheet.merge_cells "#{alp[ii]}4:#{alp[ii+bya_c]}4"
+      end
+    end
+  end
+  EdcBankAccount.all.each_with_index do |edc_bank_account, ii|
+    sheet.merge_cells "#{alp[lokasi_setor*(ii+1)]}5:#{alp[lokasi_setor*(ii+1)+2]}5"
+  end
+  (lokasi_setor).times do
+    kolom_judul3 << ""
+  end
+  EdcBankAccount.all.each do |edc_bank_account|
+    kolom_judul3 += ["Setor", "Seharusnya", "Selisih"]
+  end
+  (PettyCashType.where("name !='Cash In'").count+4).times do
+    kolom_judul3 << ""
+  end
+  sheet.add_row ["LAPORAN OMSET HARIAN".upcase, ''] + fieldnya + ["LAPORAN SETORAN OMSET DAN LAPORAN BIAYA"], style: title, :widths=>[:ignore]
+  sheet.add_row ["Toko", ": Global"] + fieldnya + ["Toko", ": Global"]
+  sheet.add_row ["Periode", ": #{@tanggal}"] + fieldnya + ["Periode", ": #{@tanggal}"]
+
+  sheet.add_row kolom_judul1, style: white_blue
+  sheet.add_row kolom_judul2, style: white_blue
+  sheet.add_row kolom_judul3, style: white_blue
+  week = 1
+  cash_per_week = 0
+  debit_amt_per_week = 0
+  credit_amt_per_week = 0
+  koperasi_per_week = 0
+  dp_masuk_per_week = 0
+  dp_keluar_per_week = 0
+  transfer_amt_per_week = 0
+  voucher_amt_per_week = 0
+  total_per_week = 0
+  qty_per_week = 0
+  net_sales_per_week = 0
+  cash_value_per_week = 0
+  jasa_kado_per_week = 0
+  dp_masuk_per_week = 0
+  dp_keluar_per_week = 0
+  btp_masuk_per_week = 0
+  btp_keluar_per_week = 0
+  tombokan_per_week = 0
+  lain_lain_per_week = 0
+  pembulatan_per_week = 0
+  total_setor_per_week = 0
+  total_seharusnya_per_week = 0
+  selisih_per_week = 0
+  total_total_biaya_per_week = 0
+  "#{@tahunnya}-#{sprintf('%02d', @bulannya)}-01".to_datetime.day.upto("#{@tahunnya}-#{sprintf('%02d', @bulannya)}-01".to_datetime.end_of_month.day).each{|date|
+    date = "#{@tahunnya}-#{sprintf('%02d', @bulannya)}-#{date}".to_date
+    current_sod_eod = SodEod.where("sod_eod_date='#{date.strftime('%Y-%m-%d')}'").last
+    sales_dets = SalesDetail.where("transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'").joins(:sale)
+    sales = Sale.where("transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'")
+    voucher_amt = sales.map(&:voucher_amt).compact.sum rescue 0
+    transfer_amt = sales.map(&:transfer_amt).compact.sum rescue 0
+    dp_keluar = sales.dp_keluar rescue 0
+    dp_masuk = sales.dp_masuk rescue 0
+    koperasi = sales.koperasi rescue 0
+    credit_amt = sales.map(&:credit_amt).compact.sum rescue 0
+    debit_amt = sales.map(&:debit_amt).compact.sum rescue 0
+    cash_value = sales.map{|sale|sale.total_price.to_f-sale.total_disocunt.to_f}.compact.sum rescue 0
+    jasa_kado = sales.map(&:jasa_kado).compact.sum rescue 0
+    dp_masuk = sales.map(&:dp_masuk).compact.sum rescue 0
+    dp_keluar = sales.map(&:dp_keluar).compact.sum rescue 0
+    tombokan = current_sod_eod.tombokan.to_f rescue 0
+    lain_lain = current_sod_eod.lain_lain.to_f rescue 0
+    btp_masuk = sales.map(&:btp_masuk).compact.sum rescue 0
+    btp_keluar = sales.map(&:btp_keluar).compact.sum rescue 0
+    cash = sales.map(&:payment_cash).compact.sum rescue 0
+    total = voucher_amt + transfer_amt + dp_keluar + dp_masuk + koperasi + credit_amt + debit_amt + (sales.map(&:payment_cash).compact.sum rescue 0)
+    pembulatan = cash_value + tombokan + (current_sod_eod.lain_lain.to_f rescue 0) - (cash_value+jasa_kado+dp_masuk-dp_keluar+(sales.map(&:btp_masuk).compact.sum rescue 0))
+    qty = sales_dets.map(&:quantity).sum
+    net_sales = sales.map(&:total_price).compact.sum rescue 0
+    cash_per_week += cash
+    debit_amt_per_week += debit_amt
+    credit_amt_per_week += credit_amt
+    koperasi_per_week += koperasi
+    dp_masuk_per_week += dp_masuk
+    dp_keluar_per_week += dp_keluar
+    btp_masuk_per_week += btp_masuk
+    transfer_amt_per_week += transfer_amt
+    voucher_amt_per_week += voucher_amt
+    total_per_week += total
+    qty_per_week += qty
+    net_sales_per_week += net_sales
+    cash_value_per_week += cash_value
+    jasa_kado_per_week += jasa_kado
+    dp_masuk_per_week += dp_masuk
+    dp_keluar_per_week += dp_keluar
+    btp_masuk_per_week += btp_masuk
+    btp_keluar_per_week += btp_keluar
+    tombokan_per_week += tombokan
+    lain_lain_per_week += lain_lain
+    pembulatan_per_week += pembulatan
+    edc_field, petty_field = [], []
+    total_setor = 0
+    seharusnya = 0
+    selisih_setor = 0
+    cash_at_bank = nil
+    EdcBankAccount.all.each{|edc_bank_account|
+      cash_at_bank = CashAtBank.find_by_sod_eod_id_and_edc_bank_account_id(current_sod_eod.id, edc_bank_account.id) rescue nil
+      edc_field << (cash_at_bank.saving_amount rescue 0)
+      edc_field << (cash_at_bank.required_amount rescue 0)
+      edc_field << ((cash_at_bank.saving_amount - cash_at_bank.required_amount) rescue 0)
+      total_setor += (cash_at_bank.saving_amount rescue 0)
+      seharusnya += (cash_at_bank.required_amount rescue 0)
+      selisih_setor += (cash_at_bank.saving_amount - cash_at_bank.required_amount rescue 0)
+      setor_per_week[edc_bank_account.id.to_s] += (cash_at_bank.saving_amount rescue 0)
+      seharusnya_per_week[edc_bank_account.id.to_s] += (cash_at_bank.required_amount rescue 0)
+    }
+    total_seharusnya_per_week += seharusnya
+    total_setor_per_week += total_setor
+    selisih_per_week += selisih_setor
+    total_biaya = 0
+    PettyCashType.where("name !='Cash In'").each{|pct|
+      biaya = CashOut.where("cash_out_type='#{pct.name.upcase}' AND time BETWEEN '#{date} 00:00:00' AND '#{date} 23:59:59'").map(&:amount).sum
+      petty_field << biaya
+      total_biaya += biaya
+      total_biaya_per_week[pct.id.to_s] += biaya
+    }
+    total_total_biaya_per_week += total_biaya
+
+    sheet.add_row [(date.strftime('%A').to_s + (current_sod_eod.id rescue nil).to_s), date.strftime('%d/%m/%y'), cash, debit_amt, credit_amt, koperasi, dp_masuk, dp_keluar, transfer_amt, voucher_amt, total, "HO#{sprintf('%03d', 1)}-#{date.strftime('%m/%d')}", qty, net_sales, cash_value, jasa_kado, dp_masuk, dp_keluar, btp_masuk, (sales.map(&:btp_keluar).compact.sum rescue 0), voucher_amt, tombokan, lain_lain, pembulatan] + edc_field + [total_setor, seharusnya, selisih_setor, (cash_at_bank rescue '')] + petty_field + [total_biaya, (total_setor - total_biaya), ""]
+    if date.strftime('%A') == 'Sunday' || date.day == date.end_of_month.day
+      edc_field2, petty_field2 = [], []
+      EdcBankAccount.all.each{|edc_bank_account|
+        edc_field2 << setor_per_week[edc_bank_account.id.to_s]
+        edc_field2 << seharusnya_per_week[edc_bank_account.id.to_s]
+        edc_field2 << setor_per_week[edc_bank_account.id.to_s] - seharusnya_per_week[edc_bank_account.id.to_s]
+        grand_total_setor_per_week[edc_bank_account.id.to_s] += setor_per_week[edc_bank_account.id.to_s]
+        setor_per_week[edc_bank_account.id.to_s] = 0
+        grand_total_seharusnya_per_week[edc_bank_account.id.to_s] += seharusnya_per_week[edc_bank_account.id.to_s]
+        seharusnya_per_week[edc_bank_account.id.to_s] = 0
+      }
+      PettyCashType.where("name !='Cash In'").each{|pct|
+        petty_field2 << total_biaya_per_week[pct.id.to_s]
+        grand_total_pct[pct.id.to_s] += total_biaya_per_week[pct.id.to_s]
+        total_biaya_per_week[pct.id.to_s] = 0
+      }
+
+      sheet.add_row [("M#{week}"), "", cash_per_week, debit_amt_per_week, credit_amt_per_week, koperasi_per_week, dp_masuk_per_week, dp_keluar_per_week, transfer_amt_per_week, voucher_amt_per_week, total_per_week, "", qty_per_week, net_sales_per_week, cash_value_per_week, jasa_kado_per_week, dp_masuk_per_week, dp_keluar_per_week, btp_masuk_per_week, btp_keluar_per_week, voucher_amt_per_week, tombokan_per_week, lain_lain_per_week, pembulatan_per_week] + edc_field2 + [total_setor_per_week, total_seharusnya_per_week, selisih_per_week, ""] + petty_field2 + [total_total_biaya_per_week, (total_setor_per_week - total_total_biaya_per_week), ""], style: bold
+      total_total_biaya_per_week = 0
+      grand_total_cash += cash_per_week
+      grand_total_debit_amt += debit_amt_per_week
+      cash_per_week = 0
+      debit_amt_per_week = 0
+      grand_total_credit_amt += credit_amt_per_week
+      credit_amt_per_week = 0
+      grand_total_koperasi += koperasi_per_week
+      koperasi_per_week = 0
+      grand_total_dp_masuk += dp_masuk_per_week
+      dp_masuk_per_week = 0
+      grand_total_dp_keluar += dp_keluar_per_week
+      dp_keluar_per_week = 0
+      grand_total_transfer_amt += transfer_amt_per_week
+      transfer_amt_per_week = 0
+      grand_total_voucher_amt += voucher_amt_per_week
+      voucher_amt_per_week = 0
+      grand_total_total += total_per_week
+      total_per_week = 0
+      grand_total_qty += qty_per_week
+      qty_per_week = 0
+      grand_total_net_sales += net_sales_per_week
+      net_sales_per_week = 0
+      grand_total_cash_value += cash_value_per_week
+      cash_value_per_week = 0
+      grand_total_jasa_kado += jasa_kado_per_week
+      jasa_kado_per_week = 0
+      grand_total_dp_masuk += dp_masuk_per_week
+      dp_masuk_per_week = 0
+      grand_total_dp_keluar += dp_keluar_per_week
+      dp_keluar_per_week = 0
+      grand_total_btp_masuk += btp_masuk_per_week
+      btp_masuk_per_week = 0
+      grand_total_btp_keluar += btp_keluar_per_week
+      btp_keluar_per_week = 0
+      grand_total_tombokan += tombokan_per_week
+      tombokan_per_week = 0
+      grand_total_lain_lain += lain_lain_per_week
+      lain_lain_per_week = 0
+      grand_total_pembulatan += pembulatan_per_week
+      pembulatan_per_week = 0
+      grand_total_total_setor += total_setor_per_week
+      total_setor_per_week = 0
+      grand_total_seharusnya += total_seharusnya_per_week
+      selisih_per_week = 0
+      week += 1
+    end
+  }
+  edc_field3, petty_field3 = [], []
+  EdcBankAccount.all.each{|edc_bank_account|
+    edc_field3 << grand_total_setor_per_week[edc_bank_account.id.to_s]
+    edc_field3 << grand_total_seharusnya_per_week[edc_bank_account.id.to_s]
+    edc_field3 << grand_total_setor_per_week[edc_bank_account.id.to_s] - grand_total_seharusnya_per_week[edc_bank_account.id.to_s]
+  }
+  PettyCashType.where("name !='Cash In'").each{|pct|
+    petty_field3 << grand_total_pct[pct.id.to_s]
+    grand_total_total_biaya += grand_total_pct[pct.id.to_s]
+  }
+  sheet.add_row ["GRAND TOTAL", grand_total_cash, grand_total_debit_amt, grand_total_credit_amt, grand_total_koperasi, grand_total_dp_masuk, grand_total_dp_keluar, grand_total_transfer_amt, grand_total_voucher_amt, grand_total_total, "", grand_total_qty, grand_total_net_sales, grand_total_cash_value, grand_total_jasa_kado, grand_total_dp_masuk, grand_total_dp_keluar, grand_total_btp_masuk, grand_total_btp_keluar, grand_total_voucher_amt, grand_total_tombokan, grand_total_lain_lain, grand_total_pembulatan] + edc_field3 + [grand_total_total_setor, grand_total_seharusnya, grand_total_total_setor-grand_total_seharusnya, ""] + petty_field3 + [grand_total_total_biaya, (grand_total_total_setor - grand_total_total_biaya), ""], style: bold
+end

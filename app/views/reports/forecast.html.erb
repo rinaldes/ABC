@@ -1,0 +1,136 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Forecast</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>RENCANA DAN REALISASI TARGET SERTA GROW UP SALE <%= params[:year].present? ? params[:year] : Time.now.year %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Branch</label>
+                <label class="col-md-8 input custom-input-box">
+                  <% if current_user.branch_id.present? %>
+                    <%= label_tag 'location', current_user.branch.office_name %>
+                  <% else %>
+                    <%= select_tag :store, options_for_select(Branch.all.map{|reg|[reg.office_name + " : " + reg.description, reg.id]}, selected: (Branch.find(params[:store].present? ? params[:store] : current_user.branch_id) rescue Branch.first)), {class:"form-control", onchange: "reload();"}%>
+                  <% end %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to reports_forecast_path(format: "html", year: params[:year], store: params[:store]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to reports_forecast_path(format: "xlsx", year: params[:year], store: params[:store]), :class => "btn btn-labeled btn-primary edit-btn-success" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <li><a href="#tabs-a">RENCANA<%= params[:year].present? ? params[:year].reverse.chop.chop.reverse : Time.now.year.to_s.reverse.chop.chop.reverse %></a></li>
+            <%
+              toko = Branch.find(params[:store].present? ? params[:store] : current_user.branch_id) rescue Branch.first
+              year, bulannya = (params[:year].present? ? params[:year].to_i : Time.now.year) - 1, ''
+              @bulan.each do |bln|
+                year += 1 if bln == "January"
+                bulannya = (bln + year.to_s).to_time.strftime("%b%y").upcase
+            %>
+              <li><a href="#tabs-<%= bulannya %>"><%= bulannya %></a></li>
+            <% end %>
+          </ul>
+          <div id="tabs-a">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <br><table class="table table-bordered table-striped"><%= render 'reports/forecast/rencana_tahunan' %></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <%
+            year, bulannya = (params[:year].present? ? params[:year].to_i : Time.now.year) - 1, ''
+            @bulan.each do |bln|
+              year += 1 if bln == "January"
+              bulannya = (bln + year.to_s).to_time.strftime("%b%y").upcase
+          %>
+            <div id="tabs-<%= bulannya %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <h2>Target Harian Toko</h2>
+                  <hr>
+                  <section class="col col-md-5 headernya">
+                    <section class="col col-md-6">
+                      <label>Periode</label><br>
+                      <label>Target</label><br>
+                      <label>Harga Rata Rata</label><br>
+                      <label>Jumlah Karyawan</label><br>
+                      <label>Target per Orang</label><br>
+                      <label><%= toko.office_name %> / <%= toko.description %></label>
+                    </section>
+                    <section class="col col-md-6">
+                      <label>: <%= bln + " " + year.to_s %></label><br>
+                      <label>: <%= rand(10000) %> Pcs / Rp <%= format_currency rand(1000000000) %></label><br>
+                      <label>: Rp </label><br>
+                      <label>: <%= rand(100) %></label><br>
+                    </section>
+                    <br><br><br><br><br><br><br><hr>
+                  </section>
+                  <table class="table table-bordered table-striped"><%= render 'reports/forecast/rencana_bulanan', bln: bln, year: year %></table>
+                  <br>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<script>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/reports/forecast.html?locale=en&store="+ $("#store").val() +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</script>
+<style type="text/css">
+  th {
+    width: 1px;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .headernya {
+    font-size: 110%;
+  }
+</style>

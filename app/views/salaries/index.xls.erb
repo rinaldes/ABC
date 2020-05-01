@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee</Data></Cell>
+        <Cell><Data ss:Type="String">Reason of Adjustment</Data></Cell>
+        <Cell><Data ss:Type="String">Basic</Data></Cell>
+        <Cell><Data ss:Type="String">Transport</Data></Cell>
+        <Cell><Data ss:Type="String">Effective Date</Data></Cell>
+        <Cell><Data ss:Type="String">From</Data></Cell>
+        <Cell><Data ss:Type="String">To</Data></Cell>
+      </Row>
+    <% @salaries.each do |salary| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= salary.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= salary.reason_of_adjustment %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= salary.basic %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= salary.transport %></Data></Cell>
+        <Cell><Data ss:Type="Date"><%= salary.date_of_performance %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= salary.from %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= salary.to %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

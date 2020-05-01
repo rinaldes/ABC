@@ -1,0 +1,149 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Inventory</li><li>Stock Opname</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-StockOpname">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Stock Opname</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding" id='so_form'><!-- widget content -->
+            <%= render partial: 'so_form', locals: {stock_opname: @stock_opname} %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Import Stock Opname</h4>
+      </div>
+      <%= form_tag import_stock_opname_details_path(:id => params[:id]), multipart: true do %>
+        <div class="modal-body">
+          <%= file_field_tag :file %>
+        </div>
+        <div class="modal-footer">
+          <%= submit_tag "Import", :class => "btn btn-primary"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function start_so(){
+    var date = new Date();
+    $.ajax({
+      url: '/stock_opnames/start_stock_opname_data',
+      data: {
+        key: date.getDay() + "" + date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(),
+        office_id: $('#stock_opname_office_id').val()
+      }
+    })
+  }
+
+  function end_so(){
+    var date = new Date();
+    $.ajax({
+      url: '/stock_opnames/end_stock_opname_data',
+      data: {
+        key: date.getDay() + "" + date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), office_id: $('#stock_opname_office_id').val()
+      }
+    })
+  }
+
+  function select_so(){
+    var date = new Date();
+    $.ajax({
+      url: '/stock_opnames/select_stock_opname_data',
+      data: {
+        key: date.getDay() + "" + date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(),
+        office_id: $('#stock_opname_office_id').val()
+      }
+    })
+  }
+  $(document).ready(function() {
+//    select_so()
+    $('#stock_opname_office_id').change(function(){
+      select_so()
+    })
+    autocomplete_barcode()
+    set_barcode()
+  });
+
+  function set_barcode(){
+    if ($('#good_transfer_origin_branch_id').val() == '')
+      $('#barcode').attr('disabled', 'disabled')
+    else
+      $('#barcode').removeAttr('disabled')
+  }
+
+  function get_quantity_data(product_id, good_transfer_detail_id){
+    var date = new Date();
+    $.ajax({
+      url: '/stock_opnames/get_quantity_data',
+      data: {
+        key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), product_id: product_id,
+        warehouse_id: $('#stock_opname_branch_id').val()
+      }
+    })
+  }
+
+  function merk(){
+  }
+
+  function autocomplete_barcode(){
+    $(".autocompletenya").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/products/autocomplete_goods_barcode",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        get_quantity_data(ui.item.id)
+      },
+      minLength: 1
+    });
+  }
+
+  function keterangan(obj, id){
+    if(parseInt($('#quantity_a'+ id).val()) == parseInt($('#quantity_v'+ id).val())){
+      obj.parent().parent().find('.stock_opname_details').html("sesuai<input type='hidden' name='stock_opname[stock_opname_details_attributes]["+id
+        +"][explanation]' value='sesuai'>");
+    }else if(parseInt($('#quantity_a'+ id).val()) > parseInt($('#quantity_v'+ id).val())){
+      obj.parent().parent().find('.stock_opname_details').html("penyesuaian(+)<input type='hidden' name='stock_opname[stock_opname_details_attributes]["+ id
+        +"][explanation]' value='penyesuaian(+)'>");
+    }else if(parseInt($('#quantity_a'+ id).val()) < parseInt($('#quantity_v'+ id).val())){
+      obj.parent().parent().find('.stock_opname_details').html(
+        "<select id='keterangan"+ id +"' name='stock_opname[stock_opname_details_attributes]["+ id
+        +"][explanation]'><option>hilang</option><option>rusak</option><option>penyesuaian(-)</option></select>"
+      );
+    }
+  }
+
+  function deleteRow(event){
+    $(event.target).parent().parent().parent().remove();
+  }
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

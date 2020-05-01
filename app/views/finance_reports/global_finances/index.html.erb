@@ -1,0 +1,772 @@
+<% grand_total_cash = 0 %>
+<% grand_total_debit_amt = 0 %>
+<% grand_total_credit_amt = 0 %>
+<% grand_total_koperasi = 0 %>
+<% grand_total_dp_masuk = 0 %>
+<% grand_total_dp_keluar = 0 %>
+<% grand_total_transfer_amt = 0 %>
+<% grand_total_voucher_amt = 0 %>
+<% grand_total_total = 0 %>
+<% grand_total_qty = 0 %>
+<% grand_total_net_sales = 0 %>
+<% grand_total_cash_value = 0 %>
+<% grand_total_jasa_kado = 0 %>
+<% grand_total_dp_masuk = 0 %>
+<% grand_total_dp_keluar = 0 %>
+<% grand_total_btp_masuk = 0 %>
+<% grand_total_btp_keluar = 0 %>
+<% grand_total_tombokan = 0 %>
+<% grand_total_lain_lain = 0 %>
+<% grand_total_pembulatan = 0 %>
+<% grand_total_total_setor = 0 %>
+<% grand_total_seharusnya = 0 %>
+<% grand_total_pct = {} %>
+<% grand_total_total_biaya = 0 %>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Pergerakan Barang</li><li>PEMBELIAN</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>PENGIRIMAN <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to finance_reports_global_finances_path(format: "html", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to export_finance_reports_global_finances_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload2" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <% Branch.order("code ASC").each{|branch| %>
+              <li><a href="#tabs-<%= branch.id %>"><%= branch.office_name %></a></li>
+            <% } %>
+            <li><a href="#tabs-global">GLOBAL</a></li>
+          </ul>
+          <% Branch.order("code ASC").each_with_index{|branch, i| %>
+            <div id="tabs-<%= branch.id %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped" id='stock'>
+                    <tr>
+                      <th rowspan=3>HARI</th>
+                      <th rowspan=3>TANGGAL</th>
+                      <th colspan=8 rowspan=2>OMSET HARIAN</th>
+                      <th rowspan=3>TOTAL</th>
+                      <th rowspan=3>NO EOD</th>
+                      <th rowspan=3>QTY</th>
+                      <th rowspan=3>NET SALES</th>
+                      <th colspan=10 rowspan=2>FINANCIAL</th>
+                      <th colspan=<%= EdcBankAccount.count*3 %>>SETOR</th>
+                      <th rowspan=3>TOTAL SETOR</th>
+                      <th rowspan=3>SEHARUSNYA</th>
+                      <th rowspan=3>SELISIH SETOR DAN SEHARUSNYA</th>
+                      <th rowspan=3>TGL SETOR</th>
+                      <th colspan=<%= PettyCashType.where("name NOT IN ('Cash In', 'Rtk')").count %> rowspan=2>BIAYA</th>
+                      <th rowspan=3>TOTAL BIAYA</th>
+                      <th rowspan=3>SELISIH SETOR DENGAN TOTAL BIAYA</th>
+                      <th rowspan=3>KETERANGAN</th>
+                    </tr>
+                    <tr>
+                      <% setor_per_week = {} %>
+                      <% seharusnya_per_week = {} %>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                        <th colspan=3><%= edc_bank_account.bank_name %></th>
+                        <% setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                        <% seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                      <% } %>
+                    </tr>
+                    <tr>
+                      <th>CASH</th>
+                      <th>DEBIT CARD</th>
+                      <th>KREDIT CARD</th>
+                      <th>KOPERASI</th>
+                      <th>DP MASUK</th>
+                      <th>DP KELUAR</th>
+                      <th>TRANSFER</th>
+                      <th>VOUCHER</th>
+                      <th>CASH VALUE</th>
+                      <th>JASA KADO</th>
+                      <th>DP MASUK</th>
+                      <th>DP KELUAR</th>
+                      <th>BTP MASUK</th>
+                      <th>BTP KELUAR</th>
+                      <th>VOUCHER</th>
+                      <th>TOMBOKAN</th>
+                      <th>LAIN-LAIN</th>
+                      <th>PEMBULATAN</th>
+                      <% grand_total_setor_per_week = {} %>
+                      <% grand_total_seharusnya_per_week = {} %>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                          <% grand_total_setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                          <% grand_total_seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                        <th>Setor</th>
+                        <th>Seharusnya</th>
+                        <th>Selisih</th>
+                      <% } %>
+                      <% total_biaya_per_week = {} %>
+                      <% PettyCashType.where("name NOT IN ('Cash In', 'Rtk')").each{|pct| %>
+                        <th><%= pct.name %></th>
+                        <% total_biaya_per_week[pct.id.to_s] = 0 %>
+                        <% grand_total_pct[pct.id.to_s] = 0 %>
+                      <% } %>
+                    </tr>
+                    <% week = 1 %>
+                    <% cash_per_week = 0 %>
+                    <% debit_amt_per_week = 0 %>
+                    <% credit_amt_per_week = 0 %>
+                    <% koperasi_per_week = 0 %>
+                    <% dp_masuk_per_week = 0 %>
+                    <% dp_keluar_per_week = 0 %>
+                    <% transfer_amt_per_week = 0 %>
+                    <% voucher_amt_per_week = 0 %>
+                    <% total_per_week = 0 %>
+                    <% qty_per_week = 0 %>
+                    <% net_sales_per_week = 0 %>
+                    <% cash_value_per_week = 0 %>
+                    <% jasa_kado_per_week = 0 %>
+                    <% btp_masuk_per_week = 0 %>
+                    <% btp_keluar_per_week = 0 %>
+                    <% tombokan_per_week = 0 %>
+                    <% lain_lain_per_week = 0 %>
+                    <% pembulatan_per_week = 0 %>
+                    <% total_setor_per_week = 0 %>
+                    <% total_seharusnya_per_week = 0 %>
+                    <% selisih_per_week = 0 %>
+                    <% total_total_biaya_per_week = 0 %>
+                    <% "#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.day.upto("#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.end_of_month.day).each{|date| %>
+                      <% date = "#{params[:year]}-#{sprintf('%02d', params[:month])}-#{date}".to_date %>
+                      <% current_sod_eod = SodEod.where("sod_eod_date='#{date.strftime('%Y-%m-%d')}' AND office_id=#{branch.id}").first_or_create %>
+                      <% sales_dets = SalesDetail.where("store_id=#{branch.id} AND transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'").joins(:sale) %>
+                      <% sales = Sale.where("store_id=#{branch.id} AND transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'") %>
+                      <% voucher_amt = sales.map(&:voucher_amt).compact.sum rescue 0 %>
+                      <% transfer_amt = sales.map(&:transfer_amt).compact.sum rescue 0 %>
+                      <% koperasi = sales.koperasi rescue 0 %>
+                      <% credit_amt = sales.map(&:credit_amt).compact.sum rescue 0 %>
+                      <% debit_amt = sales.map(&:debit_amt).compact.sum rescue 0 %>
+                      <% cash_value = sales.map{|sale|sale.payment_cash}.compact.sum %>
+                      <% jasa_kado = sales.map(&:jasa_kado).compact.sum rescue 0 %>
+                      <% dp_masuk = current_sod_eod.dp_masuk.to_f %>
+                      <% dp_keluar = current_sod_eod.dp_keluar.to_f %>
+                      <% tombokan = current_sod_eod.tombokan.to_f rescue 0 %>
+                      <% lain_lain = current_sod_eod.lain_lain.to_f rescue 0 %>
+                      <% btp_masuk = sales.map(&:btp_masuk).compact.sum rescue 0 %>
+                      <% btp_keluar = sales.map(&:btp_keluar).compact.sum rescue 0 %>
+                      <% cash = sales.map(&:payment_cash).compact.sum rescue 0 %>
+                      <% total = voucher_amt + transfer_amt + dp_keluar + dp_masuk + koperasi + credit_amt + debit_amt + cash %>
+                      <% qty = sales_dets.map(&:quantity).sum %>
+                      <% net_sales = sales.map(&:total_price).compact.sum rescue 0 %>
+                      <% pembulatan = cash - (cash_value+jasa_kado+dp_masuk-dp_keluar+(sales.map(&:btp_masuk).compact.sum rescue 0)+tombokan+lain_lain) %>
+                      <% cash_per_week += cash %>
+                      <% debit_amt_per_week += debit_amt %>
+                      <% credit_amt_per_week += credit_amt %>
+                      <% koperasi_per_week += koperasi %>
+                      <% btp_masuk_per_week += btp_masuk %>
+                      <% transfer_amt_per_week += transfer_amt %>
+                      <% voucher_amt_per_week += voucher_amt %>
+                      <% total_per_week += total %>
+                      <% qty_per_week += qty %>
+                      <% net_sales_per_week += net_sales %>
+                      <% cash_value_per_week += cash_value %>
+                      <% jasa_kado_per_week += jasa_kado %>
+                      <% dp_masuk_per_week += dp_masuk %>
+                      <% dp_keluar_per_week += dp_keluar %>
+                      <% btp_masuk_per_week += btp_masuk %>
+                      <% btp_keluar_per_week += btp_keluar %>
+                      <% tombokan_per_week += tombokan %>
+                      <% lain_lain_per_week += lain_lain %>
+                      <% pembulatan_per_week += pembulatan %>
+                      <tr>
+                        <td><%= date.strftime('%A') %></td>
+                        <td><%= date.strftime('%d/%m/%y') %></td>
+                        <td><%= format_currency cash %></td>
+                        <td><%= format_currency debit_amt %></td>
+                        <td><%= format_currency credit_amt %></td>
+                        <td><%= format_currency koperasi %></td>
+                        <td><%= format_currency dp_masuk %></td>
+                        <td><%= format_currency dp_keluar %></td>
+                        <td><%= format_currency transfer_amt %></td>
+                        <td><%= format_currency voucher_amt %></td>
+                        <td><%= format_currency total %></td>
+                        <td><%= "#{('A'..'Z').to_a[i]}#{sprintf('%03d', i+1)}-#{date.strftime('%m/%d')}" %></td>
+                        <td><%= format_currency qty %></td>
+                        <td><%= format_currency net_sales %></td>
+                        <td><%= format_currency cash_value %></td>
+                        <td><%= format_currency jasa_kado %></td>
+                        <td><%= format_currency dp_masuk %></td>
+                        <td><%= format_currency dp_keluar %></td>
+                        <td><%= format_currency btp_masuk %></td>
+                        <td><%= format_currency sales.map(&:btp_keluar).compact.sum rescue 0 %></td>
+                        <td><%= format_currency voucher_amt %></td>
+                        <td><%= format_currency tombokan %></td>
+                        <td><%= format_currency lain_lain %></td>
+                        <td><%= format_currency pembulatan %></td>
+                        <% total_setor = 0 %>
+                        <% seharusnya = 0 %>
+                        <% selisih_setor = 0 %>
+                        <% cash_at_bank = nil %>
+                        <% EdcBankAccount.all.each{|edc_bank_account| %>
+                          <% cash_at_bank = CashAtBank.find_by_sod_eod_id_and_edc_bank_account_id(current_sod_eod.id, edc_bank_account.id) rescue nil %>
+                          <td><%= format_currency cash_at_bank.saving_amount rescue 0 %></td>
+                          <td><%= format_currency cash_at_bank.required_amount rescue 0 %></td>
+                          <td><%= format_currency (cash_at_bank.saving_amount - cash_at_bank.required_amount) rescue 0 %></td>
+                          <% total_setor += (cash_at_bank.saving_amount.to_f rescue 0) %>
+                          <% seharusnya += (cash_at_bank.required_amount.to_f rescue 0) %>
+                          <% selisih_setor += (cash_at_bank.saving_amount.to_f - cash_at_bank.required_amount.to_f rescue 0) %>
+                          <% setor_per_week[edc_bank_account.id.to_s] += (cash_at_bank.saving_amount.to_f rescue 0) %>
+                          <% seharusnya_per_week[edc_bank_account.id.to_s] += (cash_at_bank.required_amount.to_f rescue 0) %>
+                        <% } %>
+                        <td><%= format_currency total_setor %></td>
+                        <td><%= format_currency seharusnya %></td>
+                        <td><%= format_currency selisih_setor %></td>
+                        <td><%= cash_at_bank.saving_date rescue '' %></td>
+                        <% total_seharusnya_per_week += seharusnya %>
+                        <% total_setor_per_week += total_setor %>
+                        <% selisih_per_week += selisih_setor %>
+                        <% total_biaya = 0 %>
+                        <% PettyCashType.where("name NOT IN ('Cash In', 'Rtk')").each{|pct| %>
+                          <% biaya = CashOut.where("office_id=#{branch.id} AND cash_out_type='#{pct.name.upcase}' AND time BETWEEN '#{date} 00:00:00' AND '#{date} 23:59:59'").joins(:petty_cash).map(&:amount).sum %>
+                          <td><%= format_currency biaya %></td>
+                          <% total_biaya += biaya %>
+                          <% total_biaya_per_week[pct.id.to_s] += biaya %>
+                        <% } %>
+                        <% total_total_biaya_per_week += total_biaya %>
+                        <td><%= format_currency total_biaya %></td>
+                        <td><%= format_currency total_setor - total_biaya %></td>
+                        <td></td>
+                      </tr>
+                      <% if date.strftime('%A') == 'Sunday' || date.day == date.end_of_month.day %>
+                        <tr>
+                          <th colspan=2><%= "M#{week}" if date.strftime('%A') == 'Sunday' %></th>
+                          <th><%= format_currency cash_per_week %></th>
+                          <th><%= format_currency debit_amt_per_week %></th>
+                          <th><%= format_currency credit_amt_per_week %></th>
+                          <th><%= format_currency koperasi_per_week %></th>
+                          <th><%= format_currency dp_masuk_per_week %></th>
+                          <th><%= format_currency dp_keluar_per_week %></th>
+                          <th><%= format_currency transfer_amt_per_week %></th>
+                          <th><%= format_currency voucher_amt_per_week %></th>
+                          <th><%= format_currency total_per_week %></th>
+                          <th></th>
+                          <th><%= format_currency qty_per_week %></th>
+                          <th><%= format_currency net_sales_per_week %></th>
+                          <th><%= format_currency cash_value_per_week %></th>
+                          <th><%= format_currency jasa_kado_per_week %></th>
+                          <th><%= format_currency dp_masuk_per_week %></th>
+                          <th><%= format_currency dp_keluar_per_week %></th>
+                          <th><%= format_currency btp_masuk_per_week %></th>
+                          <th><%= format_currency btp_keluar_per_week %></th>
+                          <th><%= format_currency voucher_amt_per_week %></th>
+                          <th><%= format_currency tombokan_per_week %></th>
+                          <th><%= format_currency lain_lain_per_week %></th>
+                          <th><%= format_currency pembulatan_per_week %></th>
+                          <% EdcBankAccount.all.each{|edc_bank_account| %>
+                            <th><%= format_currency setor_per_week[edc_bank_account.id.to_s] %></th>
+                            <th><%= format_currency seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                            <th><%= format_currency setor_per_week[edc_bank_account.id.to_s] - seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                            <% grand_total_setor_per_week[edc_bank_account.id.to_s] += setor_per_week[edc_bank_account.id.to_s] %>
+                            <% setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                            <% grand_total_seharusnya_per_week[edc_bank_account.id.to_s] += seharusnya_per_week[edc_bank_account.id.to_s] %>
+                            <% seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                          <% } %>
+                          <th><%= format_currency total_setor_per_week %></th>
+                          <th><%= format_currency total_seharusnya_per_week %></th>
+                          <th><%= format_currency selisih_per_week %></th>
+                          <th></th>
+                          <% PettyCashType.where("name NOT IN ('Cash In', 'Rtk')").each{|pct| %>
+                            <th><%= format_currency total_biaya_per_week[pct.id.to_s] %></th>
+                            <% grand_total_pct[pct.id.to_s] += total_biaya_per_week[pct.id.to_s] %>
+                            <% total_biaya_per_week[pct.id.to_s] = 0 %>
+                          <% } %>
+                          <th><%= format_currency total_total_biaya_per_week %></th>
+                          <th><%= format_currency total_setor_per_week - total_total_biaya_per_week %></th>
+                          <th></th>
+                          <% total_total_biaya_per_week = 0 %>
+                          <% grand_total_cash += cash_per_week %>
+                          <% grand_total_debit_amt += debit_amt_per_week %>
+                          <% cash_per_week = 0 %>
+                          <% debit_amt_per_week = 0 %>
+                          <% grand_total_credit_amt += credit_amt_per_week %>
+                          <% credit_amt_per_week = 0 %>
+                          <% grand_total_koperasi += koperasi_per_week %>
+                          <% koperasi_per_week = 0 %>
+                          <% grand_total_dp_masuk += dp_masuk_per_week %>
+                          <% dp_masuk_per_week = 0 %>
+                          <% grand_total_dp_keluar += dp_keluar_per_week %>
+                          <% dp_keluar_per_week = 0 %>
+                          <% grand_total_transfer_amt += transfer_amt_per_week %>
+                          <% transfer_amt_per_week = 0 %>
+                          <% grand_total_voucher_amt += voucher_amt_per_week %>
+                          <% voucher_amt_per_week = 0 %>
+                          <% grand_total_total += total_per_week %>
+                          <% total_per_week = 0 %>
+                          <% grand_total_qty += qty_per_week %>
+                          <% qty_per_week = 0 %>
+                          <% grand_total_net_sales += net_sales_per_week %>
+                          <% net_sales_per_week = 0 %>
+                          <% grand_total_cash_value += cash_value_per_week %>
+                          <% cash_value_per_week = 0 %>
+                          <% grand_total_jasa_kado += jasa_kado_per_week %>
+                          <% jasa_kado_per_week = 0 %>
+                          <% grand_total_dp_masuk += dp_masuk_per_week %>
+                          <% dp_masuk_per_week = 0 %>
+                          <% grand_total_dp_keluar += dp_keluar_per_week %>
+                          <% dp_keluar_per_week = 0 %>
+                          <% grand_total_btp_masuk += btp_masuk_per_week %>
+                          <% btp_masuk_per_week = 0 %>
+                          <% grand_total_btp_keluar += btp_keluar_per_week %>
+                          <% btp_keluar_per_week = 0 %>
+                          <% grand_total_tombokan += tombokan_per_week %>
+                          <% tombokan_per_week = 0 %>
+                          <% grand_total_lain_lain += lain_lain_per_week %>
+                          <% lain_lain_per_week = 0 %>
+                          <% grand_total_pembulatan += pembulatan_per_week %>
+                          <% pembulatan_per_week = 0 %>
+                          <% grand_total_total_setor += total_setor_per_week %>
+                          <% total_setor_per_week = 0 %>
+                          <% grand_total_seharusnya += total_seharusnya_per_week %>
+                          <% selisih_per_week = 0 %>
+                          <% week += 1 %>
+                        <% end %>
+                      </tr>
+                    <% } %>
+                    <tr>
+                      <th colspan=2>GRAND TOTAL</th>
+                      <th><%= format_currency grand_total_cash %></th>
+                      <th><%= format_currency grand_total_debit_amt %></th>
+                      <th><%= format_currency grand_total_credit_amt %></th>
+                      <th><%= format_currency grand_total_koperasi %></th>
+                      <th><%= format_currency grand_total_dp_masuk %></th>
+                      <th><%= format_currency grand_total_dp_keluar %></th>
+                      <th><%= format_currency grand_total_transfer_amt %></th>
+                      <th><%= format_currency grand_total_voucher_amt %></th>
+                      <th><%= format_currency grand_total_total %></th>
+                      <th></th>
+                      <th><%= format_currency grand_total_qty %></th>
+                      <th><%= format_currency grand_total_net_sales %></th>
+                      <th><%= format_currency grand_total_cash_value %></th>
+                      <th><%= format_currency grand_total_jasa_kado %></th>
+                      <th><%= format_currency grand_total_dp_masuk %></th>
+                      <th><%= format_currency grand_total_dp_keluar %></th>
+                      <th><%= format_currency grand_total_btp_masuk %></th>
+                      <th><%= format_currency grand_total_btp_keluar %></th>
+                      <th><%= format_currency grand_total_voucher_amt %></th>
+                      <th><%= format_currency grand_total_tombokan %></th>
+                      <th><%= format_currency grand_total_lain_lain %></th>
+                      <th><%= format_currency grand_total_pembulatan %></th>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                        <th><%= format_currency grand_total_setor_per_week[edc_bank_account.id.to_s] %></th>
+                        <th><%= format_currency grand_total_seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                        <th><%= format_currency grand_total_setor_per_week[edc_bank_account.id.to_s] - grand_total_seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                      <% } %>
+                      <th><%= format_currency grand_total_total_setor %></th>
+                      <th><%= format_currency grand_total_seharusnya %></th>
+                      <th><%= format_currency grand_total_total_setor-grand_total_seharusnya %></th>
+                      <th></th>
+                      <% PettyCashType.where("name NOT IN ('Cash In', 'Rtk')").each{|pct| %>
+                        <th><%= format_currency grand_total_pct[pct.id.to_s] %></th>
+                        <% grand_total_total_biaya += grand_total_pct[pct.id.to_s] %>
+                      <% } %>
+                      <th><%= format_currency grand_total_total_biaya %></th>
+                      <th><%= format_currency grand_total_total_setor - grand_total_total_biaya %></th>
+                      <th></th>
+                    </tr>
+                  </table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+          <div id="tabs-global">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'>
+                    <tr>
+                      <th rowspan=3>HARI</th>
+                      <th rowspan=3>TANGGAL</th>
+                      <th colspan=8 rowspan=2>OMSET HARIAN</th>
+                      <th rowspan=3>TOTAL</th>
+                      <th rowspan=3>NO EOD</th>
+                      <th rowspan=3>QTY</th>
+                      <th rowspan=3>NET SALES</th>
+                      <th colspan=10 rowspan=2>FINANCIAL</th>
+                      <th colspan=<%= EdcBankAccount.count*3 %>>SETOR</th>
+                      <th rowspan=3>TOTAL SETOR</th>
+                      <th rowspan=3>SEHARUSNYA</th>
+                      <th rowspan=3>SELISIH SETOR DAN SEHARUSNYA</th>
+                      <th rowspan=3>TGL SETOR</th>
+                      <th colspan=<%= PettyCashType.where("name !='Cash In'").count %> rowspan=2>BIAYA</th>
+                      <th rowspan=3>TOTAL BIAYA</th>
+                      <th rowspan=3>SELISIH SETOR DENGAN TOTAL BIAYA</th>
+                      <th rowspan=3>KETERANGAN</th>
+                    </tr>
+                    <tr>
+                      <% setor_per_week = {} %>
+                      <% seharusnya_per_week = {} %>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                        <th colspan=3><%= edc_bank_account.bank_name %></th>
+                        <% setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                        <% seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                      <% } %>
+                    </tr>
+                    <tr>
+                      <th>CASH</th>
+                      <th>DEBIT CARD</th>
+                      <th>KREDIT CARD</th>
+                      <th>KOPERASI</th>
+                      <th>DP MASUK</th>
+                      <th>DP KELUAR</th>
+                      <th>TRANSFER</th>
+                      <th>VOUCHER</th>
+                      <th>CASH VALUE</th>
+                      <th>JASA KADO</th>
+                      <th>DP MASUK</th>
+                      <th>DP KELUAR</th>
+                      <th>BTP MASUK</th>
+                      <th>BTP KELUAR</th>
+                      <th>VOUCHER</th>
+                      <th>TOMBOKAN</th>
+                      <th>LAIN-LAIN</th>
+                      <th>PEMBULATAN</th>
+                      <% grand_total_setor_per_week = {} %>
+                      <% grand_total_seharusnya_per_week = {} %>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                          <% grand_total_setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                          <% grand_total_seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                        <th>Setor</th>
+                        <th>Seharusnya</th>
+                        <th>Selisih</th>
+                      <% } %>
+                      <% total_biaya_per_week = {} %>
+                      <% PettyCashType.where("name !='Cash In'").each{|pct| %>
+                        <th><%= pct.name %></th>
+                        <% total_biaya_per_week[pct.id.to_s] = 0 %>
+                        <% grand_total_pct[pct.id.to_s] = 0 %>
+                      <% } %>
+                    </tr>
+                    <% week = 1 %>
+                    <% cash_per_week = 0 %>
+                    <% debit_amt_per_week = 0 %>
+                    <% credit_amt_per_week = 0 %>
+                    <% koperasi_per_week = 0 %>
+                    <% dp_masuk_per_week = 0 %>
+                    <% dp_keluar_per_week = 0 %>
+                    <% transfer_amt_per_week = 0 %>
+                    <% voucher_amt_per_week = 0 %>
+                    <% total_per_week = 0 %>
+                    <% qty_per_week = 0 %>
+                    <% net_sales_per_week = 0 %>
+                    <% cash_value_per_week = 0 %>
+                    <% jasa_kado_per_week = 0 %>
+                    <% dp_masuk_per_week = 0 %>
+                    <% dp_keluar_per_week = 0 %>
+                    <% btp_masuk_per_week = 0 %>
+                    <% btp_keluar_per_week = 0 %>
+                    <% tombokan_per_week = 0 %>
+                    <% lain_lain_per_week = 0 %>
+                    <% pembulatan_per_week = 0 %>
+                    <% total_setor_per_week = 0 %>
+                    <% total_seharusnya_per_week = 0 %>
+                    <% selisih_per_week = 0 %>
+                    <% total_total_biaya_per_week = 0 %>
+                    <% "#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.day.upto("#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.end_of_month.day).each{|date| %>
+                      <% date = "#{params[:year]}-#{sprintf('%02d', params[:month])}-#{date}".to_date %>
+                      <% current_sod_eod = SodEod.where("sod_eod_date='#{date.strftime('%Y-%m-%d')}'").last %>
+                      <% sales_dets = SalesDetail.where("transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'").joins(:sale) %>
+                      <% sales = Sale.where("transaction_date BETWEEN '#{date.strftime('%Y-%m-%d 00:00:00')}' AND '#{date.strftime('%Y-%m-%d 23:59:59')}'") %>
+                      <% voucher_amt = sales.map(&:voucher_amt).compact.sum rescue 0 %>
+                      <% transfer_amt = sales.map(&:transfer_amt).compact.sum rescue 0 %>
+                      <% koperasi = sales.koperasi rescue 0 %>
+                      <% credit_amt = sales.map(&:credit_amt).compact.sum rescue 0 %>
+                      <% debit_amt = sales.map(&:debit_amt).compact.sum rescue 0 %>
+                      <% cash_value = sales.map{|sale|sale.total_price.to_f-sale.total_disocunt.to_f}.compact.sum rescue 0 %>
+                      <% jasa_kado = sales.map(&:jasa_kado).compact.sum rescue 0 %>
+                      <% dp_masuk = sales.map(&:dp_masuk).compact.sum rescue 0 %>
+                      <% dp_keluar = sales.map(&:dp_keluar).compact.sum rescue 0 %>
+                      <% tombokan = current_sod_eod.tombokan.to_f rescue 0 %>
+                      <% lain_lain = current_sod_eod.lain_lain.to_f rescue 0 %>
+                      <% btp_masuk = sales.map(&:btp_masuk).compact.sum rescue 0 %>
+                      <% btp_keluar = sales.map(&:btp_keluar).compact.sum rescue 0 %>
+                      <% cash = sales.map(&:payment_cash).compact.sum rescue 0 %>
+                      <% total = voucher_amt + transfer_amt + dp_keluar + dp_masuk + koperasi + credit_amt + debit_amt + (sales.map(&:payment_cash).compact.sum rescue 0) %>
+                      <% pembulatan = cash_value + tombokan + (current_sod_eod.lain_lain.to_f rescue 0) - (cash_value+jasa_kado+dp_masuk-dp_keluar+(sales.map(&:btp_masuk).compact.sum rescue 0)) %>
+                      <% qty = sales_dets.map(&:quantity).sum %>
+                      <% net_sales = sales.map(&:total_price).compact.sum rescue 0 %>
+                      <% cash_per_week += cash %>
+                      <% debit_amt_per_week += debit_amt %>
+                      <% credit_amt_per_week += credit_amt %>
+                      <% koperasi_per_week += koperasi %>
+                      <% dp_masuk_per_week += dp_masuk %>
+                      <% dp_keluar_per_week += dp_keluar %>
+                      <% btp_masuk_per_week += btp_masuk %>
+                      <% transfer_amt_per_week += transfer_amt %>
+                      <% voucher_amt_per_week += voucher_amt %>
+                      <% total_per_week += total %>
+                      <% qty_per_week += qty %>
+                      <% net_sales_per_week += net_sales %>
+                      <% cash_value_per_week += cash_value %>
+                      <% jasa_kado_per_week += jasa_kado %>
+                      <% dp_masuk_per_week += dp_masuk %>
+                      <% dp_keluar_per_week += dp_keluar %>
+                      <% btp_masuk_per_week += btp_masuk %>
+                      <% btp_keluar_per_week += btp_keluar %>
+                      <% tombokan_per_week += tombokan %>
+                      <% lain_lain_per_week += lain_lain %>
+                      <% pembulatan_per_week += pembulatan %>
+                      <tr>
+                        <td><%= date.strftime('%A') %><%= current_sod_eod.id rescue nil %></td>
+                        <td><%= date.strftime('%d/%m/%y') %></td>
+                        <td><%= format_currency cash %></td>
+                        <td><%= format_currency debit_amt %></td>
+                        <td><%= format_currency credit_amt %></td>
+                        <td><%= format_currency koperasi %></td>
+                        <td><%= format_currency dp_masuk %></td>
+                        <td><%= format_currency dp_keluar %></td>
+                        <td><%= format_currency transfer_amt %></td>
+                        <td><%= format_currency voucher_amt %></td>
+                        <td><%= format_currency total %></td>
+                        <td><%= "HO#{sprintf('%02d', 1)}-#{date.strftime('%m/%d')}" %></td>
+                        <td><%= format_currency qty %></td>
+                        <td><%= format_currency net_sales %></td>
+                        <td><%= format_currency cash_value %></td>
+                        <td><%= format_currency jasa_kado %></td>
+                        <td><%= format_currency dp_masuk %></td>
+                        <td><%= format_currency dp_keluar %></td>
+                        <td><%= format_currency btp_masuk %></td>
+                        <td><%= format_currency sales.map(&:btp_keluar).compact.sum rescue 0 %></td>
+                        <td><%= format_currency voucher_amt %></td>
+                        <td><%= format_currency tombokan %></td>
+                        <td><%= format_currency lain_lain %></td>
+                        <td><%= format_currency pembulatan %></td>
+                        <% total_setor = 0 %>
+                        <% seharusnya = 0 %>
+                        <% selisih_setor = 0 %>
+                        <% cash_at_bank = nil %>
+                        <% EdcBankAccount.all.each{|edc_bank_account| %>
+                          <% cash_at_bank = CashAtBank.find_by_sod_eod_id_and_edc_bank_account_id(current_sod_eod.id, edc_bank_account.id) rescue nil %>
+                          <td><%= format_currency cash_at_bank.saving_amount rescue 0 %></td>
+                          <td><%= format_currency cash_at_bank.required_amount rescue 0 %></td>
+                          <td><%= format_currency (cash_at_bank.saving_amount - cash_at_bank.required_amount) rescue 0 %></td>
+                          <% total_setor += (cash_at_bank.saving_amount rescue 0) %>
+                          <% seharusnya += (cash_at_bank.required_amount rescue 0) %>
+                          <% selisih_setor += (cash_at_bank.saving_amount - cash_at_bank.required_amount rescue 0) %>
+                          <% setor_per_week[edc_bank_account.id.to_s] += (cash_at_bank.saving_amount rescue 0) %>
+                          <% seharusnya_per_week[edc_bank_account.id.to_s] += (cash_at_bank.required_amount rescue 0) %>
+                        <% } %>
+                        <td><%= format_currency total_setor %></td>
+                        <td><%= format_currency seharusnya %></td>
+                        <td><%= format_currency selisih_setor %></td>
+                        <td><%= format_currency cash_at_bank rescue '' %></td>
+                        <% total_seharusnya_per_week += seharusnya %>
+                        <% total_setor_per_week += total_setor %>
+                        <% selisih_per_week += selisih_setor %>
+                        <% total_biaya = 0 %>
+                        <% PettyCashType.where("name !='Cash In'").each{|pct| %>
+                          <% biaya = CashOut.where("cash_out_type='#{pct.name.upcase}' AND time BETWEEN '#{date} 00:00:00' AND '#{date} 23:59:59'").map(&:amount).sum %>
+                          <td><%= format_currency biaya %></td>
+                          <% total_biaya += biaya %>
+                          <% total_biaya_per_week[pct.id.to_s] += biaya %>
+                        <% } %>
+                        <% total_total_biaya_per_week += total_biaya %>
+                        <td><%= format_currency total_biaya %></td>
+                        <td><%= format_currency total_setor - total_biaya %></td>
+                        <td></td>
+                      </tr>
+                      <% if date.strftime('%A') == 'Sunday' || date.day == date.end_of_month.day %>
+                        <tr>
+                          <th colspan=2><%= "M#{week}" if date.strftime('%A') == 'Sunday' %></th>
+                          <th><%= format_currency cash_per_week %></th>
+                          <th><%= format_currency debit_amt_per_week %></th>
+                          <th><%= format_currency credit_amt_per_week %></th>
+                          <th><%= format_currency koperasi_per_week %></th>
+                          <th><%= format_currency dp_masuk_per_week %></th>
+                          <th><%= format_currency dp_keluar_per_week %></th>
+                          <th><%= format_currency transfer_amt_per_week %></th>
+                          <th><%= format_currency voucher_amt_per_week %></th>
+                          <th><%= format_currency total_per_week %></th>
+                          <th></th>
+                          <th><%= format_currency qty_per_week %></th>
+                          <th><%= format_currency net_sales_per_week %></th>
+                          <th><%= format_currency cash_value_per_week %></th>
+                          <th><%= format_currency jasa_kado_per_week %></th>
+                          <th><%= format_currency dp_masuk_per_week %></th>
+                          <th><%= format_currency dp_keluar_per_week %></th>
+                          <th><%= format_currency btp_masuk_per_week %></th>
+                          <th><%= format_currency btp_keluar_per_week %></th>
+                          <th><%= format_currency voucher_amt_per_week %></th>
+                          <th><%= format_currency tombokan_per_week %></th>
+                          <th><%= format_currency lain_lain_per_week %></th>
+                          <th><%= format_currency pembulatan_per_week %></th>
+                          <% EdcBankAccount.all.each{|edc_bank_account| %>
+                            <th><%= format_currency setor_per_week[edc_bank_account.id.to_s] %></th>
+                            <th><%= format_currency seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                            <th><%= format_currency setor_per_week[edc_bank_account.id.to_s] - seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                            <% grand_total_setor_per_week[edc_bank_account.id.to_s] += setor_per_week[edc_bank_account.id.to_s] %>
+                            <% setor_per_week[edc_bank_account.id.to_s] = 0 %>
+                            <% grand_total_seharusnya_per_week[edc_bank_account.id.to_s] += seharusnya_per_week[edc_bank_account.id.to_s] %>
+                            <% seharusnya_per_week[edc_bank_account.id.to_s] = 0 %>
+                          <% } %>
+                          <th><%= format_currency total_setor_per_week %></th>
+                          <th><%= format_currency total_seharusnya_per_week %></th>
+                          <th><%= format_currency selisih_per_week %></th>
+                          <th></th>
+                          <% PettyCashType.where("name !='Cash In'").each{|pct| %>
+                            <th><%= format_currency total_biaya_per_week[pct.id.to_s] %></th>
+                            <% grand_total_pct[pct.id.to_s] += total_biaya_per_week[pct.id.to_s] %>
+                            <% total_biaya_per_week[pct.id.to_s] = 0 %>
+                          <% } %>
+                          <th><%= format_currency total_total_biaya_per_week %></th>
+                          <th><%= format_currency total_setor_per_week - total_total_biaya_per_week %></th>
+                          <th></th>
+                          <% total_total_biaya_per_week = 0 %>
+                          <% grand_total_cash += cash_per_week %>
+                          <% grand_total_debit_amt += debit_amt_per_week %>
+                          <% cash_per_week = 0 %>
+                          <% debit_amt_per_week = 0 %>
+                          <% grand_total_credit_amt += credit_amt_per_week %>
+                          <% credit_amt_per_week = 0 %>
+                          <% grand_total_koperasi += koperasi_per_week %>
+                          <% koperasi_per_week = 0 %>
+                          <% grand_total_dp_masuk += dp_masuk_per_week %>
+                          <% dp_masuk_per_week = 0 %>
+                          <% grand_total_dp_keluar += dp_keluar_per_week %>
+                          <% dp_keluar_per_week = 0 %>
+                          <% grand_total_transfer_amt += transfer_amt_per_week %>
+                          <% transfer_amt_per_week = 0 %>
+                          <% grand_total_voucher_amt += voucher_amt_per_week %>
+                          <% voucher_amt_per_week = 0 %>
+                          <% grand_total_total += total_per_week %>
+                          <% total_per_week = 0 %>
+                          <% grand_total_qty += qty_per_week %>
+                          <% qty_per_week = 0 %>
+                          <% grand_total_net_sales += net_sales_per_week %>
+                          <% net_sales_per_week = 0 %>
+                          <% grand_total_cash_value += cash_value_per_week %>
+                          <% cash_value_per_week = 0 %>
+                          <% grand_total_jasa_kado += jasa_kado_per_week %>
+                          <% jasa_kado_per_week = 0 %>
+                          <% grand_total_dp_masuk += dp_masuk_per_week %>
+                          <% dp_masuk_per_week = 0 %>
+                          <% grand_total_dp_keluar += dp_keluar_per_week %>
+                          <% dp_keluar_per_week = 0 %>
+                          <% grand_total_btp_masuk += btp_masuk_per_week %>
+                          <% btp_masuk_per_week = 0 %>
+                          <% grand_total_btp_keluar += btp_keluar_per_week %>
+                          <% btp_keluar_per_week = 0 %>
+                          <% grand_total_tombokan += tombokan_per_week %>
+                          <% tombokan_per_week = 0 %>
+                          <% grand_total_lain_lain += lain_lain_per_week %>
+                          <% lain_lain_per_week = 0 %>
+                          <% grand_total_pembulatan += pembulatan_per_week %>
+                          <% pembulatan_per_week = 0 %>
+                          <% grand_total_total_setor += total_setor_per_week %>
+                          <% total_setor_per_week = 0 %>
+                          <% grand_total_seharusnya += total_seharusnya_per_week %>
+                          <% selisih_per_week = 0 %>
+                          <% week += 1 %>
+                        <% end %>
+                      </tr>
+                    <% } %>
+                    <tr>
+                      <th colspan=2>GRAND TOTAL</th>
+                      <th><%= format_currency grand_total_cash %></th>
+                      <th><%= format_currency grand_total_debit_amt %></th>
+                      <th><%= format_currency grand_total_credit_amt %></th>
+                      <th><%= format_currency grand_total_koperasi %></th>
+                      <th><%= format_currency grand_total_dp_masuk %></th>
+                      <th><%= format_currency grand_total_dp_keluar %></th>
+                      <th><%= format_currency grand_total_transfer_amt %></th>
+                      <th><%= format_currency grand_total_voucher_amt %></th>
+                      <th><%= format_currency grand_total_total %></th>
+                      <th></th>
+                      <th><%= format_currency grand_total_qty %></th>
+                      <th><%= format_currency grand_total_net_sales %></th>
+                      <th><%= format_currency grand_total_cash_value %></th>
+                      <th><%= format_currency grand_total_jasa_kado %></th>
+                      <th><%= format_currency grand_total_dp_masuk %></th>
+                      <th><%= format_currency grand_total_dp_keluar %></th>
+                      <th><%= format_currency grand_total_btp_masuk %></th>
+                      <th><%= format_currency grand_total_btp_keluar %></th>
+                      <th><%= format_currency grand_total_voucher_amt %></th>
+                      <th><%= format_currency grand_total_tombokan %></th>
+                      <th><%= format_currency grand_total_lain_lain %></th>
+                      <th><%= format_currency grand_total_pembulatan %></th>
+                      <% EdcBankAccount.all.each{|edc_bank_account| %>
+                        <th><%= format_currency grand_total_setor_per_week[edc_bank_account.id.to_s] %></th>
+                        <th><%= format_currency grand_total_seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                        <th><%= format_currency grand_total_setor_per_week[edc_bank_account.id.to_s] - grand_total_seharusnya_per_week[edc_bank_account.id.to_s] %></th>
+                      <% } %>
+                      <th><%= format_currency grand_total_total_setor %></th>
+                      <th><%= format_currency grand_total_seharusnya %></th>
+                      <th><%= format_currency grand_total_total_setor-grand_total_seharusnya %></th>
+                      <th></th>
+                      <% PettyCashType.where("name !='Cash In'").each{|pct| %>
+                        <th><%= format_currency grand_total_pct[pct.id.to_s] %></th>
+                        <% grand_total_total_biaya += grand_total_pct[pct.id.to_s] %>
+                      <% } %>
+                      <th><%= format_currency grand_total_total_biaya %></th>
+                      <th><%= format_currency grand_total_total_setor - grand_total_total_biaya %></th>
+                      <th></th>
+                    </tr>
+                  </table>
+                <br><br>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/finance_reports/global_finances.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+    $("#reload2").attr("href", "/finance_reports/global_finances/export.xlsx?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>
+<STYLE>
+  th{text-align: center}
+</STYLE>

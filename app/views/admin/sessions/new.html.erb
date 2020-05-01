@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="row login-container column-seperation">  
+    <div class="col-md-4 col-md-offset-4">
+      <h2 class="text-center">Sign in to <strong class="text-info">HRM</strong></h2>
+      <%= form_tag admin_sessions_path, class: "login-form" do %>
+        <% if flash.any? %>
+          <%- flash.each do |name, msg| -%>
+            <%= content_tag :p, msg, id: "flash_#{name}", class: "flash_content text-center" if msg.is_a?(String) %>
+          <%- end -%> 
+        <% else %>
+          <p class="text-center">Use Your username to sign in.</p>
+        <% end %>
+        
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= text_field_tag :username, params[:username], autofocus: true, autocomplete: "off", class: "form-control", placeholder: "Username" %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="form-group col-md-12">
+            <span class="help"></span>
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= password_field_tag :password, '', autocomplete: "off", class: "form-control", placeholder: "Password" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-3">
+            <span class="help"></span>
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= image_tag "/images/captcha/#{session[:text]}.jpeg", style: "width: 100px; max-width:100%; height:37px" %>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-9">
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= text_field_tag :captcha, '', autocomplete: "off", class: "form-control", placeholder: "Captcha" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br />
+        <div class="row">
+          <div class="col-md-12">
+            <div class="pull-left">
+              <%= label_tag :checkbox do %>
+                <%= check_box_tag :remember_me, 1, params[:remember_me], id: "checkbox1" %>
+                Keep me reminded
+              <% end %>
+            </div>
+
+            <button class="btn btn-primary btn-cons pull-right btn-demo-space" type="submit">Login</button>
+            <div class="clear"></div>
+            <hr />
+            <div class="text-center">
+              <%= link_to "Forgot Password?", new_admin_password_path %> |
+              <%= link_to "Login as Company", new_session_path(User) %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

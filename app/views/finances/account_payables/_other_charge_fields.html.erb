@@ -1,0 +1,7 @@
+<tr class="nested-fields">
+  <td><span><%= f.text_field :name, style: "width: 133px"  %></span></td>
+  <td><span><%= f.text_field :desc, style: "width: 133px" %></span></td>
+  <td>Rp.</td>
+  <td><span><%= f.text_field :amount, class: 'money other-charges', style: "width: 133px" %></span></td>
+  <td><%= link_to_remove_association ('<i class="fa fa-trash-o" rel="tooltip" data-placement="left"></i>').html_safe, f %></td>
+</tr>

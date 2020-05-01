@@ -1,0 +1,531 @@
+<%= javascript_tag render(:template => 'employee_histories/jsManager.js', :formats => [:js]) %>
+<div class="page-content condensed">
+  <div class="container-fluid">
+    <ul class="breadcrumb">
+      <li><p>YOU ARE HERE</p></li> 
+      <li><%= link_to "Employee", employees_path %></li>
+      <li><a onclick="return false;" class="active">Employee History</a></li>
+    </ul>
+
+    <div class="page-title">  
+      <i class="fa fa-users"></i>
+      <h3><span class="semi-bold">Employee</span></h3>  
+    </div>
+
+  <div class="grid simple">
+    <div class="grid-body no-border has-tab">
+      <%= render '/employees/tab_nav'%>         
+      <div class="tab-content">
+        <section class="tab-pane active">
+          <div class="row toolbar-block">
+            <h4 class="semi-bold col-md-4">
+              <i class="fa fa-check-square"></i> Education Detail
+            </h4>
+            <div class="col-md-8">
+              <div class="toolbar pull-right">
+                <%= link_to "<span class=\"fa fa-plus\"></span> Add New".html_safe, new_education_detail_path(:employee_id => params[:id]), :remote => true, :class => "btn btn-success" %>
+                <%= button_tag "Tools <i class=\"fa fa-angle-down\"></i>".html_safe, :class => "btn btn-default dropdown-toggle", :"data-toggle" => "dropdown" %>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "Export to CSV", education_details_path(format: "csv", id: params[:id]) %></li>
+                  <li><%= link_to "Export to Excel", education_details_path(format: "xls") %></li>
+                  <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                </ul>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_upload">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-cloud-upload\"></span> Upload".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#upload_modal" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_education_detail">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-edit\"></span> Edit".html_safe, :class => "btn", :onclick => "edit_education_detail()", :id => "button_edit_education_detail" %>
+                  <%= button_tag "<span class=\"fa fa-trash\"></span> Remove".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#confirm_modal", :id => "button_remove_education_detail", :"data-section" => "education_detail", :onclick => "set_delete_url('/education_details/delete')" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover" id="education_detail">
+            <thead>
+              <tr>
+                <th style="width: 45px" >
+                  <div class="checkbox check-default">
+                    <input id="checkall_education_detail" data-section="education_detail" data-educationdetail="parent" type="checkbox" value="1" class="checkall parent-education_detail">
+                    <label for="checkall_education_detail"></label>
+                  </div>
+                </th>
+                <th>Grade</th>
+                <th>Institution</th>
+                <th>start</th>
+                <th>end</th>
+                <th>Major</th>
+                <th>Final Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @education_details.count != 0 %>
+                <% @education_details.each do |education_detail| %>
+                  <%= render 'education_details/data', :education_detail => education_detail%>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan='6' align='center'>No Data Found !</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+    <br class="clear"/>
+  </div>
+</div>
+<div class="grid simple">
+    <div class="grid-body no-border has-tab">         
+      <div class="tab-content">
+        <section class="tab-pane active">
+          <div class="row toolbar-block">
+            <h4 class="semi-bold col-md-4">
+              <i class="fa fa-check-square"></i> External Work Experience
+            </h4>
+            <div class="col-md-8">
+              <div class="toolbar pull-right">
+                <%= link_to "<span class=\"fa fa-plus\"></span> Add New".html_safe, new_external_work_experience_path(:employee_id => params[:id]), :remote => true, :class => "btn btn-success" %>
+                <%= button_tag "Tools <i class=\"fa fa-angle-down\"></i>".html_safe, :class => "btn btn-default dropdown-toggle", :"data-toggle" => "dropdown" %>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "Export to CSV", external_work_experiences_path(format: "csv", id: params[:id]) %></li>
+                  <li><%= link_to "Export to Excel", external_work_experiences_path(format: "xls") %></li>
+                  <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                </ul>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_upload">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-cloud-upload\"></span> Upload".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#upload_modal" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_external_work_experience">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-edit\"></span> Edit".html_safe, :class => "btn", :onclick => "edit_external_work_experience()", :id => "button_edit_external_work_experience" %>
+                  <%= button_tag "<span class=\"fa fa-trash\"></span> Remove".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#confirm_modal", :id => "button_remove_external_work_experience", :"data-section" => "external_work_experience", :onclick => "set_delete_url('/external_work_experiences/delete')" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover" id="external_work_experience">
+            <thead>
+              <tr>
+                <th style="width: 45px" >
+                  <div class="checkbox check-default">
+                    <input id="checkall_external_work_experience" data-section="external_work_experience" data-externalworkexperience="parent" type="checkbox" value="1" class="checkall parent-external_work_experience">
+                    <label for="checkall_external_work_experience"></label>
+                  </div>
+                </th>
+                <th>Name Of Company</th>
+                <th>Job Desc</th>
+                <th>Position</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Achievement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @external_work_experiences.count != 0 %>
+                <% @external_work_experiences.each do |external_work_experience| %>
+                  <%= render 'external_work_experiences/data', :external_work_experience => external_work_experience %>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan='6' align='center'>No Data Found !</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+    <br class="clear"/>
+  </div>
+    <div class="grid simple">
+    <div class="grid-body no-border has-tab">        
+      <div class="tab-content">
+        <section class="tab-pane active">
+          <div class="row toolbar-block">
+            <h4 class="semi-bold col-md-4">
+              <i class="fa fa-check-square"></i> Internal Work Experience
+            </h4>
+            <div class="col-md-8">
+              <div class="toolbar pull-right">
+                <%= link_to "<span class=\"fa fa-plus\"></span> Add New".html_safe, new_internal_work_experience_path(:employee_id => params[:id]), :remote => true, :class => "btn btn-success" %>
+                <%= button_tag "Tools <i class=\"fa fa-angle-down\"></i>".html_safe, :class => "btn btn-default dropdown-toggle", :"data-toggle" => "dropdown" %>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "Export to CSV", internal_work_experiences_path(format: "csv", id: params[:id]) %></li>
+                  <li><%= link_to "Export to Excel", internal_work_experiences_path(format: "xls") %></li>
+                  <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                </ul>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_upload">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-cloud-upload\"></span> Upload".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#upload_modal" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_internal_work_experience">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-edit\"></span> Edit".html_safe, :class => "btn", :onclick => "edit_internal_work_experience()", :id => "button_edit_internal_work_experience" %>
+                  <%= button_tag "<span class=\"fa fa-trash\"></span> Remove".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#confirm_modal", :id => "button_remove_internal_work_experience", :"data-section" => "internal_work_experience", :onclick => "set_delete_url('/internal_work_experiences/delete')" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover" id="internal_work_experience">
+            <thead>
+              <tr>
+                <th style="width: 45px" >
+                  <div class="checkbox check-default">
+                    <input id="checkall_internal_work_experience" data-section="internal_work_experience" data-internalworkexperience="parent" type="checkbox" value="1" class="checkall parent-internal_work_experience">
+                    <label for="checkall_internal_work_experience"></label>
+                  </div>
+                </th>
+                <th>Name Of Company</th>
+                <th>Job Desc</th>
+                <th>Position</th>
+                <th>Organization</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Achievement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @internal_work_experiences.count != 0 %>
+                <% @internal_work_experiences.each do |internal_work_experience| %>
+                  <%= render 'internal_work_experiences/data', :internal_work_experience => internal_work_experience%>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan='6' align='center'>No Data Found !</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+    <br class="clear"/>
+  </div>
+  <div class="grid simple">
+    <div class="grid-body no-border has-tab">        
+      <div class="tab-content">
+        <section class="tab-pane active">
+          <div class="row toolbar-block">
+            <h4 class="semi-bold col-md-4">
+              <i class="fa fa-check-square"></i> History Of Organization
+            </h4>
+            <div class="col-md-8">
+              <div class="toolbar pull-right">
+                <%= link_to "<span class=\"fa fa-plus\"></span> Add New".html_safe, new_history_of_organization_path(:employee_id => params[:id]), :remote => true, :class => "btn btn-success" %>
+                <%= button_tag "Tools <i class=\"fa fa-angle-down\"></i>".html_safe, :class => "btn btn-default dropdown-toggle", :"data-toggle" => "dropdown" %>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "Export to CSV", history_of_organizations_path(format: "csv", id: params[:id]) %></li>
+                  <li><%= link_to "Export to Excel", history_of_organizations_path(format: "xls") %></li>
+                  <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                </ul>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_upload">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-cloud-upload\"></span> Upload".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#upload_modal" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_history_of_organization">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-edit\"></span> Edit".html_safe, :class => "btn", :onclick => "edit_history_of_organization()", :id => "button_edit_history_of_organization" %>
+                  <%= button_tag "<span class=\"fa fa-trash\"></span> Remove".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#confirm_modal", :id => "button_remove_history_of_organization", :"data-section" => "history_of_organization", :onclick => "set_delete_url('/history_of_organizations/delete')" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover" id="history_of_organization">
+            <thead>
+              <tr>
+                <th style="width: 45px" >
+                  <div class="checkbox check-default">
+                    <input id="checkall_history_of_organization" data-section="history_of_organization" data-historyoforganization="parent" type="checkbox" value="1" class="checkall parent-history_of_organization">
+                    <label for="checkall_history_of_organization"></label>
+                  </div>
+                </th>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Start</th>
+                <th>End</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @history_of_organizations.count != 0 %>
+                <% @history_of_organizations.each do |history_of_organization| %>
+                  <%= render 'history_of_organizations/data', :history_of_organization => history_of_organization%>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan='6' align='center'>No Data Found !</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+    <br class="clear"/>
+  </div>
+  <div class="grid simple">
+    <div class="grid-body no-border has-tab">        
+      <div class="tab-content">
+        <section class="tab-pane active">
+          <div class="row toolbar-block">
+            <h4 class="semi-bold col-md-4">
+              <i class="fa fa-check-square"></i> Certification
+            </h4>
+            <div class="col-md-8">
+              <div class="toolbar pull-right">
+                <%= link_to "<span class=\"fa fa-plus\"></span> Add New".html_safe, new_certification_path(:employee_id => params[:id]), :remote => true, :class => "btn btn-success" %>
+                <%= button_tag "Tools <i class=\"fa fa-angle-down\"></i>".html_safe, :class => "btn btn-default dropdown-toggle", :"data-toggle" => "dropdown" %>
+                <ul class="dropdown-menu pull-right">
+                  <li><%= link_to "Export to CSV", certifications_path(format: "csv", id: params[:id]) %></li>
+                  <li><%= link_to "Export to Excel", certifications_path(format: "xls") %></li>
+                  <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                </ul>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_upload">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-cloud-upload\"></span> Upload".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#upload_modal" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_certification">
+                <div class="table-tools-actions">
+                  <%= button_tag "<span class=\"fa fa-edit\"></span> Edit".html_safe, :class => "btn", :onclick => "edit_certification()", :id => "button_edit_certification" %>
+                  <%= button_tag "<span class=\"fa fa-trash\"></span> Remove".html_safe, :class => "btn", :"data-toggle" => "modal", :"data-target" => "#confirm_modal", :id => "button_remove_certification", :"data-section" => "certification", :onclick => "set_delete_url('/certifications/delete')" %>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover" id="certification">
+            <thead>
+              <tr>
+                <th style="width: 45px" >
+                  <div class="checkbox check-default">
+                    <input id="checkall_certification" data-section="certification" data-certification="parent" type="checkbox" value="1" class="checkall parent-certification">
+                    <label for="checkall_certification"></label>
+                  </div>
+                </th>
+                <th>Institution</th>
+                <th>Certification Number</th>
+                <th>Name Of Certification</th>
+                <th>Date Of Certification</th>
+                <th>Description</th>
+                <th>Attachment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @certifications.count != 0 %>
+                <% @certifications.each do |certification| %>
+                  <%= render 'certifications/data', :certification => certification%>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan='6' align='center'>No Data Found !</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+    <br class="clear"/>
+  </div>
+</div>
+<!-- popup -->
+<!-- Modal -->
+<div class="modal fade" id="terminate_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <br>
+        <h4 id="myModalLabel" class="semi-bold">Termination</h4>
+        <p class="no-margin">Claritas est etiam processus dynamicus, qui sequitur mutationem </p>
+        <br>
+      </div>
+      <div class="modal-body">
+        <form class="gen-form">
+          <div class="form-group row edit-field">
+            <label class="form-label col-sm-5">Date of Resignation</label>
+            <div class="controls col-sm-2">            
+              <div class="input-append success date">
+                <input type="text" class="form-control full-width">
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+              </div>
+            </div>
+          </div>
+          <div class="form-group row edit-field">
+            <label class="form-label col-sm-5">Reason of Resign</label>
+            <div class="controls col-sm-7">            
+              <textarea class="form-control full-width" rows="5"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Yes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <br>
+        <i class="fa fa-trash-o fa-7x"></i>
+        <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+        <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+        <br>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="modal_cancel_button" onclick="" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="modal_delete_button" onclick="" data-dismiss="modal">Yes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Import education_details</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag import_position_details_path(:id => params[:id]), multipart: true do %>
+        <%= file_field_tag :file %>
+      </div>
+      <div class="modal-footer">
+        <%= submit_tag "Import", :class => "btn btn-primary" %>
+        <%= link_to "Download Template", position_details_path(format: "csv"), :class => "btn btn-success" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.modal -->
+<!-- end -->
+
+<script type="text/javascript">
+  function datePicker(){
+    $('.input-append.date').datepicker({
+      autoclose: true,
+      todayHighlight: true
+    });
+  }
+
+  $(function(){
+    datePicker();
+    $('.grid-body').each(function(index){
+     var new_rec = $(this).find('.new-rec').html();
+     var add_btn = $(this).find('.btn-success'),
+     table = $(this).find('tbody');
+     $(this).find('.new-rec').remove();
+
+      add_btn.click(function(){
+        $('<tr class="new-rec"></tr>').prependTo(table);
+        row = table.children('tbody > tr:first-child');
+        $(row).html(new_rec);
+        //Form Function
+        datePicker();
+      })
+    });
+  });
+
+  $(".checkall").each(function(){
+    $(this).click(function() {
+      parent = $(this)
+      section = $(this).attr("data-section")
+      children = $(".child-" + section)
+      
+      show_button(parent)
+      
+      children.each(function(){
+        if (parent.is(':checked')) {
+          $(this).prop('checked', true)
+          $(this).parent().parent().parent().addClass('row_selected')
+        } else{
+          $(this).prop('checked', false)
+          $(this).parent().parent().parent().removeClass('row_selected')
+        }
+      })
+    })
+  })
+
+  $(".child-box").each(function(){
+    $(this).click(function() {
+      section = $(this).attr("data-section")
+      children = $(".child-" + section)
+      $(this).parent().parent().parent().toggleClass('row_selected')
+
+      show_button($(this))
+      
+      selected_count = 0
+      children.each(function(){ if ($(this).is(':checked')) { selected_count += 1 } })
+      if (selected_count==children.length) {
+        $(".parent-" + section).prop('checked', true)
+      } else{
+        $(".parent-" + section).prop('checked', false)
+      };
+    })
+  })
+
+  // $('table .checkbox input').click( function() {
+  //   console.log($(this).attr("data-value"))
+  //   if($(this).is(':checked')){      
+  //     $(this).parent().parent().parent().toggleClass('row_selected');
+  //     if($(this).parent().parent().parent().hasClass('new-rec')){
+  //      $(this).parents('section').find('#toolbar_upload').removeClass('hide');
+  //      $(this).parents('section').find('#toolbar_def').addClass('hide'); 
+  //    }else{
+  //      $(this).parents('section').find('#toolbar_upload').addClass('hide');
+  //      $(this).parents('section').find('#toolbar_def').removeClass('hide');  
+  //    }         
+  //   } else { 
+  //     $(this).parent().parent().parent().toggleClass('row_selected');  
+  //     $(this).parents('section').find('#toolbar_upload, #toolbar_def').addClass('hide');
+  //   }
+  // });
+
+  $('[data-addform]').click(function(){
+    var $parent = $(this).parent(),
+    $field = $(this).prev('.addform'),
+    $remove = '<a href="javascipt;"><i class="fa fa-remove"></i></a>';
+
+    $field.clone().insertBefore($(this)).find('input').val('');
+  });
+  $('.addform a').live("click",function(){
+    $(this).parent().remove();
+  });
+  $(".select-autocomplete").select2();
+</script>

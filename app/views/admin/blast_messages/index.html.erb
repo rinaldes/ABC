@@ -1,0 +1,71 @@
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><a onclick="return false;" class="active">Blast Message</a></li>
+  </ul>
+  
+  <div class="page-title">
+    <% if flash.any? %>
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+      <%- end -%> 
+    <% end %>
+  </div>
+
+  <div class="page-title">  
+    <i class="fa fa-envelope"></i>
+    <h3>Blast <span class="semi-bold">Message</span></h3>
+  </div>
+
+  <div class="grid simple">
+    <%= form_for([:admin, @blast_message]) do |f| %>
+      <div class="grid-title no-border"></div>
+      <div class="grid-body no-border">
+        <div class="gen-form full-form">
+          <div class="form-group row">
+            <label class="form-label col-sm-12"><strong>Send To</strong></label>
+            <div class="controls col-sm-12">             
+              <select id="select_send" name="blast_message[send_type]" class="full-width">
+                <option value="all">Companies</option>
+                <option value="emp">Company/Each</option>
+              </select>                             
+            </div>
+          </div>
+          <div class="form-group row" id="emp_text" style="display:none">
+            <div class="col-sm-12">
+              <label class="form-label"><strong>Company/Each</strong></label>
+              <span class="help">e.g. "email@company.com"</span>
+            </div>
+            <div class="controls col-sm-12">             
+              <%#= f.text_field :sender_id, placeholder: "Company email", class: "span12 tagsinput", :"data-role" => "tagsinput" %>
+              <%= f.autocomplete_field :sender_id, autocomplete_company_email_admin_blast_messages_url, 'data-delimiter' => ',', :multiple => true, class: "autocomplete-field-input", placeholder: "Company email" %>
+            </div>
+          </div>
+          <div class="tab-pane active">
+            <%= f.text_area :message, placeholder: "Enter text ...", class: "form-control", rows: "10", id: "text-editor" %>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <div class="pull-right">
+          <%= f.button type: "submit", class: "btn btn-success btn-cons" do %>
+            Send <i class="fa fa-send"></i>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#text-editor').wysihtml5();
+  $('#select_send').change(function(){
+    var value = $(this).val();
+    if(value == 'emp'){
+      $('#emp_text').show('fast')
+    }else{
+      $('#emp_text').hide('fast')
+    }
+    $("#blast_message_sender_id").val("")
+  });
+</script>

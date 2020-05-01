@@ -1,0 +1,70 @@
+<br>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <td rowspan=2>Supplier</td>
+      <td rowspan=2>Tgl Masuk</td>
+      <td rowspan=2>QTY</td>
+      <td rowspan=2>Cprice</td>
+      <td rowspan=2>Value</td>
+      <% @branches.each{|branch| %>
+        <td colspan=3><%= branch.description %></td>
+      <% } %>
+      <td colspan=3>RETUR</td>
+      <td colspan=3>Stok HO</td>
+      <td colspan=3>Dibeli Owner</td>
+      <td rowspan=2>KETERANGAN</td>
+    </tr>
+    <tr>
+      <% 0.upto(@branches.size) do |branch| %>
+        <td rowspan=2>QTY</td>
+        <td rowspan=2>Cprice</td>
+        <td rowspan=2>Value</td>
+      <% end %>
+      <td rowspan=2>QTY</td>
+      <td rowspan=2>Cprice</td>
+      <td rowspan=2>Value</td>
+      <td rowspan=2>QTY</td>
+      <td rowspan=2>Cprice</td>
+      <td rowspan=2>Value</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @receivings.each{|receiving| %>
+      <% next if receiving.supplier.blank? %>
+      <% receiving_details = receiving.receiving_details.where("quantity>0") %>
+      <% sum_qty = receiving_details.map(&:quantity).compact.sum %>
+      <% sum_val = receiving_details.map{|rd|rd.value.to_f*rd.quantity.to_f}.compact.sum %>
+      <% stock_ho = sum_qty %>
+      <% price_ho = receiving.total %>
+      <% retur = ReturnsToSupplier.where("receiving_id=#{receiving.id}") %>
+      <tr>
+        <td class='nowrap'><%= receiving.supplier.name %></td>
+        <td class='nowrap'><%= receiving.date.strftime('%d-%m-%Y') %></td>
+        <td class='nowrap'><%= sum_qty %></td>
+        <td class='nowrap'><%= format_currency receiving.total %></td>
+        <td class='nowrap'><%= format_currency sum_val %></td>
+        <% @branches.each{|branch| %>
+          <% total = receiving.purchase_transfers.where("destination_warehouse_id=#{branch.id}") %>
+          <% total_qty = total.map(&:total_quantity).compact.sum %>
+          <% total_price = total.map(&:total_price).compact.sum %>
+          <% total_value = total.map(&:total_value).compact.sum %>
+          <td><%= total_qty %></td>
+          <td><%= format_currency total_price %></td>
+          <td><%= format_currency total_value %></td>
+        <% } %>
+        <td><%= format_currency retur.map{|rts|rts["quantity"].to_i}.sum %></td>
+        <td><%= format_currency retur.map(&:total).sum %></td>
+        <td><%= format_currency retur.map(&:total).sum %></td>
+        <td><%= format_currency PrTransferProduct.find_by_receiving_id(receiving.id).stock_ho rescue nil %></td>
+        <td><%= format_currency PrTransferProduct.find_by_receiving_id(receiving.id).amount_ho rescue nil %></td>
+        <td><%= format_currency PrTransferProduct.find_by_receiving_id(receiving.id).value_ho rescue nil %></td>
+        <td><%= format_currency retur.map(&:total).sum %></td>
+        <td><%= format_currency retur.map(&:total).sum %></td>
+        <td><%= format_currency retur.map(&:total).sum %></td>
+        <td><%= receiving.note %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+</br>

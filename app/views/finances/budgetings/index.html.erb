@@ -1,0 +1,46 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid" class="">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Budgenting List</h2>
+          <div>
+            <div class="widget-body no-padding">
+              <% if current_user.can_manage_budget? %>
+                <%= link_to new_finances_budgeting_path, :class => "btn btn-labeled btn-primary edit-btn-primary" do %>
+                  <span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>New Budgeting
+                <% end %>
+              <% end %>
+              <table class="table table-striped table-brequested table-hover" width="100%">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Office</th>
+                    <th>Department</th>
+                    <th>M-Class</th>
+                    <th>Initial Budget</th>
+                    <th>Additional Budget</th>
+                    <th>Total Budget</th>
+                    <th>Realization</th>
+                    <th>Realization %</th>
+                    <% if current_user.can_manage_budget? %>
+                      <th>Action</th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody id='budget_list'><%= render 'list' %></tbody>
+              </table>
+              <div class="dt-toolbar-footer">
+                <div class="col-xs-12 col-sm-6 pull-right">
+                  <%= will_paginate @budgetings %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

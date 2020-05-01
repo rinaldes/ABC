@@ -1,0 +1,91 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Purchasing</li><li>Receiving</li><li>New</li>
+  </ol>
+</div>
+<div id="content">
+  <div id='notification'><%= render 'layouts/errors' %></div>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>New Receiving</h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @change_barcode, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <%= hidden_field_tag :product_id, @product.id  %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-12">
+                    <section class="col col-md-6">
+                      <section class="form-group">
+                        <label class="col-md-4 label">Head Office</label>
+                        <label class="col-md-8 input custom-input-box"><%= select_tag :head_office_id, options_for_select(HeadOffice.all.map{|ho|[ho.office_name, ho.id]}), class: 'form-control' %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-12 label"><b>Old Product Identity</b></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Barcode</label>
+                        <label class="col-md-8 input custom-input-box"><%= @product.barcode %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Colour</label>
+                        <label class="col-md-8 input custom-input-box"><%= @product.colour_code %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Article</label>
+                        <label class="col-md-8 input custom-input-box"><%= @product.article %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Size</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= select_tag :old_size, options_for_select(@product.size.size_details.map(&:size_number)), class: 'form-control' %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Quantity</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= text_field_tag :quantity %>
+                        </label>
+                      </section>
+                    </section>
+                    <section class="col col-md-6">
+                      <section class="form-group">
+                        <label class="col-md-12 label"><b>New Barcode Identity</b></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Colour</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= text_field_tag :colour %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Size</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= select_tag :size, options_for_select(@product.size.size_details.map(&:size_number)), class: 'form-control' %>
+                        </label>
+                      </section>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <%= f.submit 'Submit', class: 'btn btn-primary' %>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+              <div id='product_detail_tobe_submitted' style='display: none'></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

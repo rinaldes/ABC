@@ -1,0 +1,36 @@
+<table class="table no-more-tables table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Total Assets Assignment</th>
+            <th>Total Returned</th>
+        </tr>
+    </thead>
+    <tbody>
+    	<% if asset_assignments.count > 0 %>
+				<% asset_assignments.each do |asset_assignment| %>
+                <tr class="new-rec">
+                    <td><%= link_to asset_assignment.employee.name, asset_assignment_path(asset_assignment.id) %></td>
+                    <td><%= asset_assignment.count_assets %></td>
+                    <td><%= asset_assignment.count_returned_assets %></td>
+                </tr>
+            <% end %>
+        <% else %>	
+        	<tr>
+		        <td colspan="2" align="center">No asset assignment data found!</td>
+		    </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<div class="row dataTables_wrapper">
+	<div class="col-md-12">
+    	<div class="dataTables_paginate paging_bootstrap pagination">
+        	<%= pagination_links(asset_assignments, :params => {:controller => controller_name, :action => action_name, :asset_assignment => {:name => (params[:asset_assignment][:name] if params[:user].present?), :period_start => (params[:asset_assignment][:period_start] if params[:user].present?), :period_end => (params[:asset_assignment][:period_end] if params[:user].present?), :status => (params[:asset_assignment][:status] if params[:user].present?)}}) %>
+        </div>
+        <% base = (params[:page].present? ? params[:page].to_i-1 : 0)*asset_assignments.per_page %>
+    	<% if asset_assignments_count > 0 %>
+	        <div class="dataTables_info">Showing <b><%= base+1 %> to <%= base+asset_assignments.per_page %></b> of <%= @asset_assignments_count %> entries</div>
+	    <% end %>
+    </div>
+</div>

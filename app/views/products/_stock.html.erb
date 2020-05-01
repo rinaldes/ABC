@@ -1,0 +1,71 @@
+<thead>
+  <tr>
+    <td rowspan="2">Department</td>
+    <td rowspan="2">Article</td>
+    <td rowspan="2">Barcode</td>
+    <td rowspan="2">Warna</td>
+    <td rowspan="2">Size</td>
+    <% @offices.each{|office| %>
+      <td colspan="<%= 2 if office.class == Branch %>"><%= office.office_name %></td>
+    <% } %>
+  </tr>
+  <tr>
+    <% @offices.each{|office| %>
+      <td>Qty</td>
+      <%= raw('<td>Min Stock</td>') if office.class == Branch %>
+    <% } %>
+  </tr>
+</thead>
+<tbody>
+  <% grand_total = {} %>
+  <% grand_min_stock = {} %>
+  <% count_min_stock = false %>
+  <% @departments.each{|department| %>
+    <% put_department = 1 %>
+    <% @products[department.id].each{|product| %>
+      <% product_sizes = product.product_sizes %>
+      <% product_sizes.each{|product_size| %>
+        <% if product_size == product_sizes[0] %>
+          <tr>
+            <% if put_department == 1 %>
+              <td rowspan="<%= @products[department.id].map{|p|p.product_sizes.count+1}.sum %>">
+                <div><%= department.name %></div>
+              </td>
+              <% put_department = 0 %>
+            <% end %>
+            <td rowspan="<%= product_sizes.length+1 %>"><div><%= product.article %></div></td>
+            <td rowspan="<%= product_sizes.length+1 %>"><div><%= product.barcode %></div></td>
+            <td rowspan="<%= product_sizes.length %>"><div><%= product.colour.name rescue '' %></div></td>
+            <%= render partial: 'products/quantity_detail', locals: {product_size: product_size} %>
+          </tr>
+          <% product_sizes.each{|prd| %>
+            <% next if prd == product_sizes[0] %>
+            <tr><%= render partial: 'products/quantity_detail', locals: {product_size: prd} %></tr>
+          <% } %>
+          <tr>
+            <td colspan="2">Total</td>
+            <% @offices.each{|office| %>
+              <% total = ProductDetail.where("warehouse_id=#{office.id} AND colour_id=#{product.colour_id} AND article='#{product.article.gsub("'", "''")}'").joins(product_size: :product).map(&:available_qty).compact.sum %>
+              <td><%= total %></td>
+              <% if office.class == Branch %>
+                <% min_stock = ProductDetail.where("warehouse_id=#{office.id} AND colour_id=#{product.colour_id} AND article='#{product.article.gsub("'", "''")}'").joins(product_size: :product).map(&:min_stock).compact.sum %>
+                <td><%= min_stock %></td>
+                <% grand_min_stock[office.id.to_s].present? ? grand_min_stock[office.id.to_s] += min_stock : grand_min_stock[office.id.to_s] = min_stock %>
+              <% end %>
+              <% grand_total[office.id.to_s].present? ? grand_total[office.id.to_s] += total : grand_total[office.id.to_s] = total %>
+            <% } %>
+          </tr>
+        <% end %>
+      <% } %>
+    <% } if @products[department.id].present? %>
+    <tr>
+      <td colspan="5">Grand Total</td>
+      <% @offices.each{|office| %>
+        <td><%= grand_total[office.id.to_s] %></td>
+        <% if office.class == Branch %>
+          <td><%= grand_min_stock[office.id.to_s] %></td>
+        <% end %>
+      <% } %>
+    </tr>
+  <% } if @departments.present? %>
+</tbody>

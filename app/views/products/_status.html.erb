@@ -1,0 +1,30 @@
+<section class="form-group">
+  <section class="col col-md-2">
+    <label class="col-md-8 label">Status 1</label>
+    <label class="col-md-8"><%= f.radio_button :status1, 'Active', checked: @product.status1 == 'Active' %>Active</label>
+    <label class="col-md-8"><%= f.radio_button :status1, 'Inactive', checked: @product.status1 == 'Inactive' %>Inactive</label>
+  </section>
+  <section class="col col-md-2">
+    <label class="col-md-8 label">Status 2</label>
+    <label class="col-md-8"><%= select_tag :status2, options_for_select(Catalog.all.map{|reg|[reg.name.titleize, reg.id]}, selected: @catalog), {class: "form-control", multiple: true} %></label>
+  </section>
+  <section class="col col-md-2">
+    <section class="form-group">
+      <label class="col-md-8 label">Status 3</label>
+      <label class="col-md-8"><%= f.radio_button :status3, 'Konsinyasi', checked: @product.status3 == 'Konsinyasi' %>Konsinyasi</label>
+      <label class="col-md-8"><%= f.radio_button :status3, 'Non-Konsinyasi', checked: @product.status3 == 'Non-Konsinyasi' %>Non-Konsinyasi</label>
+      <label class="col-md-8"><%= f.radio_button :status3, 'Test Market', checked: @product.status3 == 'Test Market' %>Test Market</label>
+    </section>
+  </section>
+  <section class="col col-md-2">
+    <label class="col-md-8 label">Status 4</label>
+    <label class="col-md-8 status4"><%= f.radio_button :status4, 'Fast Moving', checked: @product.status4 == 'Fast Moving' %>Fast Moving</label>
+    <label class="col-md-8 status4"><%= f.radio_button :status4, 'Slow Moving', checked: @product.status4 == 'Slow Moving' %>Slow Moving</label>
+    <label class="col-md-8 status4"><%= f.radio_button :status4, 'Dead Moving', checked: @product.status4 == 'Dead Moving' %>Dead Moving</label>
+  </section>
+  <section class="col col-md-2">
+    <label class="col-md-8 label">Status 5</label>
+    <label class="col-md-8"><%= f.radio_button :status5, 'Private Brand', checked: @product.status5 == 'Private Brand' %>Private Brand</label>
+    <label class="col-md-8"><%= f.radio_button :status5, 'Normal Brand', checked: @product.status5 == 'Normal Brand' %>Normal Brand</label>
+  </section>
+</section>

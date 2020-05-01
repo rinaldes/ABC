@@ -1,0 +1,194 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Voucher</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-unit">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Voucher</h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @voucher, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Nama Voucher <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :name, class: "input-sm #{(error_field @voucher, :name)}" %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Valid From <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :valid_from, class: "input-sm #{(error_field @voucher, :valid_from)}" %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Valid Until <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :valid_until, class: "input-sm #{(error_field @voucher, :valid_until)}" %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Minimum Amount (Rp)<span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :min_amount, class: "input-sm #{(error_field @voucher, :min_amount)}", placeholder: "Rupiah", onkeyup: 'preventInput(event)', onkeydown: 'preventInput(event)' %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Discount<span class='important'>*</span></label>
+                      <label class="col-md-3 input custom-input-box">
+                        <%= f.text_field :discount, id: 'disc_pct', class: "input-sm", placeholder: "Persen", onkeyup: 'disable_disc_amt(event)', onkeydown: 'disable_disc_amt(event)' %>
+                        <div class="icon-append">%</div>
+                      </label>
+                      <label class="col-md-1 input custom-input-box right" style="margin-left:2px; text-align:center; margin-bottom: 0px;padding-top: 5px;">Or</label>
+                      <label class="col-md-3 input custom-input-box">
+                        <%= f.text_field :discount_amount, id: 'disc_amt', class: "input-sm", placeholder: "Rp", onkeyup: 'disable_disc_pct(event)', onkeydown: 'disable_disc_pct(event)' %>
+                        <div class="icon-append" style="width: 51px;">rupiah</div>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Voucher <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :max_voucher, id: 'max_pcs', class: "input-sm", placeholder: "Pieces", onkeyup: 'disable_max_amt(event)', onkeydown: 'disable_max_amt(event)' %>
+                        <div class="icon-append" style="padding: 0 3px 0 5px;">pcs</div>
+                      </label>
+                      <!--
+                      <label class="col-md-1 input custom-input-box" style="margin-left:2px; text-align:center; margin-bottom: 0px;padding-top: 5px;">Or</label>
+                      <label class="col-md-3 input custom-input-box">
+                        <%= f.text_field :max_voucher_amt, id: 'max_amt', class: "input-sm", placeholder: "Rp", onkeyup: 'disable_max_pcs(event)', onkeydown: 'disable_max_pcs(event)' %>
+                        <div class="icon-append" style="width: 51px;">rupiah</div>
+                      </label>-->
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Multiple</label>
+                      <label class="col-md-8 custom-input-box"><%= f.check_box :is_multiple, {}, "true", "false" %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Branch/HO <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.select :office_id,
+                          options_for_select(Office.all.map{|office|[office.office_name, office.id]}.push(['All Branch', ' '], ['All HO', '0'])) %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Term & Condition</label>
+                      <label class="col-md-8 textarea custom-input-box">
+                        <%= f.text_area :term_condition, class: "input-sm #{(error_field @voucher, :term_condition)}", :cols => 50, :rows => 5 %>
+                      </label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-primary" onclick="return(beforeSave())">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+              <%= hidden_field_tag :floated_min_amount %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    separate_by_comma($('#voucher_min_amount'))
+    $('#voucher_min_amount').keyup(function(){
+      separate_by_comma($('#voucher_min_amount'))
+    })
+    separate_by_comma($('#disc_amt'))
+    $('#disc_amt').keyup(function(){
+      separate_by_comma($('#disc_amt'))
+    })
+    $("#voucher_valid_from").datepicker({
+      dateFormat: 'dd-mm-yy', changeYear: true, changeMonth: true, yearRange: '<%= Time.now.year %>:<%= Time.now.year+7 %>'
+    });
+    $("#voucher_valid_until").datepicker({
+      dateFormat: 'dd-mm-yy', changeYear: true, changeMonth: true, yearRange: '<%= Time.now.year %>:<%= Time.now.year+7 %>'
+    });
+  });
+
+  function beforeSave(){
+    var good_id = [];
+    var tot = $('#pi tbody tr').length;
+    for(var y=0; y < tot; y+=1){
+      good_id.push($("#pi tbody tr:eq("+ y +") td:eq(0) span:eq(0)").text())
+    }
+    $("#product_list").val(good_id.toString());
+    restore_separated_by_comma($('#floated_min_amount'), $('#voucher_min_amount'))
+    setTimeout(function(){
+      $('form').submit()
+    }, 1000);
+  }
+
+  function preventInput(e){
+    // keyCode > 47 && keyCode < 58 -> numeric
+    // keyCode == 8 -> backspace
+    // keyCode == 190 -> dot, decimal separator
+    // keyCode == 189 -> minus
+    var keyCode = (e.keyCode ? e.keyCode : e.which);
+     if (!((keyCode > 47 && keyCode < 58) || (keyCode == 8)
+       || (keyCode == 190) || (keyCode == 189))) {
+         e.preventDefault();
+     }
+  }
+
+  function disable_disc_amt(e){
+    preventInput(e)
+    if($('#disc_pct').val() != ""){
+      $('#disc_amt').val('')
+      $('#disc_amt').attr('readonly','')
+      $('#voucher_is_percent').val('true')
+    }
+    else{
+      $('#disc_amt').removeAttr('readonly')
+      $('#voucher_is_percent').val('')
+    }
+  }
+
+  function disable_disc_pct(e){
+    preventInput(e)
+    if($('#disc_amt').val() != ""){
+      $('#disc_pct').val('')
+      $('#disc_pct').attr('readonly', '')
+      $('#voucher_is_percent').val('false')
+    }else{
+      $('#disc_pct').removeAttr('readonly')
+      $('#voucher_is_percent').val('')
+    }
+  }
+
+  function disable_max_amt(e){
+    preventInput(e)
+    if($('#max_pcs').val() != ""){
+      $('#max_amt').val('')
+      $('#max_amt').attr('readonly', '')
+      $('#voucher_is_max_pcs').val('true')
+    }
+    else{
+      $('#max_amt').removeAttr('readonly')
+      $('#voucher_is_max_pcs').val('')
+    }
+  }
+
+  function disable_max_pcs(e){
+    preventInput(e)
+    if($('#max_amt').val() != ""){
+      $('#max_pcs').val('')
+      $('#max_pcs').attr('readonly', '')
+      $('#voucher_is_max_pcs').val('false')
+    }
+    else{
+      $('#max_pcs').removeAttr('readonly')
+      $('#voucher_is_max_pcs').val('')
+    }
+  }
+</script>

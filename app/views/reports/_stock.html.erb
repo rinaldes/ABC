@@ -1,0 +1,59 @@
+<thead>
+  <tr>
+    <td rowspan=2>TGL</td>
+    <td colspan=2>SALDO AWAL</td>
+    <td colspan=2>PENJUALAN</td>
+    <td rowspan=2>%</td>
+    <td colspan=2>TRANSFER</td>
+    <td colspan=2>MUTASI MASUK</td>
+    <td colspan=2>MUTASI KELUAR</td>
+    <td colspan=2>RETURN KE HO</td>
+    <td colspan=2>KERUGIAN DISKON</td>
+    <td colspan=2>SALDO AKHIR</td>
+  </tr>
+  <tr>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+    <td>QTY</td>
+    <td>PRICE</td>
+  </tr>
+</thead>
+<tbody>
+  <% @product_mutation_histories.each{|pmh| %>
+    <% last_stock = @product_mutation_histories[pmh[0]].last %>
+    <% first_stock = @product_mutation_histories[pmh[0]].first %>
+    <% last_price = @last_stock[pmh[0]]*last_stock.product_detail.product_size.product.cost_of_products %>
+    <tr>
+      <td><%= pmh[0].to_i %></td>
+      <td><%= first_stock.old_quantity.to_i %></td>
+      <td><%= format_currency ((first_stock.old_quantity*last_stock.product_detail.product_size.product.cost_of_products rescue 0)) %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Sales"] %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Sales"] %></td>
+      <td><%= (@stocks["price_#{pmh[0]}_Sales"]/last_price*100).round(2) rescue 0 %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Purchase Transfer Receipt"] %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Purchase Transfer Receipt"] %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Good Transfer Receipt"] %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Good Transfer Receipt"] %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Good Transfer"].to_i*-1 %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Good Transfer"] %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Returns To Ho"].to_i*-1 %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Returns To Ho"] %></td>
+      <td><%= @stocks["qty_#{pmh[0]}_Discount"] %></td>
+      <td><%= format_currency @stocks["price_#{pmh[0]}_Discount"] %></td>
+      <td><%= @last_stock[pmh[0]] %></td>
+      <td><%= format_currency last_price %></td>
+    </tr>
+  <% } %>
+</tbody>

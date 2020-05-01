@@ -1,0 +1,6 @@
+<% if @fingerprint.save %>
+	$("#dataTable").append("<%= j(render 'fingerprint', :fingerprint => @fingerprint) %>")
+	$("#myModal").modal('hide')
+<% else %>
+	$("#myModal").html("<%= j(render 'new') %>")
+<% end %>

@@ -1,0 +1,8 @@
+<% if @group_by == "Pembayaran by Giro" %>
+  $(".tablenya").html("<%= j(render 'pembayaran_per_bulan') %>");
+<% elsif @group_by == "Tunai dan Cash" %>
+  $(".tablenya").html("<%= j(render 'tunai_dan_cash') %>");
+<% elsif @group_by == "Laporan Rekapan Total" %>
+  $(".tablenya").html("<%= j(render 'laporan_rekap') %>");
+<% end %>
+paging()

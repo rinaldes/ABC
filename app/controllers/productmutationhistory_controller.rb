@@ -1,0 +1,2 @@
+class ProductmutationhistoryController < ApplicationController
+end

@@ -1,0 +1,10 @@
+<tr id="fingerprint_<%= fingerprint.id %>" class="">
+
+  <td><%= fingerprint.name %></td>
+  <td><%= fingerprint.ip_address %></td>
+  <td><%= fingerprint.port %></td>
+  <td>
+	  <%= link_to edit_fingerprint_path(fingerprint.id), :class => 'fa fa-pencil', remote: true do %><% end %>
+	  <%= link_to '', fingerprint, :method => :delete, :data => {:confirm => "You Sure?"}, :class => 'fa fa-trash-o' %>
+  </td>
+</tr>

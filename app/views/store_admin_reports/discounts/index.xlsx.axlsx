@@ -1,0 +1,69 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+bold = styles.add_style(:b => true)
+subjudul = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER, :b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true})
+subjudul_biru_tengah = styles.add_style(:fg_color => "ffffff", :b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true}, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+subjudul_biru = styles.add_style(:b => true, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+judul = styles.add_style(:b => true, :sz => 12, :alignment => { :horizontal => :center, :wrap_text => true})
+alp = {}
+branchnya = []
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+@branches.each do |branch|
+  wb.add_worksheet(name: "#{branch.office_name}-#{branch.description}") do |sheet|
+    end_date = ("#{params[:year]}-#{params[:month]}-01").to_date
+    store = Sale.where("store_id = #{branch.id}").group("store_id, client_id")
+    grand_total_price, grand_total_pcs, grand_total = 0, 0, {}
+    terminal_1, terminal_2, total_terminal = [], ["Rp", "Pcs"], []
+
+    1.upto(store.count.count).each do |terminal|
+      terminal_1 << "Terminal " + terminal.to_s
+      terminal_1 << ""
+      terminal_2 << "Rp"
+      terminal_2 << "Pcs"
+    end
+
+    (0..1).each do |i|
+      sheet.merge_cells "#{alp[i]}4:#{alp[i]}5" #subjudul
+    end
+    (1..2).each do |i|
+      sheet.merge_cells "A#{i}:#{alp[1+(terminal_2.count)]}#{i}" #judul
+    end
+    1.upto((store.count.count + 1)).each_with_index do |terminal, i|
+      sheet.merge_cells "#{alp[(i+1)*2]}4:#{alp[(i+1)*2+1]}4"
+    end
+    sheet.merge_cells "A#{6+(end_date.end_of_month.day)}:B#{6+(end_date.end_of_month.day)}"
+    sheet.add_row ["Kerugian Diskon #{branch.description}"], widths: [:ignore], style: judul
+    sheet.add_row ["Bulan " + end_date.strftime("%B %Y")], widths: [:ignore], style: judul
+    sheet.add_row [""]
+    sheet.add_row ["Tgl", "Hari"] + terminal_1 + ["Total", ""], :style => subjudul_biru_tengah
+    sheet.add_row ["", ""] + terminal_2 , :style => subjudul_biru_tengah
+    1.upto(end_date.end_of_month.day).each do |date|
+      total_price, total_pcs, price, pcs, tanggal, terminal_3 = 0, 0, 0, 0, (@year.to_s + "/" + @month.to_s + "/" + date.to_s).to_date, []
+      store.select("store_id, client_id").each do |sale|
+        sales = Sale.where("store_id = #{branch.id} AND client_id = '#{sale.client_id}' AND transaction_date >= '#{tanggal.beginning_of_day}' AND transaction_date <= '#{tanggal.end_of_day}'").select("store_id, client_id, transaction_date, sum(total_discount) as rp, sum(total_quantity) as pcs").group("store_id, client_id, transaction_date")
+        sales.each do |s|
+          price += s.rp
+          pcs += s.pcs
+        end
+        terminal_3 << price
+        terminal_3 << pcs
+        grand_total["price_" + sale.client_id.to_s] = grand_total["price_" + sale.client_id.to_s].to_i + price
+        grand_total["pcs_" + sale.client_id.to_s] = grand_total["pcs_" + sale.client_id.to_s].to_i + pcs
+        total_price += price
+        total_pcs += pcs 
+        grand_total_price += total_price
+        grand_total_pcs += total_pcs
+      end
+      sheet.add_row [date, tanggal.strftime("%A")] + terminal_3 + [total_price, total_pcs], style: default
+    end
+    store.select("store_id, client_id").each do |sale|
+      total_terminal << grand_total["price_" + sale.client_id.to_s]
+      total_terminal << grand_total["pcs_" + sale.client_id.to_s]
+    end
+    sheet.add_row ["Total", ""] + total_terminal + [grand_total_price, grand_total_pcs], style: subjudul
+  end
+end

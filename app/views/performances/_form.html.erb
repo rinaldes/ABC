@@ -1,0 +1,57 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(performance, html: { role: "form", multipart: true}, remote: true) do |f| %>
+		<td>
+			<div class="checkbox check-default">
+          <input id="checkbox12" type="checkbox" value="1">
+          <label for="checkbox12"></label>
+      </div>
+		</td>
+		<td>
+			<div class="input-append success date">
+        <% if params[:action] == "edit"%>
+          <%= f.text_field :date_of_performance, :class => "form-control", value: performance.date_of_performance.strftime('%d-%m-%Y') %>
+        <% else %>
+          <%= f.text_field :date_of_performance, :class => "form-control" %>
+        <% end %>
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+            </div>
+			<% if params[:action] == "new"%>
+				<%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+			<% else %>
+				<%= f.hidden_field :id, :value => params[:id] %>
+			<% end %>
+		</td>
+		<td>
+			<%= f.radio_button :rating, 1, :class => "star rating2" %>
+			<%= f.radio_button :rating, 2, :class => "star rating2" %>
+			<%= f.radio_button :rating, 3, :class => "star rating2" %>
+			<%= f.radio_button :rating, 4, :class => "star rating2" %>
+			<%= f.radio_button :rating, 5, :class => "star rating2" %>			
+		</td>
+		<td>
+			<%= f.text_field :area_of_strength, :class => "full-width", :placeholder => "Areas Of Strength" %>
+		</td>
+		<td>
+			<%= f.text_field :area_of_development, :class => "full-width", :placeholder => "Areas Of Development" %>
+		</td>
+		<td>
+			<%= f.text_field :rater, class: "full-width", placeholder: "Rater" %> 
+		</td>
+		<td>
+			<%= f.text_field :position_rater, :class => "full-width", :placeholder => "Position Rater" %>
+		</td>
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+          <%= f.submit "Add", class: "btn btn-success", :onclick => "submit_performance();"%>
+        <% else %>
+          <%= f.submit "Update", class: "btn btn-success", :onclick => "update_performance();"%>
+        <% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

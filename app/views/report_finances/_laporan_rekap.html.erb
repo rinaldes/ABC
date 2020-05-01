@@ -1,0 +1,25 @@
+<thead>
+  <tr>
+    <th><%= t(:no) %></th>
+    <th><%= t(:nama_supplier) %></th>
+    <th>
+      <%= t(:tanggal_giro) %>
+      <span style="float: right;">
+        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'sales.code-desc', class: 'sorting hide' %>
+        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'sales.code-asc', class: 'sorting' %>
+      </span>
+    </th>
+    <th>
+      <%= t(:nama_bank) %>
+      <span style="float: right;">
+        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'name-desc', class: 'sorting hide' %>
+        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'name-asc', class: 'sorting' %>
+      </span>
+    </th>
+    <th><%= t(:no_giro) %></th>
+    <th><%= t(:nominal) %></th>
+    <th><%= t(:tanggal_kontra) %></th>
+    <th><%= t(:tanggal_bon) %></th>
+  </tr>
+</thead>
+<tbody id='purchase_order-list'><%= render 'bayar_by_giro_list' %></tbody>

@@ -1,0 +1,12 @@
+<% params[:cancel] ||= false %>
+<% unless params[:cancel] %>
+	$("#set-page-form").html("<%= j(render '/wizards/set_page') %>")
+	$("#close-page-link").removeClass("hide")
+	set_hide_button()
+	$('html, body').animate({
+    scrollTop: $("#set-page-form").offset().top
+	}, 2000);
+<% else %>
+	$("#set-page-form").html("")
+	$("#close-page-link").addClass("hide")
+<% end %>

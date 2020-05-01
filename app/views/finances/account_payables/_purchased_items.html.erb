@@ -1,0 +1,33 @@
+<section><legend>Purchase Order List</legend></section>
+<section></section>
+<section>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-condensed table-hover smart-form has-tickbox">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Recieve Number</th>
+          <th>Cosingment Number</th>
+          <th>PO Number</th>
+          <th>Received Qty</th>
+          <th>Outstanding Qty</th>
+        </tr>
+      </thead>
+      <tbody id="purchased-items">
+        <% @account_payable.receivings.uniq.each_with_index{|receiving, index| %>
+          <% received_qty = receiving.receiving_details.where("quantity>0").map(&:quantity).sum %>
+          <% purchase_order = receiving.purchase_order %>
+          <% pods = purchase_order.purchase_order_details.where("quantity>0") rescue [] %>
+          <tr class="nested-fields">
+            <td><span class="purchased-text"><%= index+1 %></span></td>
+            <td><span class="purchased-text"><%= link_to receiving.number, receiving_url(receiving) %></span></td>
+            <td><span class="purchased-text"><%= receiving.consigment_number %></span></td>
+            <td><span class="purchased-text"><%= link_to purchase_order.number, receiving_url(purchase_order) rescue '-' %></span></td>
+            <td><span class="purchased-text"><%= received_qty %></span></td>
+            <td><span class="purchased-text"><%= pods.map{|pod|purchase_order.outstanding_qty(pod.product_size)}.sum %></span></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>

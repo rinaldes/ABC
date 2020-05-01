@@ -1,0 +1,12 @@
+<%= "<tr id=\"data_#{contract.id}\">".html_safe if params[:action] != "update_contract" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= contract.id %>" type="checkbox" value="<%= contract.id %>" class="child-contract child-box" data-section="contract" data-contract="child">
+    <label for="checkbox<%= contract.id %>"></label>
+  </div>
+</td>
+    <td><%= contract.contract_type %></td>
+    <td><%= contract.start %></td>
+    <td><%= contract.end %></td>
+    <td><%= contract.attachment %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_contract" %>

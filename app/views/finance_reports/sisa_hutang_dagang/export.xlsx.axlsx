@@ -1,0 +1,233 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+subjudul = styles.add_style(:b => true)
+subjudul_biru_tengah = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true}, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+subjudul_biru = styles.add_style(:b => true, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+judul = styles.add_style(:b => true, :sz => 14, :alignment => { :horizontal => :center, :wrap_text => true})
+grand_total = []
+alp = {}
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+@receivings_per_department.each do |department|
+  wb.add_worksheet(name: department.name) do |sheet|
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.merge_cells "A4:f4"
+    sheet.add_row [department.name.titleize], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, 0
+      image.end_at 2, 2
+    end
+    sheet.add_row ["TANGGAL", "NO FAKTUR", "QTY", "NOMINAL", "LONG TERM", "JATUH TEMPO"], :style => subjudul_biru
+    Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").each{|receiving|
+    next unless receiving.receiving_details.map{|r|(r.product_size.product.department_id rescue nil)}.include?(department.id)
+      sheet.add_row [receiving.faktur_date, receiving.consigment_number, receiving.received_qty, receiving.consigment_number, "LONG TERM", "JATUH TEMPO"], style: default
+    }
+  end
+
+  wb.add_worksheet(name: "Total #{department.name}") do |sheet|
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.merge_cells "A4:C4"
+    sheet.add_row ["Total #{department.name.titleize}"], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, 0
+      image.end_at 2, 2
+    end
+    sheet.add_row ["NO", "NAMA SUPPLIER", "SISA HUTANG"], :style => subjudul_biru
+    abc, i, totalnya = 0, 0, 0
+    Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").order(:supplier_id).each do |sup|
+      next unless sup.receiving_details.map{|r|(r.product_size.product.department_id rescue nil)}.include?(department.id)
+      next if sup.supplier_id == abc
+      abc = sup.supplier_id
+      oa = 0
+      i += 1
+      conditions = []
+      conditions << "account_payables.due_date BETWEEN '#{@date}' AND  '#{@date + 1.month}'" if params[:month].present? && params[:year].present?
+      AccountPayable.where(supplier_id: sup.supplier_id).where("outstanding_amount > 0").where(conditions.join(' AND ')).each do |ap|
+        oa += ap.outstanding_amount
+      end
+      totalnya += oa
+      sheet.add_row [i, sup.supplier.name, oa], style: default
+    end
+    sheet.add_row ["", "TOTAL", totalnya], style: subjudul_biru
+    grand_total << ["#{department.name}", totalnya]
+  end
+end
+
+['test market', 'Konsinyasi'].each do |statusnya|
+  wb.add_worksheet(name: statusnya) do |sheet|
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, 0
+      image.end_at 2, 2
+    end
+    sheet.merge_cells "A4:G4"
+    sheet.add_row [statusnya.titleize], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    sheet.add_row ["SUPPLIER", "TANGGAL", "NO FAKTUR", "QTY", "NOMINAL", "LONG TERM", "JATUH TEMPO"], :style => subjudul_biru
+    total_amount = 0
+    conditions = []
+    conditions << "account_payables.due_date BETWEEN '#{@date}' AND  '#{@date + 1.month}'" if params[:month].present? && params[:year].present?
+    AccountPayable.where("outstanding_amount > 0").where(conditions.join(' AND ')).order(:created_at).each_with_index do |ap, i|
+      if (ap.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+        sheet.add_row [ap.supplier.name, ap.created_at.strftime("%d-%b-%Y"), ap.ap_number, 0, ap.total_amount, ap.supplier.try(:long_term), ap.due_date.present? ? ap.due_date.strftime("%d-%b-%Y") : ''], :style => default
+        total_amount += ap.total_amount
+      end
+    end
+    sheet.add_row [nil, nil, nil, 0, total_amount, nil, nil], :style => subjudul_biru
+    sheet.add_row [nil]
+  end
+
+  wb.add_worksheet(name: "total #{statusnya}") do |sheet|
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, 0
+      image.end_at 2, 2
+    end
+    sheet.merge_cells "A4:C4"
+    sheet.add_row ["total #{statusnya}".titleize], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    sheet.add_row ["NO", "NAMA SUPPLIER", "SISA HUTANG"], :style => subjudul_biru
+    abc, i, totalnya = 0, 0, 0
+    conditions = []
+    conditions << "account_payables.due_date BETWEEN '#{@date}' AND  '#{@date + 1.month}'" if params[:month].present? && params[:year].present?
+    AccountPayable.where("outstanding_amount > 0").where(conditions.join(' AND ')).order(:supplier_id).each do |sup|
+      next if sup.supplier_id == abc
+      next unless (sup.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+      abc = sup.supplier_id
+      oa = 0
+      i += 1
+      AccountPayable.where(supplier_id: sup.supplier_id).where("outstanding_amount > 0").where(conditions.join(' AND ')).each do |ap|
+        if (ap.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+          oa += ap.outstanding_amount
+        end
+      end
+      totalnya += oa
+      sheet.add_row [i, sup.supplier.name, oa], style: default
+    end
+    sheet.add_row ["", "TOTAL", totalnya], style: subjudul_biru
+    grand_total << ["#{statusnya.titleize}", totalnya]
+  end
+end
+
+wb.add_worksheet(name: "Total") do |sheet|
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 2, 2
+  end
+  sheet.merge_cells "A4:C4"
+  sheet.add_row ["total".titleize], :style => judul, :widths=>[:ignore]
+  sheet.add_row [nil]
+  sheet.add_row ["NO", "STATUS", "SISA HUTANG"], :style => subjudul_biru
+  grand_gt = 0
+  grand_total.each_with_index do |sup, i|
+    sheet.add_row [i+1, sup[0], sup[1]], style: default
+    grand_gt += sup[1]
+  end
+  sheet.add_row ["", "TOTAL", grand_gt], style: subjudul_biru
+end
+
+wb.add_worksheet(name: "Rekap") do |sheet|
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 1, 2
+  end
+  sheet.add_row ["Jadwal Pembayaran Hutang".upcase], :style => judul, :widths=>[:ignore]
+  sheet.add_row [nil]
+  depart_name = []
+  jum_field = 3
+  @receivings_per_department.each{|department|
+    depart_name << department.name
+    jum_field += 1
+  }
+  sheet.merge_cells "A4:#{alp[jum_field]}4"
+  sheet.add_row ["Jatuh Tempo"] + depart_name + ["TM", "Konsinyasi", "Total"], :style => subjudul_biru_tengah
+  ttl_depart, ttl_status = [], [0, 0]
+  @receivings_per_department.count.times do 
+    ttl_depart << 0
+  end
+
+  @tanggal.each_with_index do |tanggal|
+    total_amount = 0
+    per_depart, per_status = [], [0, 0]
+    @receivings_per_department.count.times do 
+      per_depart << 0
+    end
+    @receivings_per_department.each_with_index{|department, io|
+      abc, ia, totalnya, oa, ua = 0, 0, 0, 0, ''
+      Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").order(:supplier_id).each do |sup|
+        next unless sup.receiving_details.map{|r|(r.product_size.product.department_id rescue nil)}.include?(department.id)
+        next if sup.supplier_id == abc
+        abc = sup.supplier_id
+        oa = 0
+        ap = AccountPayable.where(supplier_id: sup.supplier_id, due_date: tanggal.due_date).where("outstanding_amount > 0")
+        ap.each do |ap|
+          oa += ap.outstanding_amount
+        end
+        per_depart[io] = per_depart[io].to_i + oa
+        ttl_depart[io] = ttl_depart[io].to_i + oa
+      end
+    }
+    ["test market", "Konsinyasi"].each_with_index do |statusnya, ioi|
+      abc, i, totalnya, oa = 0, 0, 0, 0
+      AccountPayable.where("outstanding_amount > 0").where(due_date: tanggal.due_date).order(:supplier_id).each do |sup|
+        next if sup.supplier_id == abc
+        next unless (sup.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+        abc = sup.supplier_id
+        oa = 0
+        i += 1
+        AccountPayable.where(supplier_id: sup.supplier_id, due_date: tanggal.due_date).where("outstanding_amount > 0").each do |ap|
+          if (ap.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+            oa += ap.outstanding_amount
+          end
+        end
+        per_status[ioi] = per_status[ioi].to_i + oa
+        ttl_status[ioi] = ttl_status[ioi].to_i + oa
+      end
+    end
+    total_amount, dprt2, dprt3 = 0, [], []
+    per_depart.each do |dprt|
+      dprt2 << dprt
+      total_amount += dprt.to_i
+    end
+    per_status.each do |dprt|
+      dprt3 << dprt  
+      total_amount += dprt.to_i
+    end
+    sheet.add_row [tanggal.due_date.strftime("%d %B %Y")] + dprt2 + dprt3 + [total_amount]
+  end
+  total_amount, dprt2, dprt3 = 0, [], []
+  ttl_depart.each do |dprt|
+    dprt2 << dprt
+    total_amount += dprt.to_i
+  end
+  ttl_status.each do |dprt|
+    dprt3 << dprt  
+    total_amount += dprt.to_i
+  end
+  sheet.add_row ["Total"] + ttl_depart + ttl_status + [total_amount], :style => subjudul_biru
+end

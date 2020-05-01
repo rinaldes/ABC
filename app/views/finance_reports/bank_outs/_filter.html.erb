@@ -1,0 +1,18 @@
+<%= form_tag finance_reports_bank_outs_path, class: "smart-form", :id => "bank-outs-filter-form", :remote => true  do %>
+  <fieldset>
+    <div class="row">
+      <section class="col col-6">
+        <section>
+          <label class="col-md-4 label">Supplier</label>
+          <label class="col-md-6 input custom-input-box">
+            <%= select_tag("supplier_id", options_for_select(@suppliers.map{|supplier|[supplier.name, supplier.id]}, selected: (object.id rescue '')), prompt: "Please Select", class: "form-control bank-out-supplier") %>
+          </label>
+          <label class="col-md-4 label">AP Number</label>
+          <label class="col-md-6 input custom-input-box">
+            <%= select_tag("ap_number", options_for_select(@ap_numbers), prompt: "Please Select", class: "form-control bank-out-ap-number") %>
+          </label>
+        </section>
+      </section>
+    </div>
+  </fieldset>
+<% end %>

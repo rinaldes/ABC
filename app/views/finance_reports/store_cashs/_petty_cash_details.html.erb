@@ -1,0 +1,69 @@
+<% unless @petty_cash.blank? %>
+  <%= form_for @petty_cash, url: finance_reports_store_cashs_path, html: {class: "smart-form petty-cash", id: "form-update-verify", :multipart => true} do |f| %>
+    <fieldset>
+      <section>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-condensed table-hover smart-form has-tickbox">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Sisa Kas Bulan Lalu</th>
+                <th>Kas Masuk</th>
+                <th>Saldo Akhir</th>
+                <% @cash_out_types.each do |cash_out_type| %>
+                  <th><%= cash_out_type %></th>
+                <% end %>
+                <th>Total Pengeluaran</th>
+              </tr>
+            </thead>
+            <tbody id="petty-cashes">
+              <%= f.fields_for :petty_cash_details, f.object.petty_cash_details.order('date ASC') do |petty_cash_detail| %>
+                <%= render 'petty_cash_detail_fields', f: petty_cash_detail, cash_outs: @cash_outs, cash_out_types: @cash_out_types %>
+              <% end %>
+              <tr style="font-weight:bold;">
+                <td>Total</td>
+                <td align="right"><%= format_currency(f.object.petty_cash_details.sum(:initial_budget)) %></td>
+                <td align="right"><%= format_currency(f.object.petty_cash_details.sum(:cash_in)) %></td>
+                <td align="right"><%= format_currency(f.object.petty_cash_details.sum(:balance)) %></td>
+                <% @cash_out_types.each do |cash_out_type| %>
+                  <td align="right">
+                    <%= format_currency(@cash_outs.where(:cash_out_type => cash_out_type).where("EXTRACT(YEAR FROM time) = ?", @year).where("EXTRACT(MONTH FROM time) = ?", @month).sum(:amount)) %>
+                  </td>
+                <% end %>
+                <td align="right"><%= format_currency(f.object.petty_cash_details.sum(:cash_out)) %></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </fieldset>
+  <% end %>
+<% else %>
+  <fieldset>
+    <section>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-condensed table-hover smart-form has-tickbox">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Sisa Kas Bulan Lalu</th>
+              <th>Kas Masuk</th>
+              <th>Saldo Akhir</th>
+              <th>Total Pengeluaran</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td  align="center" colspan="8">There No Petty Cash details yet!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </fieldset>
+<% end %>
+<footer style="text-align:right; margin:10px;">
+  <%= link_to export_finance_reports_store_cashs_path(format: "xlsx", :office_id => params[:office_id], :year => @year, :month => @month), :class => "btn btn-primary" do %>
+    <i class="glyphicon glyphicon-download"></i>Export XLSX
+  <% end %>
+</footer>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Institution</Data></Cell>
+        <Cell><Data ss:Type="String">Certification Number</Data></Cell>
+        <Cell><Data ss:Type="String">Name Of Certification</Data></Cell>
+        <Cell><Data ss:Type="String">Date Of Certification</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <Cell><Data ss:Type="String">Attachment</Data></Cell>
+      </Row>
+    <% @certifications.each do |certification| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= certification.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.institution %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.certification_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.name_of_certification %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.date_of_certification %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.description %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= certification.attachment %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

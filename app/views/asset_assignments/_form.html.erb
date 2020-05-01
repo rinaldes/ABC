@@ -1,0 +1,71 @@
+
+
+<div class="container-fluid">
+    	<ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="asset_assignment.html" class="">Recruitment</a></li>
+            <li><a href="#" class="active">New Asset Assignment</a></li>
+        </ul>
+        
+        <div class="page-title">	
+        	<i class="fa fa-puzzle-piece"></i>
+        	<h3>New <span class="semi-bold">Asset Assignment</span></h3>	
+        </div>
+        	<%= form_for asset_assignment do |f|%>
+	        	<div class="grid simple">
+	           	  <div class="grid-title no-border"></div>
+	            	<div class="grid-body no-border">
+	                        <div class="col-md-6">
+			                	<div class="form-group row">
+		                            <label class="form-label col-sm-2">Name</label>
+		                            <div class="controls col-sm-5">
+		                                <%= f.autocomplete_field :employee_id, autocomplete_employee_name_blast_messages_url,:id_element =>"#my_employee_id", class: "autocomplete-field-input", placeholder: "Employee" %>                    
+		                            </div>
+		                        </div>
+				            </div>
+
+				            <div class="col-md-12">
+	                        	<div class="toolbar pull-right" id="toolbar_main">
+	                            	<div class="table-tools-actions">
+	                                	<%= link_to_add_association f, :asset_assignment_details, :"data-association-insertion-node" => "tbody", :"data-association-insertion-method" => "append", :class => "btn btn-success" do %>
+	                                		<span class="fa fa-plus"></span> Add New
+	                                	<% end %>
+	                                </div>
+	                            </div>
+	                        </div>
+
+	                        <table class="table no-more-tables table-striped table-hover">
+		                        <thead>
+		                            <tr>
+		                                <th width="10%">Asset Type</th>
+		                                <th width="12%">Asset Name</th>
+		                                <th width="11%">Serial Number</th>
+		                                <th width="11%">Date Of Assignment</th>
+		                                <th width="12%">Action</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody>
+		                            
+		                        </tbody>
+		                    </table>
+
+					</div>
+					<div class="form-actions">
+	                    <div class="pull-right">
+	                      <button class="btn btn-success btn-cons" type="submit"><i class="icon-ok"></i> Save</button>
+	                      
+	                    </div>
+	                </div>
+	       		</div> 
+	             
+	        <% end %>  
+    </div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker_form').datepicker();
+        
+    });
+
+
+</script>

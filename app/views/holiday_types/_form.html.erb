@@ -1,0 +1,39 @@
+<% if params[:action] == "new"%>
+  <tr>
+<% end %>
+  <%= form_for(holiday_type, html: { role: "form", multipart: true}, remote: true) do |f| %>
+    <td>
+      <div class="checkbox check-default">
+          <input id="checkbox12" type="checkbox" value="1">
+          <label for="checkbox12"></label>
+      </div>
+    </td>
+    <td>
+      <%= f.text_field :code, :placeholder => "Code" %>
+      <% if params[:action] == "edit"%>
+        <%= f.hidden_field :id, :value => params[:id] %>
+      <% end %>
+    </td>
+    <td>
+      <%= f.text_field :name, :placeholder => "Name" %>
+    </td>
+    <td class="v-align-middle text-center">
+      <div class="checkbox check-success checkbox-circle" id="cek_checkbox">
+          <%= f.check_box :as_leave, id: 'checkbox8'%>
+          <label for="checkbox8">Yes</label>
+      </div>
+    </td>
+    <td>
+      <div>
+        <% if params[:action] == "new" %>
+          <%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "submit_holiday_type();"%>
+        <% else %>
+          <%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "update_holiday_type();"%>
+        <% end %>
+      </div>
+    </td>
+  <% end %>
+<% if params[:action] == "new"%>
+  </tr>
+<% end %>
+

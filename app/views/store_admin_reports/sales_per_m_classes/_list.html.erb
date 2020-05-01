@@ -1,0 +1,31 @@
+<tr>
+  <th>KATEGORI</th>
+<!--  <th>STOCK AWAL</th>-->
+  <% params[:start_date].upto(params[:end_date]).each{|date| %>
+    <th><%= date %></th>
+  <% } %>
+  <th>TOTAL</th>
+<!--  <th>STOCK AKHIR</th>-->
+</tr>
+<% @departments.each{|department| %>
+  <tr><td colspan=11><%= department.code_and_name %></td></tr>
+  <% MClass.where("parent_id=#{department.id}").each{|m_class1| %>
+    <tr>
+      <td colspan=11>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= m_class1.code_and_name %></td>
+      </tr>
+      <% MClass.where("parent_id=#{m_class1.id}").each{|m_class2| %>
+        <tr>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= m_class2.code_and_name %></td>
+          <% params[:start_date].upto(params[:end_date]).each{|date| %>
+            <td>
+              <%= @sales_details.where("m_class_id=#{m_class2.id} AND transaction_date BETWEEN '#{params[:year]}-#{sprintf('%02d', params[:month])}-#{sprintf('%02d', date)} 00:00:00' AND '#{params[:year]}-#{sprintf('%02d', params[:month])}-#{date} 23:59:59' AND store_id=#{branch_id}").joins(:sale, product_size: [product: :m_class]).select("SUM(quantity) AS sum_quantity")[0].sum_quantity.to_i %>
+            </td>
+          <% } %>
+          <td>
+            <%= @sales_details.where("m_class_id=#{m_class2.id} AND transaction_date BETWEEN '#{params[:year]}-#{sprintf('%02d', params[:month])}-#{sprintf('%02d', params[:start_date])} 00:00:00' AND '#{params[:year]}-#{sprintf('%02d', params[:month])}-#{params[:end_date]} 23:59:59' AND store_id=#{branch_id}").joins(:sale, product_size: [product: :m_class]).select("SUM(quantity) AS sum_quantity")[0].sum_quantity %>
+          </td>
+        </tr>
+      <% } %>
+    </tr>
+  <% } %>
+<% } %>

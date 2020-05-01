@@ -1,0 +1,4 @@
+$("#list_income").html("<%= j(render 'list_income', :list_income => @list_income) %>");
+$("#list_outcome").html("<%= j(render 'list_outcome', :list_outcome => @list_outcome, :cash_outs => @cash_outs) %>");
+$("#list_deposit").html("<%= j(render 'list_deposit', :list_deposit => @list_deposit, :saldo_cash => @saldo_cash, :selisih => @selisih) %>");
+$("#list_net_sales").html("<%= j(render 'list_net_sales', :list_net_sales => @list_net_sales) %>");

@@ -1,0 +1,14 @@
+<% params[:cancel] ||= false %>
+<% params[:is_background] = params[:is_background].present? ? params[:is_background].to_s : 'false' %>
+<% unless params[:cancel] %>
+	$("#set-<%= params[:is_background]=='true' ? 'background' : 'page' %>-form").html("<%= j(render '/wizards/set_page', id: params[:id], is_background: params[:is_background]) %>")
+	set_hide_button()
+	$('html, body').animate({
+    scrollTop: $("#set-<%= params[:is_background]=='true' ? 'background' : 'page' %>-form").offset().top
+	}, 2000);
+<% else %>
+	$("#set-<%= params[:is_background]=='true' ? 'background' : 'page' %>-form").html("")
+<% end %>
+$('.colorpicker-default').colorpicker({
+  format: 'hex'
+});

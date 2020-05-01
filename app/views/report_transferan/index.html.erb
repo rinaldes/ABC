@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Transfer Barang</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>Report Transferan</h2>
+        </header>
+        <%#= link_to "Eksport ke Excel", export_finance_reports_report_azzurra_index_path(:id => params[:id], format: "xlsx") %>
+        <div id="tabs">
+          <ul>
+            <li><a href="#tabs-a">Kedatangan Barang</a></li>
+            <li><a href="#tabs-b">Stock HO Murni</a></li>
+            <li><a href="#tabs-c">Batal Retur & Ganti Barcode</a></li>
+          </ul>
+          <div id="tabs-a">
+            <div class="widget-body no-padding">
+              <div class="table-responsive">
+                <div>
+                  <%= render 'kedatangan_barang' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="tabs-b">
+            <div class="widget-body no-padding">
+              <div class="table-responsive">
+                <div class="table table-bordered table-striped">
+                  <%= render 'stock_ho' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="tabs-c">
+            <div class="widget-body no-padding">
+              <div class="table-responsive">
+                <div class="table table-bordered table-striped">
+                  <%= render 'batal_retur' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<SCRIPT>
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

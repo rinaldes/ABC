@@ -1,0 +1,27 @@
+<% id ||= 0 %>
+<% current_value = session[current_user.id.to_s]['logical'][id.to_i] %>
+
+<%= form_tag id == 0 ? set_logical_surveys_path : manage_logical_post_surveys_path(:update, id: id), class: "form-horizontal", :multipart => true, id: "new_set_logical", remote: true do %>
+	<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+	<div class="form-group">
+    <div class="col-sm-8">
+      <% options = session[current_user.id.to_s]['question'].map{|question_id, question| (([question['title'], question_id] if question['varians']['logical'] == "1") if question['varians'].present?) }.compact  %>
+      <%= select_tag "logical[target]", options_for_select(options, current_value.present? ? current_value["target"] : "-"), :prompt => "Select question...", :class => "form-control", :onclick => "question_detail(this, 'head', 0)" %>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div id="logical_content_wrapper">
+    <% if current_value.present? %>
+      <%= render '/values/logical', id: id, index: 0 %>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-4">
+      <%= button_tag "Done", type: "submit", class: "btn btn-primary" %>
+      <%= link_to "Cancel", edit_logical_surveys_path(id: id, cancel: true), remote: true, class: "btn btn-primary" if id.to_i > 0 %>
+    </div>
+  </div>
+<% end %>

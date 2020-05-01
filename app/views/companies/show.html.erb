@@ -1,0 +1,102 @@
+<%= javascript_tag render(:template => 'companies/jsManager.js', :formats => [:js]) %>
+<div class="container-fluid">
+	<ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="admin_master_company.html">Master Company</a></li>
+        <li><a href="#" class="active">New</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-building-o"></i>
+    	<h3>Master Company <span class="semi-bold">New</span></h3>	
+    </div>
+
+    
+
+    
+	    <div class="grid simple">
+	       	  <div class="grid-title no-border"></div>
+	        	<div class="grid-body no-border">
+					<div class="gen-form full-form">
+	                	<div class="form-group row edit-field">
+	                      <label class="form-label col-sm-2">Company Name</label>
+	                      <div class="controls col-sm-4">						 
+	                         <%= f.text_field :name, :class => "full-width", :placeholder => "Company Name", disabled: true %>
+	                      </div>
+	                  </div>
+	                  
+	                  <div class="form-group row">
+	                      <label class="form-label col-sm-2">Phone Number</label>
+	                      <div class="controls col-sm-4">						 
+	                         <%= f.text_field :phone, :class => "full-width", :placeholder => "Phone Number"%>
+	                      </div>
+	                  </div>
+	                  
+	                  <div class="form-group row">
+	                      <label class="form-label col-sm-2">Address</label>
+	                      <div class="controls col-sm-4">						 
+	                         <%= f.text_field :address, :class => "full-width", :placeholder => "Address"%>
+	                         <br /><br />
+	                         <div class="row">
+	                         	<div class="col-xs-6">
+	                                 <%= f.select :province_id, options_for_select(@provinces), {:prompt => '--select--'},{:class => "form-control", :onchange => "generateCity();"} %>
+	                            </div>
+	                            <div class="col-xs-6" id='dropdown_city'>
+	                                 <%= f.select :city_id, options_for_select([]), {:prompt => '--select--'},{:class => "form-control", :disabled => true }%>
+	                            </div>
+	                         </div>
+	                      </div>
+	                  </div>
+	                  
+	                  <div class="form-group row">
+	                      <label class="form-label col-sm-2">Owner</label>
+	                      <div class="controls col-sm-4">						 
+	                         <%= f.text_field :owner_name, :class => "full-width", :placeholder => "Owner"%>
+	                      </div>
+	                  </div>
+	                  
+	                  <div class="form-group row">
+	                      <label class="form-label col-sm-2">Email</label>
+	                      <div class="controls col-sm-4">						 
+	                         <%= f.email_field :com_email, :class => "full-width", :placeholder => "Email"%>
+	                      </div>
+	                  </div>
+	                  
+	                  <div class="form-group row">
+	                      <label class="form-label col-sm-2">Logo</label>
+	                      <div class="controls col-sm-4">						 
+	                        <%= f.file_field :com_logo, multiple: true %>
+	                      </div>
+	                  </div>
+	                  
+	                  <hr />
+							<h5 class="bold col-md-12 m-b-40"><i class="fa fa-user"></i> Username Detail</h5>
+							
+							<%= f.fields_for :users, :class => "gen-form alert alert-info" do |ff| %>
+							  <div class="clearfix m-b-20"></div>
+							  <div class="form-group row edit-field">
+	                            <label class="form-label col-sm-2">Username</label>
+								  <div class="controls col-sm-4">						 
+									 
+									 <%= ff.text_field :username, :class => "full-width", :placeholder => "User Name"%>                  
+								  </div>
+							  </div>
+							  <div class="form-group row edit-field">
+	                            <label class="form-label col-sm-2">Password</label>
+								  <div class="controls col-sm-4">						 
+									 <%= ff.password_field :password, :class => "full-width", :placeholder => ""%>                 
+								  </div>
+							  </div>
+	                          <div class="form-group row edit-field">
+	                            <label class="form-label col-sm-2">Re-Type Password</label>
+								  <div class="controls col-sm-4">						 
+									 <%= ff.password_field :password, :class => "full-width", :placeholder => ""%>                       
+								  </div>
+							  </div>
+							<% end %>
+	                </div>  
+	            </div>
+	        </div>   
+	
+     
+</div>

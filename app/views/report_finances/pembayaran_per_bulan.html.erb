@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="/css/jquery-ui-1.11.4.css">
+<script src="/js/jquery-1.10.2.js"></script>
+<script src="/js/jquery-ui-1.11.4.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li><%= t(:reports) %></li><li><%= t(:pembayaran_per_bulan) %></li>
+  </ol>
+</div>
+<div id="content">
+  <section id="widget-grid" class="">
+    <div id="notice_template"><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <header id="header-product" role="heading">
+          <h2><span class="widget-icon"> <i class="fa fa-list-ul"></i> </span><%= t(:pembayaran_per_bulan) %></h2></header>
+          <div style='overflow-y: hidden;'>
+            <fieldset>
+              <div class="row">
+                <section class="col col-md-6">
+                  <section>
+                    <label class="col-md-2">Report</label>
+                    <label class="col-md-8 input custom-input-box">
+                      <%= select_tag :group_by, options_for_select(["Pembayaran by Giro", "Tunai dan Cash", "Laporan Rekapan Total"]), {class:"form-control search"} %>
+                    </label>
+                  </section>
+                  <section>
+                    <label class="col-md-2"></label>
+                    <label class="col-md-8">
+                      <div class="btn btn-primary" onclick="load()">Load</div>
+                      <div class="btn btn-primary">Export</div>
+                    </label>
+                  </section>
+                </section>
+                <section class="col col-md-6">                  
+                  <section>
+                    <label class="col-md-2">Month</label>
+                    <label class="col-md-8 input custom-input-box">
+                      <%= text_field_tag :start, '', class:"form-control search datepicker_form" %>
+                    </label>
+                  </section>
+                </section>
+              </div>
+              <br>
+            </fieldset>
+            <table class="table table-bordered tablenya" width="100%">
+              <%= render 'bayar_by_giro' %>
+            </table>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+<script type="text/javascript">
+  $(function () {
+    $('.datepicker_form').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'MM yy',
+      prevText : '<i class="fa fa-chevron-left"></i>',
+      nextText : '<i class="fa fa-chevron-right"></i>',
+      onClose: function(dateText, inst) { 
+          $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+      }
+    });
+  });
+
+  function load(){
+    $.ajax({
+      url: "/report_finances/search_pembayaran_per_bulan?&group_by="+($('#group_by').length == 1 ? $('#group_by').val() : '')+"&start="+($('#start').length == 1 ? $('#start').val() : ''),
+      method: "get",
+      data: {},
+      dataType: "script"
+    })
+  }
+</script>

@@ -1,0 +1,30 @@
+<% end_date = ("#{params[:year]}-#{params[:month]}-01").to_date.end_of_month.day %>
+<tr>
+  <th rowspan="2" style="vertical-align: middle;">NO</th>
+  <th rowspan="2" style="width: 1px; white-space: nowrap; vertical-align: middle;">Nama Karyawan</th>
+  <th rowspan="2" style="vertical-align: middle;">ID</th>
+  <th colspan="<%= end_date %>" style="text-align: center;"><%= Date::MONTHNAMES[params[:month].to_i] %> <%= params[:year] %></th>
+  <th rowspan="2" style="vertical-align: middle;">TOTAL</th>
+</tr>
+<tr>
+  <% 1.upto(end_date).each{|date| %>
+    <th style="text-align: center;"><%= date %></th>
+  <% } %>
+</tr>
+<% @users.where(branch_id: branch_id).each_with_index do |user, i| %>
+  <tr>
+    <td><%= i+1 %></td>
+    <td><%= user.first_name %></td>
+    <td><%= user.id %></td>
+    <%
+      total_total_price = 0
+      1.upto(end_date).each{|date|
+        tanggal = "#{params[:year]}/#{params[:month]}/#{date}".to_date 
+        total_price = Sale.where("user_id = #{user.id} and transaction_date >= '#{tanggal.beginning_of_day}' and transaction_date <= '#{tanggal.end_of_day}'").map(&:total_price).sum
+        total_total_price += total_price
+      %>
+      <td><%= format_currency total_price %></td>
+    <% } %>
+    <td><%= format_currency total_total_price %></td>
+  </tr>
+<% end %>

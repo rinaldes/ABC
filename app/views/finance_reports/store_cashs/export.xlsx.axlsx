@@ -1,0 +1,53 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+
+@offices.each do |office|
+  office_name = office.office_name
+  petty_cash = @petty_cash.where("offices.id = ?", office.id).first
+  if petty_cash.present?
+    @cash_outs = petty_cash.cash_outs.where("cash_out_type != 'CASH IN'")
+    @cash_out_types = @cash_outs.pluck(:cash_out_type).uniq
+  end
+  wb.add_worksheet(name: "#{office_name}") do |sheet|
+    sheet.add_row
+    sheet.add_row ["KAS #{office_name} #{@month}-#{@year}"]
+    headers = ["Tanggal", "Sisa Kas Bulan Lalu", "Kas Masuk", "Saldo Akhir"]
+    if @cash_out_types.present?
+      @cash_out_types.each do |cash_out_type|
+        headers.push(cash_out_type)
+      end
+    end
+    headers.push("Total Pengeluaran")
+    sheet.add_row headers, :style => default
+
+    if petty_cash.present?
+      petty_cash.petty_cash_details.order('date ASC').each do |petty_cash_detail|
+        contents = Array.new
+        contents.push(petty_cash_detail.date.strftime("%d-%m-%y"))
+        contents.push(petty_cash_detail.initial_budget.to_f)
+        contents.push(petty_cash_detail.cash_in.to_f)
+        contents.push(petty_cash_detail.balance.to_f)
+        @cash_out_types.each do |cash_out_type|
+          contents.push(@cash_outs.where("cash_out_type = ? AND DATE(time) = ?", cash_out_type, petty_cash_detail.date.strftime("%d-%b-%y")).sum(:amount))
+        end
+        contents.push(petty_cash_detail.cash_out.to_f)
+        sheet.add_row contents, :style => default
+      end
+    end
+
+    total = ["Total"]
+    if petty_cash.present?
+      total.push(petty_cash.petty_cash_details.sum(:initial_budget))
+      total.push(petty_cash.petty_cash_details.sum(:cash_in))
+      total.push(petty_cash.petty_cash_details.sum(:balance))
+      if @cash_out_types.present?
+        @cash_out_types.each do |cash_out_type|
+          total.push(@cash_outs.where(:cash_out_type => cash_out_type).where("EXTRACT(YEAR FROM time) = ?", @year).where("EXTRACT(MONTH FROM time) = ?", @month).sum(:amount))
+        end
+      end
+      total.push(petty_cash.petty_cash_details.sum(:cash_out))
+    end
+    sheet.add_row total, :style => default
+  end
+end

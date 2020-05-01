@@ -1,0 +1,10 @@
+<ul class="nav nav-tabs">
+  <li class="<%= params[:controller] == 'employee_surveys' ? 'active' : ''%>"><%= link_to "Surveys", employee_surveys_path(:id => params[:id]) %></li>
+  <li class="<%= params[:controller] == 'employees' ? 'active' : ''%>"><%= link_to "Personal Data", employees_path(:employee_id => params[:employee_id]) %></li>
+  <li class="<%= params[:controller] == 'employee_working_datas' ? 'active' : ''%>"><%= link_to "Working Data", employee_working_datas_path(:id => params[:id]) %></li>
+  <li class="<%= params[:controller] == 'employee_histories' ? 'active' : ''%>"><%= link_to "Employee History", employee_histories_path(:id => params[:id]) %></li>
+  <li class="<%= params[:controller] == 'families' ? 'active' : ''%>"><%= link_to "Family Details", families_path(:employee_id => params[:employee_id]) %></li>
+  <li><a href="employee_absence.html">Absence</a></li>
+  <li class="<%= params[:controller] == 'performances' ? 'active' : ''%>"><%= link_to "Performance", performances_path(:id => params[:id]) %></li>
+  <li class="<%= params[:controller] == 'salaries' ? 'active' : ''%>"><%= link_to "Salary History", salaries_path(:id => params[:id]) %></li>
+</ul>

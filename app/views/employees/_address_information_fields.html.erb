@@ -1,0 +1,26 @@
+<tr class="new-rec">
+    <td>
+        <div class="checkbox check-default">
+            <input id="checkbox12" type="checkbox" value="1">
+            <label for="checkbox12"></label>
+        </div>
+    </td>
+    <td>
+        <%= f.select :province_id, options_for_select(@organizations), {:prompt => '--select--'} %>
+    </td>
+    <td>
+        <%= f.select :city_id, options_for_select(@organizations), {:prompt => '--select--'} %>
+    </td>
+    <td>
+        <%= f.select :kecematan_id, options_for_select(@organizations), {:prompt => '--select--'} %>
+    </td>
+    <td>
+      <%= f.text_field :rt, :class => 'size-ultra-small' %> / <%= f.text_field :rw, :class => 'size-ultra-small' %>
+    </td>
+    <td>
+      <%= f.text_field :kode_pos, :class => 'size-small' %>
+    </td>
+    <td>
+      <%= f.text_field :street, :class => 'form-control full-width' %>
+    </td>
+</tr>

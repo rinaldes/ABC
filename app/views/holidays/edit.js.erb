@@ -1,0 +1,6 @@
+$('#data_<%= @holiday.id %>').html("<%= j(render 'form', :holiday => @holiday) %>");
+$('#button-new').hide();
+$('.input-append.date').datepicker({
+  autoclose: true,
+  todayHighlight: true
+});

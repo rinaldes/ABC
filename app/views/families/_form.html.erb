@@ -1,0 +1,49 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(family, html: { role: "form", multipart: true}, remote: true) do |f| %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+		<td>
+			<%= f.select :status, options_for_select(status) %>
+			<% if params[:action] == "new"%>
+				<%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+			<% else %>
+				<%= f.hidden_field :id, :value => params[:id] %>
+			<% end %>
+		</td>
+		<td>
+			<%= f.text_field :name, :class => "full-width", :placeholder => "Name" %>
+		</td>
+		<td>
+			<%= f.text_field :address, :class => "full-width", :placeholder => "Address" %>
+		</td>
+		<td>
+			<%= f.text_field :education, :class => "full-width", :placeholder => "Education" %>
+		</td>
+		<td>
+			<%= f.text_field :work, :class => "full-width", :placeholder => "Work" %>
+		</td>
+		<td>
+			<div class="input-append success date">
+                <%= f.text_field :birthday, :class => "form-control"%>
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+            </div>
+		</td>
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+            		<%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "submit_family();"%>
+            	<% else %>
+            		<%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "update_family();"%>
+            	<% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

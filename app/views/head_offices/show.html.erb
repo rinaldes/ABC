@@ -1,0 +1,78 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Head Office</li><li><%= @head_office.office_name %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-supplier">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= @head_office.office_name %></h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <%= form_for @head_office, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <fieldset> <!-- tambah supplier -->
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-4 label">Nama Head Office</label>
+                      <label class="col-md-8 input custom-input-box"><%= @head_office.office_name %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Deskripsi</label>
+                      <label class="col-md-8 textarea custom-input-box"><%= @head_office.description %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Gudang</label>
+                      <label class="col-md-8 input custom-input-box"><%= @head_office.warehouse %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Penanggung Jawab (CP)</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= @head_office.user.first_name rescue '' %> <%= @head_office.user.last_name rescue '' %>
+                      </label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Departement</label>
+                      <label class="col-md-8 label">
+                        <% @depart.each_with_index do |depart, i| %>
+                          <%= depart.department.name %> <br> 
+                        <% end %>
+                      </label>
+                    </section><br>
+                  </section>
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Tlp</label>
+                      <label class="col-md-10 input custom-input-box"><%= @head_office.phone_number %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Fax</label>
+                      <label class="col-md-10 input custom-input-box"><%= @head_office.fax_number %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No HP</label>
+                      <label class="col-md-10 input custom-input-box"><%= @head_office.mobile_phone %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">Alamat</label>
+                      <label class="col-md-10 textarea custom-input-box"><%= @head_office.address %></label>
+                    </section><br>
+                  </section><br>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

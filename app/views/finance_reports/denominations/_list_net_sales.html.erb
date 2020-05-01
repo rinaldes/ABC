@@ -1,0 +1,26 @@
+<table class="table table-striped table-brequested table-hover" width="100%">
+  <tr>
+    <td>Total Pendapatan</td>
+    <td><%= format_currency(list_net_sales["total_income"]) %></td>
+  </tr>
+  <tr>
+    <td>BTP Keluar</td>
+    <td><%= format_currency(list_net_sales["btp_out"]) %></td>
+  </tr>
+  <tr>
+    <td>Bon Titip</td>
+    <td><%= format_currency(list_net_sales["bon"]) %></td>
+  </tr>
+  <tr>
+    <td>Pendapatan Lainnya</td>
+    <td><%= format_currency(list_net_sales["another_income"]) %></td>
+  </tr>
+  <tr>
+    <td>Net Sales</td>
+    <td><%= format_currency(list_net_sales["net_sales"]) %></td>
+  </tr>
+</table>
+
+<%= link_to export_finance_reports_denominations_path(format: "xlsx", date: params[:date], branch_id: params[:branch_id]), :class => "btn btn-labeled btn-primary edit-btn-primary" do %>
+  <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+<% end %>

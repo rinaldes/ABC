@@ -1,0 +1,43 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(user, html: { role: "form", multipart: true}, remote: true) do |f| %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+		
+		<td>
+			<%= f.text_field :first_name, :class => "full-width", :placeholder => "Name" %>
+		</td>
+
+		<td>
+			<%= f.text_field :username, :class => "full-width", :placeholder => "User Name" %>
+		</td>
+
+		<td>
+			<%= f.email_field :email, :class => "full-width", :placeholder => "email" %>
+		</td>
+
+		<td>
+			<span class="muted">Generate</span>
+		</td>
+		
+		<td>
+			<%= f.select :role, options_for_select(roles) %>
+		</td>
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+            		<%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "submit_user();"%>
+            	<% else %>
+            		<%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "update_user();"%>
+            	<% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

@@ -1,0 +1,9 @@
+<% (@receivings || []).each do |request| %>
+  <tr>
+    <td><%= request.number %></td>
+    <td><%= request.date %></td>
+    <td><%= request.supplier.name rescue nil %></td>
+    <td><%= request.status %></td>
+    <td><a href="javascript:void(0)" onclick="loadRcv('<%= request.number %>', '<%= request.date %>', '<%= request.note %>')" class="btn btn-primary"> Choose </a></td>
+  </tr>
+<% end %>

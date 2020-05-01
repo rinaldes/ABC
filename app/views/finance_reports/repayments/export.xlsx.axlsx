@@ -1,0 +1,99 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+
+wb.add_worksheet(name: "Repayment") do |sheet|
+  sheet.add_row [@supplier.try(:name)]
+
+  sheet.merge_cells 'A2:A3'
+  sheet.merge_cells 'B2:B3'
+  sheet.merge_cells 'C2:C3'
+  sheet.merge_cells 'D2:D3'
+  sheet.merge_cells 'E2:E3'
+  sheet.merge_cells 'F2:G2'
+  sheet.merge_cells 'H2:K2'
+  sheet.merge_cells 'L2:M2'
+
+  #merge dynamic headers
+  columns = Array('N'..'ZZ')
+  last_col = nil
+  index = -1
+  if @other_charges_name.present?
+    index = 0
+    @other_charges_name.each_with_index do |other_charge_name, index|
+      index = index
+      col = columns[index]
+      merging = "#{col}2:#{col}3"
+      sheet.merge_cells merging
+    end
+  end
+  for i in 0..2
+    index = index + 1
+    col_1 = columns[index]
+    index = index + 1
+    col_2 = columns[index]
+    merging = "#{col_1}2:#{col_2}2"
+    sheet.merge_cells merging
+  end
+  for i in 0..1
+    index = index + 1
+    col = columns[index]
+    merging = "#{col}2:#{col}3"
+    sheet.merge_cells merging
+    last_col = col
+  end
+
+  header_row = ["Tgl Bon", "Faktur", "Nominal", "Sub Total", "Tgl Kontra", "Brg Kurang", "", "Retur", "", "", "", "Pending", ""]
+  if @other_charges_name.present?
+    @other_charges_name.each do |other_charge_name|
+      header_row.push(other_charge_name)
+    end
+  end
+  header_row.push("Tunai", "", "Giro", "", "Transfer", "", "Total", "Keterangan")
+  sheet.add_row header_row, :style => default
+
+  second_header_row = ["", "", "", "", "", "Qty", "Nominal", "Tgl", "No. Form", "Qty", "Nominal", "Qty", "Nominal"]
+  if @other_charges_name.present?
+    @other_charges_name.each do |other_charge_name|
+      second_header_row.push("")
+    end
+  end
+  second_header_row.push("Tgl", "Nominal", "Tgl", "Nominal", "Tgl", "Nominal", "", "")
+  sheet.add_row second_header_row, :style => default
+
+  columns = Array("D"..last_col)
+  row = 3 + @rowspan
+  columns.each do |col|
+    sheet.merge_cells "#{col}4:#{col}#{row}"
+  end
+
+  total = 0
+  if @repayments.present?
+    @repayments.each_with_index do |repayment,index|
+      total_returns_to_suppliers = index.eql?(0) ? @returns_to_suppliers.map(&:total).sum : ""
+      sum_total_receiving = index.eql?(0) ? get_sum_total_receiving(@repayments) : ""
+      return_to_supplier_date = index.eql?(0) ? @returns_to_suppliers.first.try(:date).try(:strftime, "%d-%m-%y") : ""
+      return_to_supplier_number = index.eql?(0) ? @returns_to_suppliers.first.try(:number) : ""
+      return_to_supplier_quantity = index.eql?(0) ? @returns_to_suppliers.map(&:quantity).sum : ""
+      cash_payment_date = index.eql?(0) ? @cash.first.try(:payment_date).try(:strftime, "%d-%m-%y") : ""
+      cash_amount = index.eql?(0) ? @cash.map(&:amount).sum : ""
+      transfer_payment_date = index.eql?(0) ? @transfer.first.try(:payment_date).try(:strftime, "%d-%m-%y") : ""
+      transfer_amount = index.eql?(0) ? @transfer.map(&:amount).sum : ""
+      giro_payment_date = index.eql?(0) ? @giro.first.try(:payment_date).try(:strftime, "%d-%m-%y") : ""
+      giro_amount = index.eql?(0) ? @giro.map(&:amount).sum : ""
+      total = index.eql?(0) ? (total + @cash.map(&:amount).sum + @transfer.map(&:amount).sum + @giro.map(&:amount).sum) : ""
+      lunas = index.eql?(0) ? "Lunas" : ""
+
+      content = [repayment.date.try(:strftime, "%d-%m-%y"), repayment.consigment_number, repayment.total, sum_total_receiving, "", "", "", return_to_supplier_date, return_to_supplier_number, return_to_supplier_quantity, total_returns_to_suppliers, "", ""]
+      total += total_returns_to_suppliers
+
+      @other_charges_name.each do |other_charge_name|
+        other_charges = index.eql?(0) ? get_amount_of_other_charges(@account_payable_ids, other_charge_name) : ""
+        content.push(@other_charges)
+        total += other_charges 
+      end
+      content.push(cash_payment_date, cash_amount, transfer_payment_date, transfer_amount, giro_payment_date, giro_amount, total, lunas)
+      sheet.add_row content, :style => default
+    end
+  end
+end

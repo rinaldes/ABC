@@ -1,0 +1,6 @@
+<% if @dibeliowner.errors.full_messages.present? %>
+  $("#notification").html("<%= j(render 'layouts/errors') %>");
+  window.scrollTo(0, 0);
+<% else %>
+  window.location = '/dibeliowners/new'
+<% end %>

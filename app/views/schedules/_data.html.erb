@@ -1,0 +1,15 @@
+<% if params[:action] != "update_schedule" %>
+    <tr id="data_<%= schedule.id %>">
+<% end %>
+    <td>
+      <div class="checkbox check-default">
+            <input id="checkbox<%= schedule.id %>" type="checkbox" value="<%= schedule.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= schedule.id %>"></label>
+        </div>
+    </td>
+    <td><%= schedule.shift.name %></td>
+    <td><%= link_to schedule.employee.name, detail_schedules_path(schedule) %></td>
+    <td><%= schedule.start_period %> - <%= schedule.end_period %></td>
+<% if params[:action] != "update_schedule" %>
+    </tr>
+<% end %>

@@ -1,0 +1,146 @@
+<%= javascript_tag render(:template => 'salaries/jsManager.js', :formats => [:js]) %>
+<div class="container-fluid">
+	<ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="#" class="active">Employee</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-users"></i>
+    	<h3><span class="semi-bold">Employee</span></h3>	
+    </div>  
+        <div class="grid simple">
+        	<div class="grid-body no-border has-tab">
+                <%= render '/employees/tab_nav'%>
+                <div class="tab-content">
+                    <section class="tab-pane active" id="survey">
+                      <div class="row toolbar-block">
+                        <div class="col-md-8 col-md-offset-4">
+                                <div class="toolbar pull-right" id="toolbar_main">
+                                    <div class="table-tools-actions" id="button-new">
+                                        <%= button_to new_salary_path(:employee_id => params[:id]), :method => 'get', :class => 'btn btn-success', :remote => true do %>
+                                            <span class="fa fa-plus"></span> Add New
+                                        <% end %>
+                                    </div>
+                                </div>
+                                <div class="toolbar pull-right" id="toolbar_main">                      
+                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Tools <i class="fa fa-angle-down"></i>
+                                </button>
+                                  <ul class="dropdown-menu pull-right">
+                                  <li><%= link_to "Export to CSV",  salaries_path(:id => params[:id], format: "csv") %></li>
+                                  <li><%= link_to "Export to Excel", salaries_path(:id => params[:id], format: "xls") %></li>
+                                  <li data-toggle="modal" data-target="#myModal"><a>Import from CSV</a></li>
+                                </ul>
+                                </div>
+                                <div class="toolbar pull-right" id="toolbar_def">
+                                    <div class="table-tools-actions">
+                                        <button class="btn" id="button_edit" onclick="edit_salary()"><span class="fa fa-edit"></span> Edit</button> 
+                                        <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                        <div class="separator">&nbsp;</div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <table class="table no-more-tables table-striped table-hover" id='salary'>
+                            <thead>
+                                <tr>
+                                    <th style="width:1%" >
+                                        <div class="checkbox check-default">
+                                            <input id="checkbox" type="checkbox" value="1" class="checkall">
+                                            <label for="checkbox"></label>
+                                        </div>
+                                    </th>
+                                    <th>REASON OF ADJUSTMENT</th>
+                                    <th>BASIC</th>
+                                    <th>TRANSPORT</th>
+                                    <th>EFFECTIVE DATE</th>
+                                    <th>FROM</th>
+                                    <th width="15%" colspan='2'>TO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if @salaries.count != 0 %>
+                                    <% @salaries.each do |salary|%>
+                                        <%= render 'data', :salary => salary%>
+                                    <% end %>
+                                <% else %>
+                                    <tr>
+                                        <td colspan='8' align='center'>No Data Found !</td>
+                                    </tr>
+                                <% end %>
+                            </tbody>
+                        </table>
+                    </section>
+				</div>
+            </div>
+            
+            <div class="form-actions">
+                <div class="pull-right">
+                  
+                </div>
+          </div>
+        </div>
+</div>
+
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete_salary();">Yes</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>
+
+<div aria-hidden="true" aria-labelledby="myModalLabel" id="myModal2" class="modal fade">
+<div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          </div>
+        <div class="modal-footer"><center>
+          <h2>Import Salaries</h2>
+            <%= form_tag import_salaries_path(:id => params[:id]), multipart: true do %>
+              <%= file_field_tag :file %>
+              <%= submit_tag "Import" %>
+              <%= link_to "Download Template", salaries_path(format: "csv") %>
+            <% end %>
+          </center>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Import Salaries</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag import_salaries_path(:id => params[:id]), multipart: true do %>
+          <%= file_field_tag :file %>
+      </div>
+      <div class="modal-footer">
+        <%= link_to "Download Template", salaries_path(format: "csv"), :class => "btn btn-success" %>
+        <%= submit_tag "Import", :class => "btn btn-primary"%>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

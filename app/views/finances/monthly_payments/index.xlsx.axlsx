@@ -1,0 +1,90 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+subjudul = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true})
+judul = styles.add_style(:b => true, :sz => 14, :alignment => { :horizontal => :center, :wrap_text => true})
+judul2 = styles.add_style(:b => true, :sz => 12)
+alp = {}
+branchnya = []
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+wb.add_worksheet(name: "Detail") do |sheet|
+  baris = 2
+3.times do
+  @payments_by_giro.each{|payments_by_giro|
+    sheet.add_row [nil]
+    sheet.add_row ["PEMBAYARAN GIRO ABC"], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    sheet.add_row ["Periode #{payments_by_giro.payment_date.strftime('%d %B %Y')}"], style: judul2, widths: [:ignore]
+    sheet.merge_cells "A#{baris}:H#{baris}"
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, (baris-2)
+      image.end_at 2, baris
+    end
+    baris += 3
+    sheet.add_row ["No.Urut", "Nama Supplier", "Tanggal Giro", "Nama Bank", "No. Giro", "Nominal", "Tanggal Kontra", "Tanggal Bon"], :style => subjudul
+    ap_details = AccountPayableDetail.where("#{@giro} AND payment_date='#{payments_by_giro.payment_date}'")
+    ap_details.each_with_index{|payment, i|
+      baris += 1
+      receiving = payment.account_payable.receivings.where("supplier_id=#{payment.account_payable.supplier_id}")[i]
+      sheet.add_row [i+1, payment.account_payable.supplier.name, payments_by_giro.payment_date.strftime('%d %B %Y'), payment.bank, payment.giro_number, payment.amount, payments_by_giro.payment_date.strftime('%d %B %Y'), (receiving.faktur_date rescue '')]
+    }
+    sheet.add_row ["", "", "", "", "Jumlah", ap_details.map(&:amount).sum], style: subjudul
+    baris += 5
+    sheet.add_row [nil]
+    sheet.add_row [nil]
+  }
+end
+  #part 2 : PEMBAYARAN TUNAI DAN TRANSFER ABC
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row ["PEMBAYARAN TUNAI DAN TRANSFER ABC"], :style => judul, :widths=>[:ignore]
+  sheet.add_row [nil]
+  sheet.add_row ["Periode #{@period}"], style: judul2, widths: [:ignore]
+  sheet.merge_cells "A#{baris+2}:F#{baris+2}"
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, (baris-2)
+    image.end_at 2, baris
+  end
+  baris += 3
+  sheet.add_row ["No. Urut", "Nama Supplier", "Tanggal Bayar", "Nominal", "Tanggal Kontra", "Keterangan"], :style => subjudul
+  @payments_by_cash_and_trf.each_with_index{|payment, i|
+    baris += 1
+    receiving = payment.account_payable.receivings.where("supplier_id=#{payment.account_payable.supplier_id}")[i]
+    sheet.add_row [i+1, payment.account_payable.supplier.name, payment.payment_date.strftime('%d %B %Y'), payment.amount, (receiving.faktur_date rescue ''), payment.note]
+  }
+  sheet.add_row ["", "", "Jumlah", @payments_by_cash_and_trf.map(&:amount).sum], style: subjudul
+  baris += 5
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+end
+
+wb.add_worksheet(name: "Global") do |sheet|
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+    sheet.add_row ["TOTAL PEMBAYARAN SUPPLIER"], :style => judul, :widths=>[:ignore]
+    sheet.add_row [nil]
+    sheet.add_row ["Periode #{@period}"], style: judul2, widths: [:ignore]
+    sheet.merge_cells "A4:C4"
+    img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+    sheet.add_image(:image_src => img, :end_at => true) do |image|
+      image.start_at 0, 0
+      image.end_at 1, 2
+    end
+    sheet.add_row ["TRANSFER TUNAI", @payments_by_cash_and_trf.map(&:amount).sum, @payments_by_cash_and_trf.map(&:amount).sum]
+    sheet.merge_cells "A7:B7"
+    a = 8
+    @payments_by_giro.each{|payments_by_giro|
+      sheet.merge_cells "A#{a}:B#{a}"
+      sheet.add_row ["BILYET GIRO #{payments_by_giro.payment_date.strftime('%d %B')}", payments_by_giro.amount, payments_by_giro.amount]
+      a += 1
+    }
+    sheet.merge_cells "A#{a}:B#{a}"
+    sheet.add_row ["TOTAL", (@payments_by_cash_and_trf.map(&:amount).sum+@payments_by_giro.map(&:amount).sum), (@payments_by_cash_and_trf.map(&:amount).sum+@payments_by_giro.map(&:amount).sum)]
+end

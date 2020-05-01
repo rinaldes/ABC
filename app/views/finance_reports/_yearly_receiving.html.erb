@@ -1,0 +1,49 @@
+<div class="widget-body"><!-- TABEL -->
+  <h2 style="color:#BF1E2D; text-align: center">GLOBAL PEMBELIAN DAN PENGIRIMAN BARANG KE TOKO</h2> <!-- header content -->
+  <img src="/img/logo_nuansabaru.png" alt="SmartAdmin">
+  <br/>
+  <b>Periode AGUSTUS - <%= Time.now.strftime('%B %Y').upcase %></b>
+  <table class="table table-bordered table-striped" id='stock'>
+    <thead>
+      <tr>
+        <th rowspan=3 style='text-align: center'>BULAN</th>
+        <th rowspan=2 colspan=3 style='text-align: center'>PEMBELIAN</th>
+        <th colspan=<%= 3*@branches.count %> style='text-align: center'>TRANSFER</th>
+      </tr>
+      <tr>
+        <% @branches.each{|branch| %>
+          <td colspan=3><%= branch.description %></td>
+        <% } %>
+      </tr>
+      <tr>
+        <td rowspan=2>QTY</td>
+        <td rowspan=2>Cprice</td>
+        <td rowspan=2>Value</td>
+        <% 1.upto(@branches.size) do |branch| %>
+          <td rowspan=2>QTY</td>
+          <td rowspan=2>Cprice</td>
+          <td rowspan=2>Value</td>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @monthly_receivings.each{|receiving| %>
+        <tr>
+          <td class='nowrap'><%= receiving[0] %></td>
+          <td class='nowrap'><%= receiving[1].map(&:quantity).compact.sum %></td>
+          <td class='nowrap'><%= format_currency receiving[1].map(&:hpp).compact.sum %></td>
+          <td class='nowrap'><%= format_currency receiving[1].map(&:value).compact.sum %></td>
+          <% @branches.each{|branch| %>
+            <% pr_tp = PrTransferProduct.where("receiving_id IN (#{receiving[1].map(&:receiving_id).uniq.join(',')})").map(&:transfer_product_id) %>
+            <% pmd = ProductMutationDetail.joins(:product_mutation).where("type='PurchaseTransfer' AND product_mutations.id IN (#{pr_tp.push(0).join(',')}) AND destination_warehouse_id=#{branch.id}") %>
+            <td class='nowrap'>
+              <%= pmd.map(&:quantity).compact.sum %><%=  %>
+            </td>
+            <td class='nowrap'><%= format_currency pmd.map(&:hpp).compact.sum %></td>
+            <td class='nowrap'><%= format_currency pmd.map(&:value).compact.sum %></td>
+          <% } %>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

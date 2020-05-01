@@ -1,0 +1,20 @@
+<% total = 0 %>
+<% @tanggal.each_with_index do |ap, i| %>
+  <tr>
+    <td><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td><%= ap.due_date.strftime("%d %B %Y") %></td>
+    <td><%= ap.total_amount2 %></td>
+  </tr>
+  <% total += ap.total_amount2 %>
+<% end %>
+<tr>
+  <% if @tanggal.present? %>
+    <td></td>
+    <td><b>Total</b></td>
+    <td><%= total %></td>
+  <% else %>
+    <td colspan=3>
+      <%= raw '<center>No Data Available</center>' %>
+    </td>
+  <% end %>
+</tr>

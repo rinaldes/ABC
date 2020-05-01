@@ -1,0 +1,17 @@
+<% if params[:action] != "position_update" %>
+    <tr id="data_<%= position.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= position.id %>" type="checkbox" value="<%= position.id %>" onchange="cek_checkbox1();">
+            <label for="checkbox<%= position.id %>"></label>
+        </div>
+    </td>
+    <td><%= position.name %></td>
+    <td><%= position.leave_time %></td>
+    <td></td>    
+    <td></td>
+
+<% if params[:action] != "position_update" %>
+    </tr>
+<% end %>

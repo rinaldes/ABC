@@ -1,0 +1,21 @@
+<tr border=1 class="nested-fields">
+	<td>
+		<%= f.text_field :component, :label => false, :placeholder => 'Component', class: 'form-control'%>
+	</td>
+	<td>
+		<%= f.text_field :bobot, :label => false, :placeholder => 'Bobot', class: 'form-control'%>
+	</td>
+	<td colspan=3>
+		<%= f.fields_for :appraisal_component_indikators do |appraisal_component_indikator| %>
+        	<%= render 'appraisal_component_indikator_fields', :f => appraisal_component_indikator %>
+        <% end %>
+        <div class='links'>
+            <%= link_to_add_association 'add indicator', f, :appraisal_component_indikators, :data => {"association-insertion-method" => "before" } %>
+        </div>
+	</td>
+	<td>
+		<%= link_to_remove_association f, data: {:confirm => 'do you really want to do this?'}, class: 'btn btn-default btn-xs' do%>
+			<i class="fa fa-trash-o"></i>
+		<% end %>
+	</td>
+</tr>

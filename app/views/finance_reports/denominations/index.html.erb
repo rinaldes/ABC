@@ -1,0 +1,59 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Denomination Report List</h2>
+          <div style="margin-top:-10px;">
+            <div class="widget-body no-padding">
+              <%= render 'filter', :branchs => @branchs, :time => @time, :branch_id => @branch_id %>
+            </div>
+            <table class="table table-striped table-brequested table-bordered" style="width: 35%; float:left;">
+              <thead>
+                <tr>
+                  <th rowspan="2">No</th>
+                  <th colspan="2">Pendapatan</th>
+                </tr>
+                <tr>
+                  <th>Uraian</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id='list_income'><%= render 'list_income', :list_income => @list_income %></tbody>
+            </table>
+            <table class="table table-striped table-brequested table-bordered" style="width: 30%; float:left; border-right: none; border-left: none;">
+              <thead>
+                <tr>
+                  <th colspan="2">Biaya & Pengeluaran</th>
+                </tr>
+                <tr>
+                  <th>Uraian</th>
+                  <th>Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id='list_outcome'><%= render 'list_outcome', :list_outcome => @list_outcome, :cash_outs => @cash_outs %></tbody>
+            </table>
+            <table class="table table-striped table-brequested table-bordered" style="width: 35%;">
+              <thead>
+                <tr>
+                  <th colspan="3">Setoran Kasir</th>
+                </tr>
+                <tr>
+                  <th>Nominal</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id='list_deposit'><%= render 'list_deposit', :list_deposit => @list_deposit, :saldo_cash => @saldo_cash, :selisih => @selisih %></tbody>
+            </table>
+            <div id="list_net_sales">
+              <%= render 'list_net_sales', :list_net_sales => @list_net_sales %>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,47 @@
+<tr>
+  <th rowspan="3">Supplier</th>
+  <th rowspan="3">Tgl Receive</th>
+  <th rowspan="3">No.Faktur</th>
+  <th rowspan="3">Qty</th>
+  <th rowspan="3">Nominal Harga</th>
+  <th rowspan="3">Disc.1</th>
+  <th rowspan="3">Disc.2</th>
+  <th rowspan="3">Disc.3</th>
+  <th rowspan="3">Disc.4</th>
+  <th rowspan="3">Cost</th>
+  <th rowspan="3">ST</th>
+  <th rowspan="3">Long Term</th>
+  <th rowspan="3">Jatuh Tempo</th>
+  <th colspan="<%= 2 + @results.map{|a|a.other_charges.map(&:name).delete_if{|a|a.blank?}}.delete_if{|a|a.blank?}.map{|a|a.count}.sum %>">Potongan</th>
+  <% 1.upto(@repayments.map{|a|a.account_payables.count}.max).each{|account_payable| %>
+    <th colspan=6>Pembayaran <%= account_payable %></th>
+  <% } %>
+  <th rowspan="3">Total Potongan</th>
+  <th rowspan="3">Total Pembayaran</th>
+  <th rowspan="3">Sisa Hutang</th>
+  <th rowspan="3">Ket</th>
+</tr>
+<tr>
+  <th colspan="2">Retur</th>
+  <% @results.map{|a|a.other_charges.map(&:name).delete_if{|a|a.blank?}}.delete_if{|a|a.blank?}.each{|oc| %>
+    <% oc.each{|o| %>
+      <th rowspan="2"><%= o %></th>
+    <% } %>
+  <% } %>
+  <% 1.upto(@repayments.map{|a|a.account_payables.count}.max).each{|account_payable| %>
+    <th colspan=2>Cash / Transfer</th>
+    <th colspan=4>Giro</th>
+  <% } %>
+</th>
+<tr>
+  <th>Qty</th>
+  <th>Nominal</th>
+</th>
+<% 1.upto(@repayments.map{|a|a.account_payables.count}.max).each{|account_payable| %>
+  <th>Tgl</th>
+  <th>Nominal</th>
+  <th>Tgl</th>
+  <th>Bank</th>
+  <th>No Giro</th>
+  <th>Nominal</th>
+<% } %>

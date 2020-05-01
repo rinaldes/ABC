@@ -1,0 +1,184 @@
+<%= javascript_tag render(:template => 'schedules/jsManager.js', :formats => [:js]) %>
+ <div class="container-fluid">
+	<ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="#" class="active">Schedule</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-calendar"></i>
+    	<h3><span class="semi-bold">Schedule</span></h3>	
+    </div>  
+        <div class="grid simple">
+       	  <div class="grid-title no-border"></div>
+        	<div class="grid-body no-border">
+				<div class="row toolbar-block">
+                	<div class="col-md-4">
+                    	<div class="dataTables_filter" id="example3_filter">
+                        	<div class="controls">
+                                <div class="input-group">
+                                  <input id="filter" type="text" class="form-control" placeholder="Search Record">
+                                  <span class="input-group-addon ">
+                                   	<i class="fa fa-search"></i>
+                                  </span>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                    	
+                        <div class="toolbar pull-right" id="toolbar_main">
+                        	<div class="table-tools-actions">
+                                <button class="btn btn-success", data-toggle="modal" data-target="#addModal">
+                                    Add New <i class="fa fa-plus"></i>
+                                </button>                            
+                                <div class="btn-group">
+                                	<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Tools <i class="fa fa-angle-down"></i>
+                                  </button>
+                                    <ul class="dropdown-menu right-edge">
+                                      <li><%= link_to "Export to CSV",  schedules_path(format: "csv") %></li>
+                                      <li><%= link_to "Export to Excel", schedules_path(format: "xls") %></li>
+                                      <li data-toggle="modal" data-target="#uploadModal"><a>Import from CSV</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="toolbar pull-right" id="toolbar_def">
+                          <div class="table-tools-actions"> 
+                            <button class="btn" data-toggle="modal" data-target="#confirm_modal">
+                                <span class="fa fa-trash"></span> Remove
+                            </button> 
+                            <div class="separator">&nbsp;</div>
+                          </div>
+                        </div>
+                    
+                    	<div class="toolbar pull-right hide" id="toolbar_upload">
+                        	<div class="table-tools-actions">
+                            	<button class="btn"><span class="fa fa-cloud-upload"></span> Upload</button>
+                                <div class="separator">&nbsp;</div>
+                            </div>
+                        </div>
+                    	<div class="toolbar pull-right hide" id="toolbar_def">
+                        	<div class="table-tools-actions">
+                            	<button class="btn"><span class="fa fa-edit"></span> Edit</button> 
+                                <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                <div class="separator">&nbsp;</div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            	<table class="table no-more-tables table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:1%"><div class="checkbox check-default">
+                              <input id="checkbox" type="checkbox" value="1" class="checkall">
+                              <label for="checkbox"></label>
+                            </div></th>
+                            <th style="width:9%">Shift Name</th>
+                            <th style="width:22%">Employee</th>
+                            <th style="width:22%">Periode</th>
+                        </tr>
+                    </thead>
+                    <tbody id='dataTable' class="searchable">
+                      <% if @schedules.count != 0 %>
+                        <% @schedules.each do |schedule|%>
+                          <%= render 'data', :schedule => schedule %>
+                        <% end %>
+                      <% else %>
+                        <tr>
+                          <td colspan='8' align='center'>No Data Found !</td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                </table>
+                
+                <div class="row dataTables_wrapper">
+                	<div class="col-md-12">
+                    	<div class="dataTables_paginate paging_bootstrap pagination">
+                        	<ul>
+                                <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            </ul>
+                        </div>
+                    	<div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+	$('table .checkbox input').click( function() {			
+		if($(this).is(':checked')){			
+			$(this).parent().parent().parent().toggleClass('row_selected');
+			if($(this).parent().parent().parent().hasClass('new-rec')){
+				$('#toolbar_upload').removeClass('hide');
+				$('#toolbar_def').addClass('hide');	
+			}else{
+				$('#toolbar_upload').addClass('hide');
+				$('#toolbar_def').removeClass('hide');	
+			}					
+		}else{	
+			$(this).parent().parent().parent().toggleClass('row_selected');	
+			$('#toolbar_upload, #toolbar_def').addClass('hide');
+		}
+	});
+</script>
+
+<!-- Modal Session -->
+<!-- Modal Add -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add New Schedule</h4>
+      </div>
+      <%= render 'form', :schedule => @schedule, :shifts => @shifts, :organizations => @organizations %>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Upload -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Import Schedules</h4>
+      </div>
+      <%= form_tag import_schedules_path, multipart: true do %>
+        <div class="modal-body">
+            <%= file_field_tag :file %>
+        </div>
+        <div class="modal-footer">
+          <%= link_to "Download Template", schedules_path(format: "csv", :a => "a"), :class => "btn btn-success" %>
+          <%= submit_tag "Import", :class => "btn btn-primary"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Remove -->
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete_schedule();">Yes</button>
+        </div>
+      </div>
+    </div>
+</div>

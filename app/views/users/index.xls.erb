@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <% @fields.each do |field| %>
+          <Cell><Data ss:Type="String"><%= field.gsub("_", " ").upcase %></Data></Cell>
+        <% end %>
+      </Row>
+    <% @users.each do |user| %>
+      <Row>
+        <% @fields.each do |field| %>
+          <Cell><Data ss:Type="String"><%= user[field] %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

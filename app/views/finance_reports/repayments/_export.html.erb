@@ -1,0 +1,5 @@
+<% if @repayments.present? %>
+  <%= link_to export_finance_reports_repayments_path(format: "xlsx", :supplier_id => @supplier_id), :class => "btn btn-labeled btn-primary edit-btn-primary" do %>
+    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLS
+  <% end %>
+<% end %>

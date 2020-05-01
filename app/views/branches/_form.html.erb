@@ -1,0 +1,267 @@
+<link rel="stylesheet" href="/css/jquery-ui-1.11.4.css">
+<script src="/js/jquery-1.10.2.js"></script>
+<script src="/js/jquery-ui-1.11.4.js"></script>
+<style>
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: 96%;
+    padding: 0;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+  }
+  .custom-checkbox {
+    margin-bottom: 15px;
+  }
+
+</style>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Branch</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div id='notification'></div>
+  
+  <div id="map-canvas"></div>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-branch">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Branch</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <%= form_for @branch, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <div id='departments' style='display: none'></div>
+              <%= f.hidden_field :lat %>
+              <%= f.hidden_field :long %>
+              <fieldset> <!-- tambah supplier -->
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-4 label">Nama Cabang <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :office_name, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Deskripsi <span class='important'>*</span></label>
+                      <label class="col-md-8 textarea custom-input-box"><%= f.text_area :description, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Gudang <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :warehouse, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Head Office <span class='important'>*</span></label>
+                      <label class="col-md-8 custom-input-box">
+                        <%= f.select :head_office_id, options_for_select(@head_offices.map{|ho|[ho.office_name, ho.id]}, selected: @branch.head_office_id), {include_blank: 'Please Select'},
+                          {class: 'form-control', onclick: "filter_department(this)"} %>
+                      </label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Penanggung Jawab (CP) <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= text_field_tag :username, (@branch.user.username rescue ''), :class => "input-sm", onkeyup: "$(this).next().next().hide()" %>
+                        <a class="ui-button ui-widget ui-state-default ui-button-icon-only custom-combobox-toggle ui-corner-right" tabindex="-1" onclick="$(this).next().show()">
+                          <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-s"></span><span class="ui-button-text"></span>
+                        </a>
+                        <ul style="display: none; width: 100%; top: 29px;" tabindex="0" id="ui-id-1" class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content">
+                          <% @users.each{|user| %>
+                            <li tabindex="-1" id="ui-id-2" class="ui-menu-item">
+                              <%= user[0] %>
+                            </li>
+                          <% } %>
+                        </ul>
+                      </label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-4 label">Departement</label>
+                      <label class="col-md-8 label"><button type="button" class="btn btn-primary" onclick="$('#myModal').modal()" style="padding:1px 5px;">Browse</button></label>
+                      <label class="col-md-9 label" id='selected_department'>
+                        Selected Department : 
+                        <% @branch.departments.each do |department| %>
+                           <%= department.name %> 
+                        <% end %>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Tlp <span class='important'>*</span></label>
+                      <label class="col-md-10 input custom-input-box"><%= f.text_field :phone_number, :class => "input-sm is-number" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Fax <span class='important'>*</span></label>
+                      <label class="col-md-10 input custom-input-box"><%= f.text_field :fax_number, :class => "input-sm is-number" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No HP <span class='important'>*</span></label>
+                      <label class="col-md-10 input custom-input-box"><%= f.text_field :mobile_phone, :class => "input-sm is-number" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-2 label">Alamat <span class='important'>*</span></label>
+                      <label class="col-md-10 textarea custom-input-box"><%= f.text_area :address, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-2 label">Short Address <span class='important'>*</span></label>
+                      <label class="col-md-10 textarea custom-input-box"><%= f.text_area :short_address, maxlength: 40 %></label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <!-- <button type="button" class="btn btn-primary save">Submit</button> -->
+                <button type="button" class="btn btn-primary save">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            <% end %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Department</h4>
+      </div>
+      <div class="modal-body" style="color:#5E5E5E">
+        <% @departments.each{|department| %>
+          <% if ((params[:branch][:branch_departments_attributes]["#{department.id}"][:department_id]) rescue (@branch.office_departments.find_by_department_id department.id)) %>
+            <%= check_box_tag "branch[branch_departments_attributes][#{department.id}][department_id]", department.id, 1, :class => "depart-check" %><label><%= department.name %></label>
+          <% else %>
+            <%= check_box_tag "branch[branch_departments_attributes][#{department.id}][department_id]", department.id, false,:class => "depart-check" %><label><%= department.name %></label>
+          <% end %>
+          <br/>
+        <% } %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<SCRIPT>
+
+  
+
+  function filter_department(obj){
+    $.ajax({
+      url: "/departments/departments_list",
+      dataType: "script",
+      data: {office_id: obj.value},
+      success: function (data){
+        response(data)
+      }
+    });
+  }
+  $(document).ready(function() {
+    $(window).unbind('gMapsLoaded');
+    $(window).bind('gMapsLoaded', function(){});
+    window.loadGoogleMaps();
+
+    $(".depart-check").change(function(){
+      deps = []
+      $(".depart-check").each(function(){
+        if (this.checked)
+          deps.push($(this).next().html())
+      })
+      $("#selected_department").html(deps.join(', '));
+    });
+
+    $('.save').click(function(){
+      var geocoder = new google.maps.Geocoder();
+      var map = new google.maps.Map(document.getElementById("map-canvas"), {zoom: 17, center: new google.maps.LatLng(-34.397, 150.644)});
+      var address = $('#branch_address').val();
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          $('#branch_lat').val(results[0].geometry.location.lat())
+          $('#branch_long').val(results[0].geometry.location.lng())
+          for (i=0; i<$('.modal-body input[type=checkbox]').length; i++){
+            if($('.modal-body input[type=checkbox]')[i].checked)
+              $('#departments').append("<input name='branch[office_departments_attributes]["+i+"][department_id]' value="+$('.modal-body input[type=checkbox]')[i].value+" type='hidden'>")
+          }
+          clone_inputs()
+          setTimeout(function(){
+            $.ajax(
+            {
+              url: "/branches<%= "/#{@branch.id}" if @branch.id.present? %>",
+              dataType: "script",
+              method: 'POST',
+              data: $("form").serialize(),
+              success: function (data){
+                response(data)
+              },
+            });
+          }, 1000);
+        } else
+          alert("Geocode was not successful for the following reason: " + status);
+      });
+    })
+
+    $("#username").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/users/autocomplete_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    //$('#supplier_department_id').combobox()
+  });
+  function beforeSave(){
+    var geocoder = new google.maps.Geocoder();
+      var map = new google.maps.Map(document.getElementById("map-canvas"), {zoom: 17, center: new google.maps.LatLng(-34.397, 150.644)});
+      var address = $('#branch_address').val();
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          $('#branch_lat').val(results[0].geometry.location.lat())
+          $('#branch_long').val(results[0].geometry.location.lng())
+          for (i=0; i<$('.modal-body input[type=checkbox]').length; i++){
+            if($('.modal-body input[type=checkbox]')[i].checked)
+              $('#departments').append("<input name='branch[office_departments_attributes]["+i+"][department_id]' value="+$('.modal-body input[type=checkbox]')[i].value+" type='hidden'>")
+          }
+          clone_inputs()
+          setTimeout(function(){
+            $.ajax(
+            {
+              url: "/branches",
+              dataType: "script",
+              method: 'POST',
+              data: $("form").serialize(),
+              success: function (data){
+                response(data)
+              },
+            });
+          }, 1000);
+        } else
+          alert("Geocode was not successful for the following reason: " + status);
+      });
+    
+  }
+</SCRIPT>
+<script src="/js/jquery-2.1.1.min.js"></script><!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->

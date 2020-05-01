@@ -1,0 +1,14 @@
+<%= "<tr id=\"data_#{certification.id}\">".html_safe if params[:action] != "update_certification" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= certification.id %>" type="checkbox" value="<%= certification.id %>" class="child-certification child-box" data-section="certification" data-certification="child">
+    <label for="checkbox<%= certification.id %>"></label>
+  </div>
+</td>
+    <td><%= certification.institution %></td>
+    <td><%= certification.certification_number %></td>
+    <td><%= certification.name_of_certification %></td>
+    <td><%= certification.date_of_certification %></td>
+    <td><%= certification.description %></td>
+    <td><%= certification.attachment %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_certification" %>

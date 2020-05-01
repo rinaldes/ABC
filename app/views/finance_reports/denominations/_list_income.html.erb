@@ -1,0 +1,77 @@
+<tr>
+  <td>1</td>
+  <td>Pembayaran Tunai</td>
+  <td><%= format_currency(list_income["payment_cash"]) %></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>BTP Masuk (Tunai)</td>
+  <td><%= format_currency(list_income["btp_income_cash"]) %></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Dp. Pembelian (Masuk)</td>
+  <td><%= format_currency(list_income["dp_buying_in"]) %></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Charge Merchant (Tunai)</td>
+  <td><%= format_currency(list_income["charge_merchant"]) %></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Service</td>
+  <td><%= format_currency(list_income["service"]) %></td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Buku Katalog/Kertas Kado</td>
+  <td><%= format_currency(list_income["catalogue_book"]) %></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td><%= format_currency(list_income["total"]) %></td>
+</tr>
+<tr>
+  <td>&nbsp</td>
+  <td>&nbsp</td>
+  <td>&nbsp</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>DP. Pembelian (Keluar)</td>
+  <td><%= format_currency(list_income["dp_buying_out"]) %></td>
+</tr>
+<tr>
+  <td colspan="2" rowspan="2">Pendapatan Tunai</td>
+  <td rowspan="2"><%= format_currency(list_income["income_cash"]) %></td>
+</tr>
+<tr></tr>
+<tr>
+  <td colspan="3">&nbsp</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Omzet - Koperasi</td>
+  <td><%= format_currency(list_income["omzet_koperasi"]) %></td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>Credit Card</td>
+  <td><%= format_currency(list_income["credit_card"]) %></td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>Debit Card</td>
+  <td><%= format_currency(list_income["debit_card"]) %></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>Tukar Point</td>
+  <td><%= format_currency(list_income["voucher_amt"]) %></td>
+</tr>
+<tr>
+  <td colspan="2">Pendapatan Non Tunai</td>
+  <td><%= format_currency(list_income["income_non_cash"]) %></td>
+</tr>

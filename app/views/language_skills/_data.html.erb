@@ -1,0 +1,12 @@
+<%= "<tr id=\"data_#{language_skill.id}\">".html_safe if params[:action] != "update_language_skill" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= language_skill.id %>" type="checkbox" value="<%= language_skill.id %>" class="child-language_skill child-box" data-section="language_skill" data-languageskill="child">
+    <label for="checkbox<%= language_skill.id %>"></label>
+  </div>
+</td>
+    <td><%= language_skill.language %></td>
+    <td><%= language_skill.reading %></td>
+    <td><%= language_skill.writing %></td>
+    <td><%= language_skill.speaking %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_language_skill" %>

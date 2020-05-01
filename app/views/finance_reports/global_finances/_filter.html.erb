@@ -1,0 +1,22 @@
+<%= form_tag finance_reports_global_finances_path, method: "GET", class: "smart-form", :remote => true  do %>
+  <fieldset>
+    <div class="row">
+      <section class="col col-6">
+        <section>
+          <label class="col-md-4 label">Month</label>
+          <div class="col-md-6 input custom-input-box">
+            <%= select_month(time, field_name: 'month', class: "form-control") %>
+          </div>
+          <label class="col-md-4 label">Year</label>
+          <div class="col-md-6 input custom-input-box">
+            <%= select_year(time, start_year: 2010, end_year: time.year, class: "form-control") %>
+          </div>
+          <div class="col-md-4"></div>
+          <div class="col-md-6">
+            <%= submit_tag "Submit", :class => "btn btn-primary", :style => "padding:5px;" %>
+          </div>
+        </section>
+      </section>
+    </div>
+  </fieldset>
+<% end %>

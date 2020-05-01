@@ -1,0 +1,86 @@
+<thead>
+  <tr><td align='center' colspan=<%= @branches.count*3+3 %>>RETUR</td></tr>
+  <tr>
+    <td rowspan=2>MINGGU</td>
+    <td rowspan=2>HARI </td>
+    <td rowspan=2>TGL</td>
+  </tr>
+  <tr>
+    <% @branches.each{|branch| %>
+      <td align='center' colspan=3><%= branch.description %></td>
+    <% } %>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <% @branches.each{|branch| %>
+      <td>QTY</td>
+      <td>COST</td>
+      <td>VALUE</td>
+    <% } %>
+  </tr>
+</thead>
+<% week = 0 %>
+<% total_qty = {} %>
+<% total_cost = {} %>
+<% total_value = {} %>
+<% grand_total_qty = {} %>
+<% grand_total_cost = {} %>
+<% grand_total_value = {} %>
+<% @branches.each{|branch| %>
+  <% grand_total_qty[branch.id.to_s] = 0 %>
+  <% grand_total_cost[branch.id.to_s] = 0 %>
+  <% grand_total_value[branch.id.to_s] = 0 %>
+  <% total_qty[branch.id.to_s] = 0 %>
+  <% total_cost[branch.id.to_s] = 0 %>
+  <% total_value[branch.id.to_s] = 0 %>
+<% } %>
+<tbody>
+  <% "#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.day.upto("#{params[:year]}-#{sprintf('%02d', params[:month])}-01".to_datetime.end_of_month.day).each_with_index{|date, i| %>
+    <% date = "#{params[:year]}-#{sprintf('%02d', params[:month])}-#{date}".to_date %>
+    <tr>
+      <% if date.day == 1 || date.strftime('%A') == 'Monday' %>
+        <% week += 1 %>
+        <td rowspan=<%= date.end_of_week.day>date.day ? date.end_of_week.day-date.day+1 : date.end_of_month.day-date.day+1 %>><%= week %></td>
+      <% end %>
+      <td><%= date.strftime('%A') %></td>
+      <td><%= date.day %></td>
+      <% @branches.each_with_index{|branch, idx| %>
+        <% rthb = ReturnsToHo.where("mutation_date BETWEEN '#{date} 00:00:00' AND '#{date} 23:59:59' AND origin_warehouse_id=#{branch.id}") %>
+        <% total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+        <% total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+        <% total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+        <td class='nowrap'><%= rthb.map(&:total_quantity).sum %></td>
+        <% grand_total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+        <% grand_total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+        <% grand_total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+        <td class='nowrap'><%= format_currency rthb.map(&:total_price).sum %></td>
+        <td class='nowrap'><%= format_currency rthb.map(&:sell_price).sum %></td>
+      <% } %>
+    </tr>
+    <% if date.strftime('%A') == 'Sunday' || date.day == date.end_of_month.day %>
+      <tr>
+        <td colspan=3>Total Per Minggu</td>
+        <% @branches.each{|branch| %>
+          <td class='nowrap'><%= total_qty[branch.id.to_s] %></td>
+          <td class='nowrap'><%= format_currency total_cost[branch.id.to_s] %></td>
+          <td class='nowrap'><%= format_currency total_value[branch.id.to_s] %></td>
+        <% } %>
+      </tr>
+      <% @branches.each{|branch| %>
+        <% total_qty[branch.id.to_s] = 0 %>
+        <% total_cost[branch.id.to_s] = 0 %>
+        <% total_value[branch.id.to_s] = 0 %>
+      <% } %>
+    <% end %>
+  <% } %>
+  <tr>
+    <td colspan=3>GRAND TOTAL</td>
+    <% @branches.each{|branch| %>
+      <td class='nowrap'><%= format_currency grand_total_qty[branch.id.to_s] %></td>
+      <td class='nowrap'><%= format_currency grand_total_cost[branch.id.to_s] %></td>
+      <td class='nowrap'><%= format_currency grand_total_value[branch.id.to_s] %></td>
+    <% } %>
+  </tr>
+</tbody>

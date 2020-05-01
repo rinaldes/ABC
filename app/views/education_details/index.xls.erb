@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Grade</Data></Cell>
+        <Cell><Data ss:Type="String">Institution</Data></Cell>
+        <Cell><Data ss:Type="String">Start</Data></Cell>
+        <Cell><Data ss:Type="String">End</Data></Cell>
+        <Cell><Data ss:Type="String">Major</Data></Cell>
+        <Cell><Data ss:Type="String">Final Score</Data></Cell>
+      </Row>
+    <% @education_details.each do |education_detail| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= education_detail.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.grade %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.institution %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.start %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.major %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= education_detail.final_score %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

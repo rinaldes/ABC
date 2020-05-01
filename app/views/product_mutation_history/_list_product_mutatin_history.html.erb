@@ -1,0 +1,27 @@
+<% @productmutationhistories.each_with_index do |productmutationhistory, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td class="hidden-phone"><%= productmutationhistory.created_at.strftime('%d-%m-%Y') rescue '' %></td>
+    <% if @product.blank? %>
+      <td class="hidden-phone"><%= (link_to (productmutationhistory.product_detail.product_size.product.barcode), "/product_mutation_history/#{productmutationhistory.product_detail_id}") rescue '' %></td>
+      <td class="hidden-phone"><%= (link_to ((productmutationhistory.product_detail.warehouse.office_name rescue nil)), "/product_mutation_history/#{productmutationhistory.product_detail_id}") %></td>
+    <% end %>
+    <td class="hidden-phone"><%= productmutationhistory.mutation_type %></td>
+    <td class="hidden-phone"><%= productmutationhistory.quantity_type %></td>
+    <td class="hidden-phone"><%= productmutationhistory.old_quantity.to_i %></td>
+    <td class="hidden-phone"><%= productmutationhistory.moved_quantity %></td>
+    <td class="hidden-phone"><%= productmutationhistory.new_quantity %></td>
+  </tr>
+<% end %>
+
+<tr>
+  <td colspan=10>
+    <% if @productmutationhistories.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@productmutationhistories, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

@@ -1,0 +1,6 @@
+<% if @leave_request.save %>
+	$('#leave_request tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#leave_request tbody').prepend("<%= j(render 'data', :leave_request => @leave_request) %>"); 
+<% else %>
+<% end %>

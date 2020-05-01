@@ -1,0 +1,15 @@
+<% params[:cancel] ||= false %>
+<% unless params[:cancel] %>
+	$("#set-question-form").html("<%= j(render '/wizards/set_question', id: params[:id]) %>")
+	$("#question_content").html("<%= j(render '/values/' + session[current_user.id.to_s]['question'][params[:id]]['type'], id: params[:id]) %>")
+	<% if session[current_user.id.to_s]['question'][params[:id]]['type'] == "header_text" %>
+		$("#question_head").html("")
+	<% end %>
+	set_hide_button()
+	$('html, body').animate({
+    scrollTop: $("#set-question-form").offset().top
+	}, 2000);
+<% else %>
+	$("#set-question-form").html("")
+<% end %>
+get_view_logic("<%= session[current_user.id.to_s]['question'][params[:id]]['type'] %>")

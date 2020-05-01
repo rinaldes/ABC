@@ -1,0 +1,116 @@
+<thead>
+  <tr>
+    <th style="vertical-align: middle;" rowspan=3>Minggu</th>
+    <th style="vertical-align: middle;" rowspan=3>Hari</th>
+    <th style="vertical-align: middle;" rowspan=3>Tgl</th>
+    <th style="vertical-align: middle;" rowspan=2 colspan=2>Target</th>
+    <th style="vertical-align: middle;" rowspan=3>%</th>
+    <th style="vertical-align: middle;" rowspan=2 colspan=2>Realisasi</th>
+    <th style="vertical-align: middle;" rowspan=3>%</th>
+    <th style="vertical-align: middle;" colspan=4>Barang Masuk</th>
+    <th style="vertical-align: middle;" colspan=4>Barang Keluar</th>
+    <th style="vertical-align: middle;" rowspan=2 colspan=2>Kerugian Diskon</th>
+    <th style="vertical-align: middle;" rowspan=3>%</th>
+  </tr>
+  <tr>
+    <th style="vertical-align: middle;" colspan=2>Transfer ke Toko</th>
+    <th style="vertical-align: middle;" colspan=2>Mutasi Antar Toko</th>
+    <th style="vertical-align: middle;" colspan=2>Return to HO</th>
+    <th style="vertical-align: middle;" colspan=2>Mutasi Antar Toko</th>
+  </tr>
+  <tr>
+    <% 7.times do %>
+      <td>Qty</td>
+      <td>Value</td>
+    <% end %>
+  </tr>
+</thead>
+<tbody>
+  <%
+    period = "01 #{bln} #{year}".to_time
+    tanggal_satu, minggu_pertama, tanggal_akhir = period.beginning_of_month, period.beginning_of_week, period.end_of_month
+    minggu_ke, mngg, mngg2 = 0, 1, ''
+    (tanggal_satu.day..tanggal_akhir.day).each do |tgl|
+  %>
+  <% if (tanggal_satu + (tgl-1).day).strftime("%A") == "Monday" && tgl != 1 %>
+    <tr>
+      <!-- Dummy -->
+      <th><%= rand(100).to_f %>%</th>
+      <th colspan="2">Total</th>
+      <th><%= rand(10000) %></th>
+      <th><%= format_currency rand(1000000000).to_f %></th>
+      <th><%= rand(25).to_f %>%</th>
+      <% 14.times do %>
+        <td></td>
+      <% end %>
+      <!-- Dummy End -->
+    </tr>
+  <% end %>
+  <tr>
+    <% if (tanggal_satu + (tgl-1).day).strftime("%A") == "Monday" || mngg == 1
+      case mngg
+      when 1
+        mngg2 = "I"
+        banyak_hari = ((minggu_pertama + mngg.week).day - (tanggal_satu).day)
+      when 2
+        mngg2 = "II"
+        banyak_hari = 7
+      when 3
+        mngg2 = "III"
+        banyak_hari = 7
+      when 4
+        mngg2 = "VI"
+        banyak_hari = ((tanggal_akhir).day - (minggu_pertama + minggu_ke.week).day)
+        banyak_hari = banyak_hari > 6 ? 7 : banyak_hari+1
+      when 5
+        mngg2 = "V"
+        banyak_hari = ((tanggal_akhir).day - (minggu_pertama + minggu_ke.week).day)
+        banyak_hari = banyak_hari > 6 ? 7 : banyak_hari+1
+      end
+    %>
+      <th id="mngg_<%= period.month %>_<%= tgl %>" style="text-align: center; vertical-align: middle;"><%= mngg2 %></th> 
+      <% mngg += 1 %>
+      <script type="text/javascript">
+        $("#mngg_<%= period.month %>_<%= tgl %>").attr("rowspan", "<%= banyak_hari %>")
+      </script>
+    <% end %>
+    <td><%= (tanggal_satu + (tgl-1).day).strftime("%A") %></td>
+    <td><%= tgl %></td>
+    <!-- Dummy -->
+      <td><%= rand(1000) %></td>
+      <td><%= format_currency rand(10000000).to_f %></td>
+      <td><%= rand(10).to_f %>%</td>
+      <% 14.times do %>
+        <td></td>
+      <% end %>
+    <!-- Dummy End -->
+  </tr>
+  <%
+    if (tanggal_satu + (tgl-1).day).strftime("%A") == "Monday"
+      minggu_ke += 1
+    end
+  %>
+  <% end %>
+  <tr>
+    <!-- Dummy -->
+    <th><%= rand(100).to_f %>%</th>
+    <th colspan="2">Total</th>
+    <th><%= rand(10000) %></th>
+    <th><%= format_currency rand(1000000000).to_f %></th>
+    <th><%= rand(25).to_f %>%</th>
+    <% 14.times do %>
+      <td></td>
+    <% end %>
+    <!-- Dummy End -->
+  </tr>
+  <tr><td> </td></tr>
+  <tr>
+    <th colspan="3">Grand Total</th>
+    <th><%= rand(1000) %></th>
+      <th><%= format_currency rand(10000000).to_f %></th>
+      <th><%= rand(10).to_f %>%</th>
+      <% 14.times do %>
+        <td></td>
+      <% end %>
+  </tr>
+</tbody>

@@ -1,0 +1,46 @@
+<thead>
+  <tr>
+    <td rowspan=2>Tgl Masuk</td>
+    <td rowspan=2>Nama Supplier</td>
+    <% @branches.each{|branch| %>
+      <td colspan=3><%= branch.description %></td>
+    <% } %>
+    <td rowspan=2>KETERANGAN</td>
+  </tr>
+  <tr>
+    <% 1.upto(@branches.size) do |branch| %>
+      <td rowspan=2>QTY</td>
+      <td rowspan=2>Cost</td>
+      <td rowspan=2>Value</td>
+    <% end %>
+  </tr>
+</thead>
+<tbody>
+  <% 
+    @u_receive.each{|receiving|
+      pt = receiving.purchase_transfer
+  %>
+    <tr>
+      <td class='nowrap'><%= pt.mutation_date.strftime('%d %B %Y') %></td>
+      <td class='nowrap'><%= pt.supplier.name %></td>
+      <% 
+        @branches.each{|branch|
+          if pt.destination_warehouse_id == branch.id
+            total_qty = pt.total_quantity
+            total_price = pt.total_price
+            total_value = pt.total_value 
+      %>
+        <td><%= total_qty %></td>
+        <td><%= format_currency total_price %></td>
+        <td><%= format_currency total_value %></td>
+      <% else %>
+        <td></td>
+        <td></td>
+        <td></td>
+      <% 
+          end
+        } %>
+      <td><%= pt.note %></td>
+    </tr>
+  <% } %>
+</tbody>

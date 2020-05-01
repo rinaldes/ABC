@@ -1,0 +1,27 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Repayment Report List</h2>
+          <div style="margin-top:-10px;">
+            <div class="widget-body no-padding">
+              <%= render 'filter' %>
+            </div>
+            <div id="repayment_export">
+              <%= render 'export' %>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped table-brequested table-hover table-bordered overflow" width="100%">
+                <thead id="repayment_header_list"><%= render 'header_list' %></thead>
+                <tbody id='repayment_list'><%= render 'list' %></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

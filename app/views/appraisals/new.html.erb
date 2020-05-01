@@ -1,0 +1,117 @@
+<style type="text/css">
+    .ui-autocomplete {
+        z-index:2147483647;
+        width: 174px !important;
+    }
+</style>
+<div class="container-fluid">
+	<ul class="breadcrumb">
+
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="#" class="active">Appraisal</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-user"></i>
+    	<h3>Appraisal - <span class="semi-bold">New</span></h3>	
+    </div> 
+
+    <div class="grid simple">
+	<div class="grid-title no-border"></div>
+	<div class="grid-body no-border">
+		<%= form_for @appraisal do |f|%>
+			<div class="form-group row edit-field">
+                <label class="form-label col-sm-2">Employee Name</label>
+                <div class="controls col-sm-3">
+                	<%= f.hidden_field :employee_id %>
+                    <%= f.autocomplete_field :created_at, autocomplete_employee_name_blast_messages_url, class: "autocomplete-field-input", placeholder: "Employee", :onchange => "setValue()" %>
+                </div>
+           	</div>
+
+           	<div class="form-group row edit-field">
+                <label class="form-label col-sm-2">Organization</label>
+                <div class="controls col-sm-3">				 
+                    <%= text_field_tag :organization,'', :placeholder => "Orgnization", :class => "form-control", :disabled => true %>
+                </div>
+         	</div>
+
+         	<div class="form-group row edit-field">
+                <label class="form-label col-sm-2">Evaluator</label>
+                <div class="controls col-sm-3">
+                    <%= f.autocomplete_field :evaluator, autocomplete_employee_name_blast_messages_url, class: "autocomplete-field-input", placeholder: "Evaluator" %>
+                </div>
+         	</div>
+
+         	<div class="form-group row edit-field">
+                <label class="form-label col-sm-2">Periode</label>
+                <div class="controls col-sm-6 row">	:					 
+                    <div class="col-xs-3">
+                    	<div class="radio radio-success">
+                            <input id="yes" type="radio" name="optionyes" value="yes" checked="checked" />
+                            <label for="yes">Mid Year</label>
+                            <input id="no" type="radio" name="optionyes" value="no" />
+                            <label for="no">Annual</label>
+                          </div>
+                    </div>
+                    <div class="col-xs-8">
+                    	<div class="pull-left input-append success date p-r-10">
+                            <%= f.text_field :start_period, class: "form-control full-width"%>
+                            <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                        </div>
+                        <div class="pull-left p-l-50">to</div>
+                        <div class="pull-right input-append success date p-l-10">
+                            <%= f.text_field :end_period, class: "form-control full-width"%>
+                            <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                        </div>
+                    </div>
+                </div>
+         	</div>
+        	<div class="col-md-12">
+				<div class="row">
+		            <div class="col-md-12">
+		                <section class="panel">
+		                    <header class="panel-heading">
+		                        Man Power
+		                    </header>
+		                    <div class="panel-body toggle-heading">
+		                    	<div class="col-md-12">
+			                        <div class="toolbar pull-right" id="toolbar_main">
+				                    	<div class="table-tools-actions">
+				                        	<%= link_to_add_association f, :appraisal_components, :"data-association-insertion-node" => "tbody", :"data-association-insertion-method" => "append", :class => "btn btn-success" do %>
+			                                    <span class="fa fa-plus"></span> add component
+			                                <% end %>
+				                        </div>
+				                    </div>
+				                </div>
+				                <div class="col-md-12">
+			                    	<%= render 'table_new', :f => f %>
+			                    </div>
+		                    </div>
+		                </section>
+		            </div>
+		        </div>
+		        <%= f.submit "Save", class: 'btn btn-success btn-cons'%>
+            </div> <!-- col-md-12 -->
+
+        <% end %>
+    </div> <!-- grid-body no-border -->
+    </div> <!-- grid simple -->
+</div> <!-- container-fluid -->
+
+<script type="text/javascript">
+		$('.input-append.date').datepicker({
+			autoclose: true,
+			todayHighlight: true
+	   });
+
+	function setValue(){
+		$.ajax({
+	        url: '<%= get_value_appraisals_path %>',
+	        type: 'get',
+	        data: {
+	          name: $('#appraisal_created_at').val()
+	        }
+	    })
+	}
+
+</script>

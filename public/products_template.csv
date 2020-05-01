@@ -1,0 +1,5 @@
+barcode,brand,article,size,department,m_class,unit,colour,colour 2,colour 3,colour 4,colour_code,purchase_price,selling_price,status1,status2,status3,status4,status5,first_po,margin_percent,percent_bandrol,percent_eceran,percent_member_eceran,percent_kredit,harga_bandrol,harga_eceran,harga_member_eceran,harga_kredit,min_stock
+,Arlene,arn,Generic,Baju,Puring Tipis,Buah,White,,,,wht,100000,,Active,Catalog,Konsinyasi,Slow Moving,Private Brand,,100,70,60,50,40,,,,,9
+,Abc 5,ab5,Medium,Baju,Puring Tebal,Buah,White,,,,wht,100000,,Active,Catalog,Non-Konsinyasi,Slow Moving,Normal Brand,,,40,60,50,100000,,,,,8
+,Abc 6,ab6,Medium,Baju,Puring Tebal,Buah,White,,,,wht,100000,,Active,Non-Catalog,Non-Konsinyasi,Slow Moving,Private Brand,,,70,50,30,10,,,,,7
+,Abc 7,ab7,Medium,Baju,Puring Tebal,Buah,White,,,,wht,100000,,Active,Catalog,Non-Konsinyasi,Slow Moving,Normal Brand,,,,,,,150000,200000,250000,300000,6

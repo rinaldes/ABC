@@ -1,0 +1,17 @@
+<% @sod_eods.each do |sod_eod| %>
+  <tr>
+    <td><%= format_date(sod_eod.sod_eod_date) rescue '' %></td>
+    <td><%= format_currency(sod_eod.office.office_name) rescue '' %></td>
+    <td><%= sod_eod.session rescue '' %></td>
+    <td><%= format_time(sod_eod.start_time) rescue '' %></td>
+    <td><%= format_currency(sod_eod.start_amount) rescue '' %></td>
+    <td><%= format_time(sod_eod.end_time) rescue '' %></td>
+    <td><%= format_currency(sod_eod.end_amount) rescue '' %></td>
+    <td><%= format_currency(sod_eod.actual_end_amount) rescue '' %></td>
+    <td><%= format_currency(sod_eod.difference) rescue '' %></td>
+    <td><%= truncate_text(sod_eod.note) rescue '' %></td>
+    <% if current_user.can_manage_sod_eod? %>
+    <td><%= link_to raw('<i class="fa fa-pencil" rel="tooltip" data-placement="left"></i>'), edit_finances_sod_eod_path(sod_eod.id), class: "btn btn-primary btn-xs custom-edit-btn" %></td>
+    <% end %>
+  </tr>
+<% end %>

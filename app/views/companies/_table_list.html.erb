@@ -1,0 +1,47 @@
+<table class="table no-more-tables table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Company Code</th>
+            <th>Joining Date</th>
+            <th>Company Name</th>
+            <th>Address</th>
+            <th>Owner</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Username Master</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id='dataTable'>
+      <% if companies.count > 0 %>
+        <% companies.each do |company| %>
+                <tr class="new-rec" id="data_<%= company.id %>">
+                    <td><%= company.name %></td>
+                    <td><%= company.ip_address%></td>
+                    <td><%= company.port%></td>
+                    <td>
+                      <%= link_to edit_company_path(company.id), :class => 'fa fa-pencil', remote: true do %><% end %>
+                      
+                      <%= link_to '', company, :method => :delete, :data => {:confirm => "You Sure?"}, :class => 'fa fa-trash-o' %>
+                    </td>
+                </tr>
+            <% end %>
+        <% else %>  
+          <tr>
+            <td colspan="6" align="center">No company data found!</td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<div class="row dataTables_wrapper">
+  <div class="col-md-12">
+      <div class="dataTables_paginate paging_bootstrap pagination">
+          <%= pagination_links(companies, :params => {:controller => controller_name, :action => action_name, :company => {:name => (params[:company][:name] if params[:user].present?), :ip_address => (params[:company][:ip_address] if params[:user].present?), :port => (params[:company][:port] if params[:user].present?)}}) %>
+        </div>
+        <% base = (params[:page].present? ? params[:page].to_i-1 : 0)*companies.per_page %>
+      <% if companies_count > 0 %>
+          <div class="dataTables_info">Showing <b><%= base+1 %> to <%= base+companies.per_page %></b> of <%= @companies_count %> entries</div>
+      <% end %>
+    </div>
+</div>

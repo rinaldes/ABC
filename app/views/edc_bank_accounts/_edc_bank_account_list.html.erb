@@ -1,0 +1,30 @@
+<% @edc_bank_accounts.each_with_index do |edc_bank_account, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td><%= edc_bank_account.bank_name %></td>
+    <td><%= edc_bank_account.account_number %></td>
+    <td><%= edc_bank_account.card_number %></td>
+    <td><%= edc_bank_account.account_name %></td>
+    <% if current_user.can_manage_bank? %>
+    <td class="hidden-phone">
+      <%= link_to edit_edc_bank_account_path(edc_bank_account), class: "btn btn-primary btn-xs" do %>
+        <i class="fa fa-pencil"></i>
+      <% end %>
+      <%= link_to 'javascript:void(0)', onclick: "delete_one(#{edc_bank_account.id}, 'edc_bank_accounts')", class: "btn btn-danger btn-xs" do %>
+        <i class="fa fa-trash-o"></i>
+      <% end %>
+    </td>
+    <% end %>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=10>
+    <% if @edc_bank_accounts.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@edc_bank_accounts, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

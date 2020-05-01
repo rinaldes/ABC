@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Reports</li><li>Pergerakan Barang</li><li>PEMBELIAN</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>EVALUASI PENJUALAN PER-MINGGU BERDASARKAN M-Class</h2>
+        </header>
+        <%#= link_to "Eksport ke Excel", reports_receiving_path(:id => params[:id], format: "xls") %>
+        <div id="tabs">
+          <ul>
+            <% @branches.each{|branch| %>
+              <li><a href="#tabs-<%= branch.id %>"><%= branch.office_name %></a></li>
+            <% } %>
+          </ul>
+          <% @branches.each{|branch| %>
+            <div id="tabs-<%= branch.id %>">
+              <div class="widget-body"><!-- TABEL -->
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped" id='stock'><%= render 'store_admin_reports/sales_per_m_classes/list', branch_id: branch.id %></table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  function filter_stock(){
+    $.ajax(
+    {
+      url: "/products/stock",
+      dataType: "script",
+      data: $("form").serialize(),
+      success: function (data){
+        response(data)
+      },
+    });
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+    $("#search_brand").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/brands/autocomplete_brand_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#supplier_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+  })
+</SCRIPT>

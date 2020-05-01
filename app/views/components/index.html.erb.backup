@@ -1,0 +1,51 @@
+<div class="row">
+            <div class="col-sm-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        Component &amp; Indicator
+                        <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                         </span>
+                    </header>
+                    <div class="panel-body">
+                        <div class="adv-table editable-table ">
+                            <div class="clearfix">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary">
+                                        Add New <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>                                
+								<div class="btn-group pull-right">
+                                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i> Tools <i class="fa fa-angle-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="#"><i class="fa fa-print"></i>  Print</a></li>
+                                        <li><a href="#"><i class="fa fa-book"></i>  Save as PDF</a></li>
+                                        <li><a href="#"><i class="fa fa-table"></i>  Export to Excel</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="space15"></div>
+                            <div id="table-component_indicator_wrapper" class="dataTables_wrapper form-inline" role="grid"><div class="row"><div class="col-lg-6"><div id="table-component_indicator_length" class="dataTables_length"><label><select size="1" name="table-component_indicator_length" aria-controls="table-component_indicator" class="form-control xsmall"><option value="5">5</option><option value="10" selected="selected">10</option><option value="15">15</option><option value="20">20</option><option value="-1">All</option></select> records per page</label></div></div><div class="col-lg-6"><div class="dataTables_filter" id="table-component_indicator_filter"><label>Search: <input type="text" aria-controls="table-component_indicator" class="form-control medium"></label></div></div></div><table class="table table-striped table-hover table-bordered dataTable" id="table-component_indicator" aria-describedby="table-component_indicator_info">
+                                <thead>
+                                <tr role="row"><th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 253px;">Component</th><th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 297px;">Indicator</th><th width="15%" class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" style="width: 82px;">Action</th></tr>
+                                </thead>
+                                
+                            <tbody role="alert" aria-live="polite" aria-relevant="all"><tr class="odd">
+                                    <td class=" "><input type="text" class="form-control" placeholder="insert component..." value=""></td>
+                                    <td class=" "><input type="text" class="form-control" placeholder="insert indicator..." value="" style="width:85%"><button class="btn btn-primary"><i class="fa fa-plus"></i></button></td>
+                                    <td class=" "><a href="javascript:;"><i class="fa fa-cloud-download fa-2x" style="padding: 0px 8px 0px 8px;"></i></a><a href="javascript:;"><i class="fa fa-backward fa-2x" style="padding: 0px 8px 0px 8px;"></i></a></td>
+                                </tr><tr class="even">
+                                    <td class=" ">Kehadiran</td>
+                                    <td class=" ">Terlambat Max 1x dalam 1 minggu</td>
+                                    <td class=" "><a class="edit" href="javascript:;"><i class="fa fa-pencil fa-2x" style="padding: 0px 8px 0px 8px;"></i></a><a class="delete" href="javascript:;"><i class="fa fa-trash-o fa-2x" style="padding: 0px 8px 0px 8px;"></i></a></td>
+                                </tr><tr class="odd">
+                                    <td class=" "></td>
+                                    <td class=" ">Max cuti 2x dalam 6 bulan</td>
+                                    <td class=" "><a class="edit" href="javascript:;"><i class="fa fa-pencil fa-2x" style="padding: 0px 8px 0px 8px;"></i></a><a class="delete" href="javascript:;"><i class="fa fa-trash-o fa-2x" style="padding: 0px 8px 0px 8px;"></i></a></td>
+                                </tr></tbody></table><div class="row"><div class="col-lg-6"><div class="dataTables_info" id="table-component_indicator_info">Showing 1 to 3 of 3 entries</div></div><div class="col-lg-6"><div class="dataTables_paginate paging_bootstrap pagination"><ul><li class="prev disabled"><a href="#">← Prev</a></li><li class="active"><a href="#">1</a></li><li class="next disabled"><a href="#">Next → </a></li></ul></div></div></div></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>

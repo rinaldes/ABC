@@ -1,0 +1,31 @@
+wb = xlsx_package.workbook
+wb.use_autowidth = true 
+styles = wb.styles
+title = styles.add_style(:sz => 14, :b => true, :alignment => { :horizontal => :center })
+bold = styles.add_style(:b => true)
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+green = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "93e731")
+orange = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "e79f31")
+yellow = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "FFFF66")
+white_blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "95c7ce")
+blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "18d1ec")
+grey = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "988d7c")
+alp = {}
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+sisa_saldo = @petty_cash.petty_cash_details.first.initial_budget
+cash_out = 0
+cash_in = sisa_saldo
+wb.add_worksheet { |sheet|
+  sheet.add_row ['NO', 'TANGGAL', 'NAMA BARANG', 'KET', 'QTY', 'UNIT', 'Harga per unit', 'DEBIT', 'KREDIT', 'Sisa Saldo']
+  sheet.add_row [1, (@cash_outs.first.time.strftime('%d-%m-%Y') rescue ''), 'SALDO KAS', 'SISA KAS BULAN LALU', '', '', '', @petty_cash.petty_cash_details.first.initial_budget.to_f, '',
+    @petty_cash.petty_cash_details.first.initial_budget.to_f]
+  @cash_outs.each_with_index { |cash, index|
+    sisa_saldo = cash.cash_out_type == 'CASH IN' ? cash.amount.to_f + sisa_saldo.to_f : sisa_saldo.to_f-cash.amount.to_f
+    sheet.add_row [index+2, cash.time.strftime('%d-%m-%Y'), cash.description, cash.cash_out_type, cash.qty, cash.unit, cash.price_per_unit, "#{cash.amount if cash.cash_out_type == 'CASH IN'}",
+      "#{cash.amount unless cash.cash_out_type == 'CASH IN'}", sisa_saldo]
+    cash_out += cash.amount unless cash.cash_out_type == 'CASH IN'
+    cash_in += cash.amount if cash.cash_out_type == 'CASH IN'
+  }
+}

@@ -1,0 +1,22 @@
+<% @out_stocks.each_with_index do |product, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td><span class="name"><%= link_to product.barcode, product_url(product.product_size.product_id) %></span></td>
+    <td class="hidden-phone"><%= product.article %></td>
+    <td class="hidden-phone"><%= product.colour_code %></td>
+    <td class="hidden-phone"><%= product.size_number %></td>
+    <td class="nowrap"><%= product.supplier_name %></td>
+    <td class="nowrap"><%= product.brand_name %></td>
+    <td class="nowrap"><%= product.department_name %></td>
+    <td class="hidden-phone"><%= format_currency product.purchase_price %></td>
+    <td class="hidden-phone"><%= format_currency product.selling_price %></td>
+    <td class="hidden-phone"><%= product.min_stock %></td>
+    <td class="hidden-phone"><%= product.available_qty.to_i %></td>
+    <td class="hidden-phone"><%= product.warehouse_name %></td>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=12>
+    <%= will_paginate @out_stocks %>
+  </td>
+</tr>

@@ -1,0 +1,13 @@
+<% params[:is_background] = params[:is_background].present? ? params[:is_background].to_s : 'false' %>
+<% if params[:section] == "remove" %>
+	<% unless @error.present? %>
+		$("#<%= params[:is_background]=='true' ? 'background' : 'page' %>-preview-<%= params[:id].to_s %>").remove()
+	<% end %>
+
+<% elsif params[:section] == "update" %>
+	<% unless @error.present? %>
+		$("#set-<%= params[:is_background]=='true' ? 'background' : 'page' %>-form").html("")
+		$("#<%= params[:is_background]=='true' ? 'background' : 'page' %>-preview-<%= params[:id].to_s %>").replaceWith("<%= j(render '/questions/page', page: params[:pages], id: params[:pages][:id], is_background: params[:is_background]) %>")
+	<% end %>
+
+<% end %>

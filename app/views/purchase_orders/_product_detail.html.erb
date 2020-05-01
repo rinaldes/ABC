@@ -1,0 +1,5 @@
+<% @purchase_request.purchase_request_details.group_by{|prd|(prd.product_size.product_id rescue nil)}.each do |prd| %>
+  <% next if prd[1][0].blank? || prd[1][0].product_size.blank? %>
+  <% product = prd[1][0].product_size.product %>
+  <%= render 'modal_product', product: product, quantities: prd[1].sort_by{|p|p.product_size.size_detail.size_number}.map(&:quantity), product_sizes: product.product_sizes, key: "#{key}", prd: prd[1].map(&:id) %>
+<% end %>

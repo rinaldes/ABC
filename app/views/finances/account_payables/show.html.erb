@@ -1,0 +1,25 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid" class="">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+          <header>
+            <span class="widget-icon"><i class="fa fa-edit"></i></span>
+            <h2>Account Payable Detail</h2>
+          </header>
+          <div>
+            <div class="jarviswidget-editbox"></div>
+            <div class="widget-body no-padding">
+              <%= form_for @account_payable, url: finances_account_payable_path, html: {class: "smart-form account-payable", id: "form-update-verify", :multipart => true} do |f| %>
+                <%= render partial: 'form',  locals: { f: f }%>
+                <%#= hidden_field_tag 'prev_action', 'show' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Start Date</Data></Cell>
+        <Cell><Data ss:Type="String">End Date</Data></Cell>
+        <Cell><Data ss:Type="String">Annual Leave</Data></Cell>
+        <Cell><Data ss:Type="String">Mandays</Data></Cell>
+      </Row>
+    <% @holidays.each do |holiday| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= holiday.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= holiday.start %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= holiday.end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= holiday.annual_leave %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= holiday.mandays %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

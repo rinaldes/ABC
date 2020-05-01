@@ -1,0 +1,187 @@
+<%= wicked_pdf_stylesheet_link_tag "pdf.css" -%>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <div>
+          <div class="widget-body no-padding">
+            <b>
+              <h2>
+              Account Payable
+              <%= image_tag "#{Rails.root}/public/img/logo_nuansabaru.png", alt: "logo", style: "float:right" %>
+              </h2>
+            </b>
+            <b><%= @entity.name %></b><br/>
+            <p style='font-size: 11px'><b>NPWP:</b> 02.649.040.9-415.000</p>
+            <p style='font-size: 11px'><b>ADDRESS:</b> <%= @entity.address %></p>
+            <hr/>
+            <table id="table-info">
+              <tr>
+                <td width="47%"><label>Payment Term</label>:<span><%= @account_payable.payment_term.try(:titleize) %></span></td>
+                <td width="6"></td>
+                <td width="47%"><label>Supplier</label>:<span><%= @account_payable.supplier.name %></span></td>
+              </tr>
+              <tr>
+                <td width="47%"><label>Supplier Due Date</label>:<span><%= format_date(@account_payable.due_date) %></span></td>
+                <td width="6"></td>
+                <td width="47%"><label>Phone No</label>:<span><%= @account_payable.supplier.phone %></span></td>
+              </tr>
+              <tr>
+                <td width="47%"><label>Payment Due Date</label>:<span><%= format_date(@account_payable.due_date) %></span></td>
+                <td width="6"></td>
+                <td width="47%"><label>Supplier Address</label>:<span><%= @account_payable.supplier.address %></span></td>
+              </tr>
+              <tr>
+                <td width="47%"></td>
+                <td width="6"></td>
+                <td width="47%"><label>No Rekening</label>:<span><%= @account_payable.supplier.bank_accounts.map(&:account_number).join('/') rescue '-'%></span></td>
+              </tr>
+              <tr></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </article>
+    <section class="col-sm-12 col-md-12">
+      <article>
+        <table id="table-info">
+          <tr>
+            <td colspan=6><b><center>Detail Pembayaran</center></b></td>
+            <td colspan=7><b><center>Payment Method</center></b></td>
+          </tr>
+          <tr>
+            <td colspan=6><center>Detail Pembelian</center></td>
+            <td></td>
+            <td><b>No</b></td>
+            <td><b>Method</b></td>
+            <td><b>Bank</b></td>
+            <td><b>Tr No</b></td>
+            <td><b>Cust Name</b></td>
+            <td width='7%'><b>Date</b></td>
+            <td><b>Amount</b></td>
+          </tr>
+          <tr>
+            <td><b>No</b></td>
+            <td><b>Recieve Number</b></td>
+            <td><b>Cons No</b></td>
+            <td width='7%'><b>Date</b></td>
+            <td><b>QTY</b></td>
+            <td><b>Total Payment</b></td>
+            <% apb = @account_payable_details[0] %>
+            <%= render 'payment', apb: apb, i: 0 if apb.present? %>
+          </tr>
+          <% @receivings.each_with_index{|receiving, i| %>
+            <% apb = @account_payable_details[i+1] %>
+            <tr>
+              <td><%= i+1 %></td>
+              <td><%= receiving.number %></td>
+              <td><%= receiving.consigment_number %></td>
+              <td width='7%'><%= receiving.date %></td>
+              <td class='text-right'><%= format_currency receiving.received_qty %></td>
+              <td class='text-right'><%= format_currency receiving.total %></td>
+              <%= render 'payment', apb: apb, i: i+1 if apb.present? %>
+            </tr>
+          <% } %>
+          <% i = @receivings.count+1 %>
+          <% apb = @account_payable_details[i] %>
+          <tr>
+            <td colspan=4></td>
+            <td colspan=2>_____________________________</td>
+            <%= render 'payment', apb: apb, i: i if apb.present? %>
+          </tr>
+          <tr>
+            <td colspan=2></td>
+            <td colspan=2 style='text-align: center'><b>Total</b></td>
+            <td class='text-right'><b><%= format_currency @receivings.map(&:received_qty).sum %></b></td>
+            <td class='text-right'><b><%= format_currency @total_receiving_amount %></b></td>
+            <% i = @receivings.count+2 %>
+            <% apb = @account_payable_details[i] %>
+            <%= render 'payment', apb: apb, i: i if apb.present? %>
+          </tr>
+          <tr>
+            <td colspan=6><center>Detail Retur</center></td>
+          </tr>
+          <tr>
+            <td><b>No</td>
+            <td colspan=2><b>Retur Number</b></td>
+            <td width='7%'><b>Date</b></td>
+            <td><b>QTY</b></td>
+            <td><b>Total Payment</b></td>
+          </tr>
+          <% @returns_to_suppliers.each_with_index{|rts, i| %>
+            <tr>
+              <td><%= i+1 %></td>
+              <td colspan=2><%= rts.number %></td>
+              <td width='7%'><%= rts.date %></td>
+              <td class='text-right'><%= rts.quantity %></td>
+              <td class='text-right'><%= format_currency rts.total %></td>
+            </tr>
+          <% } %>
+          <tr>
+            <td colspan=4></td>
+            <td colspan=2>_____________________________</td>
+          </tr>
+          <tr>
+            <td colspan=2></td>
+            <td colspan=2 style='text-align: center'><b>Total</b></td>
+            <td class='text-right'><b><%= format_currency @returns_to_suppliers.map(&:quantity).sum %></b></td>
+            <td class='text-right'><b><%= format_currency @total_retur_amount %></b></td>
+          </tr>
+          <tr>
+            <td colspan=6><center>Detail Discount</center></td>
+          </tr>
+          <tr>
+            <td><b>No</b></td>
+            <td colspan=3><b>Detail Discount</b></td>
+            <td><b>Ket</b></td>
+            <td><b>Total Payment</b></td>
+          </tr>
+          <% @other_charges.each_with_index{|apb, o| %>
+            <tr>
+              <td><%= o+1 %></td>
+              <td colspan=3><%= apb.name %></td>
+              <td><%= apb.desc %></td>
+              <td class='text-right'><%= format_currency apb.amount %></td>
+            </tr>
+          <% } %>
+          <tr>
+            <td colspan=2></td>
+            <td colspan=2 style='text-align: center'><b>Total</b></td>
+            <td></td>
+            <td class='text-right'><b><%= format_currency @total_other_charges %></b></td>
+          </tr>
+          <tr>
+            <td colspan=4></td>
+            <td colspan=2>_____________________________</td>
+          </tr>
+          <tr>
+            <td colspan=5>Pending Payment from last billing</td>
+            <td class='text-right'><b><%= format_currency @outstanding_amount %></b></td>
+          </tr>
+          <tr>
+            <td colspan=5></td>
+            <td class='text-right'>_________</td>
+            <td colspan=7></td>
+            <td class='text-right'>_________</td>
+          </tr>
+          <tr>
+            <td colspan=5>Total Outstanding Payment</td>
+            <td class='text-right'><b><%= format_currency @total_receiving_amount-@total_retur_amount-@total_other_charges+@outstanding_amount %><b></td>
+            <td colspan=2></td>
+            <td colspan=5>Total Payment</td>
+            <td class='text-right'><b><%= format_currency @account_payable_details.map(&:amount).sum %><b></td>
+          </tr>
+          <tr>
+            <td colspan=8></td>
+            <td colspan=5>Total Pending</td>
+            <td class='text-right'>(<b><%= format_currency @account_payable.outstanding_amount %>)<b></td>
+          </tr>
+          <tr>
+            <td colspan=8></td>
+            <td colspan=8>Notes: <%= 'Barang tidak dibayar semua karena akan ada returan di pembayaran berikutnya' %></td>
+          </tr>
+        </table>
+      </article>
+    </section>
+  </div>
+</div>

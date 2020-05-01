@@ -1,0 +1,5 @@
+<% @purchase_order.purchase_order_details.group_by{|prd|prd.product_size.product_id}.each do |prd| %>
+  <% detail = prd[1][0].product_size %>
+  <% product = detail.product %>
+  <%= render partial: 'tr_detail', locals: {product: product, purchase_request: @purchase_request, key: product.id} %>
+<% end if @purchase_order.present? %>

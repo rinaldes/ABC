@@ -1,0 +1,3 @@
+$("#users_header").remove()
+$("#users_footer").remove()
+$("#users").replaceWith("<%= j(render 'users', :users => @users) %>")

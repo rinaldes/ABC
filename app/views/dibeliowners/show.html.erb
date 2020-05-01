@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Purchasing</li><li>Purchased by Owners</li><li><%= @good_transfer.code %></li>
+  </ol>
+</div>
+<div id="content">
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-good_transfer">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= @good_transfer.code %></h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <form class="smart-form">
+              <%= render 'return_to_ho_receipts/rtho_detail' %>
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+                <%= link_to 'Print To PDF', print_to_pdf_dibeliowner_url(@good_transfer), class: 'btn btn-primary' %>
+              </footer>
+              <div id='product_detail_tobe_submitted' style='display: none'></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<%= render 'shared/product_detail_outer_form', tr_label: "Transfered" %>

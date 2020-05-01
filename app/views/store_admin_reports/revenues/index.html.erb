@@ -1,0 +1,145 @@
+<% end_date = (params[:year].to_s + "/" +params[:month].to_s + "/01").to_date.end_of_month %>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Store Admin Report</li><li>Revenue</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>Revenue <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to store_admin_reports_revenues_path(format: "html", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to store_admin_reports_revenues_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload2" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <% Branch.all.each{|branch| %>
+              <li><a href="#tabs-<%= branch.id %>"><%= branch.office_name %></a></li>
+            <% } %>
+            <li><a href="#tabs-global">GLOBAL</a></li>
+          </ul>
+          <% Branch.all.each_with_index{|branch, i| %>
+            <% store, minggu = Sale.where("store_id = #{branch.id}").group("store_id, client_id").count.count, 1 %>
+            <div id="tabs-<%= branch.id %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped">
+                    <tr>
+                      <th rowspan="2" style="vertical-align: middle;">Tanggal</th>
+                      <% 1.upto(store).each do |terminal| %>
+                        <th colspan="9">Terminal <%= terminal %></th>
+                      <% end %>
+                      <th colspan="2">Total</th>
+                    </tr>
+                    <tr>
+                      <% 1.upto(store).each do |terminal| %>
+                        <th>QTY</th>
+                        <th>CASH</th>
+                        <th>DEBIT</th>
+                        <th>KREDIT</th>
+                        <th>VOUCHER</th>
+                        <th>BTPMASUK</th>
+                        <th>BTPKELUAR</th>
+                        <th>TRANSFER</th>
+                        <th>TOTAL</th>
+                      <% end %>
+                      <th>QTY</th>
+                      <th>VALUE</th>
+                    </tr>
+                    <% 
+                      (1..(end_date.day)).each do |tgl| 
+                        tanggal = params[:year].to_s + "/" + params[:month].to_s + "/" + tgl.to_s
+                      %>
+                      <tr>
+                        <td><%= tanggal %></td>
+                        <% Sale.where("store_id = #{branch.id}").distinct(:client_id).select(:client_id).each do |terminal| %>
+                          <% store2 = Sale.where("store_id = #{branch.id} and transaction_date >= '#{tanggal.to_time.beginning_of_day}' and transaction_date <= '#{tanggal.to_time.end_of_day}' and client_id = '#{terminal.client_id}'").group("store_id, client_id, transaction_date").select("store_id, client_id, transaction_date, sum(total_quantity) as qty, sum(payment_cash) as cash, sum(debit_amt) as debit, sum(credit_amt) as kredit, sum(voucher_amt) as voucher, sum(btp_masuk) as btp_masuk, sum(btp_keluar) as btp_keluar, sum(transfer_amt) as transfer") %>
+                          <td><%= format_currency store2.cash rescue 0 %></td>
+                          <td><%= format_currency store2.debit rescue 0 %></td>
+                          <td><%= format_currency store2.kredit rescue 0 %></td>
+                          <td><%= format_currency store2.voucher rescue 0 %></td>
+                          <td><%= format_currency store2.btp_masuk rescue 0 %></td>
+                          <td><%= format_currency store2.btp_keluar rescue 0 %></td>
+                          <td><%= format_currency store2.transfer rescue 0 %></td>
+                          <td><%= format_currency (store2.tanggal.to_f + store2.cash.to_f + store2.debit.to_f + store2.kredit.to_f + store2.voucher.to_f + store2.btp_masuk.to_f + store2.btp_keluar.to_f + store2.transfer.to_f) rescue 0 %></td>
+                        <% end %>
+                      </tr>
+                      <% if tanggal.to_date.strftime("%A").downcase == "sunday" %>
+                        <tr>
+                          <th>M<%= minggu %></th>
+                          <% minggu += 1 %>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                  </table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+          <div id="tabs-global">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/store_admin_reports/revenues.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+    $("#reload2").attr("href", "/store_admin_reports/revenues/export.xlsx?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>
+<STYLE>
+  th{text-align: center}
+</STYLE>

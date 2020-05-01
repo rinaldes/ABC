@@ -1,0 +1,344 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Pergerakan Barang</li><li>Sisa Hutang Dagang</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>Sisa Hutang Dagang <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : Time.now.month].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to finance_reports_sisa_hutang_dagang_index_path(
+                      format: "html", year: (params[:year].present? ? params[:year] : Time.now.year), month: (params[:month].present? ? params[:month] : Time.now.month)
+                    ), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to export_finance_reports_sisa_hutang_dagang_index_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, (params[:year].present? ? params[:year] : Time.now.year), min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <% grand_total = [] %>
+            <% @receivings_per_department.each{|department| %>
+              <li><a href="#tabs-department-<%= department.gsub(' ', '') %>"><%= department %></a></li>
+              <li><a href="#tabs-department-total-<%= department.gsub(' ', '') %>">Total <%= department %></a></li>
+            <% } %>
+            <li><a href="#tabs-test_market">TM</a></li>
+            <li><a href="#tabs-total-test_market">TOTAL TM</a></li>
+            <li><a href="#tabs-Konsinyasi">KONSINYASI</a></li>
+            <li><a href="#tabs-total-Konsinyasi">TOTAL KONSINYASI</a></li>
+            <li><a href="#tabs-total">TOTAL</a></li>
+            <li><a href="#tabs-rekap">REKAP</a></li>
+          </ul>
+          <% @receivings_per_department.each{|department| %>
+            <div id="tabs-department-<%= department.gsub(' ', '') %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <h2><%= department %></h2>
+                  <hr>
+                  <table class="table table-bordered table-striped" id='stock'>
+                    <tr>
+                      <th>TANGGAL</th>
+                      <th>NO FAKTUR</th>
+                      <th>QTY</th>
+                      <th>NOMINAL</th>
+                      <th>LONG TERM</th>
+                      <th>JATUH TEMPO</th>
+                    </tr>
+                    <% Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").each{|receiving| %>
+                      <% next if (receiving.receiving_details.first.product_size.product.department.department_type rescue nil) != department %>
+                      <tr>
+                        <td><%= receiving.faktur_date %></td>
+                        <td><%= receiving.consigment_number %></td>
+                        <td><%= receiving.received_qty %></td>
+                        <td><%= format_currency receiving.total_after_discount %></td>
+                        <td><%= receiving.supplier.long_term %></td>
+                        <td><%= AccountPayableReceiving.where("receiving_id=#{receiving.id}").last.account_payable.due_date %></td>
+                      </tr>
+                    <% } %>
+                  </table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+            <div id="tabs-department-total-<%= department.gsub(' ', '') %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <h2>Total <%= department %></h2>
+                  <hr>
+                  <table class="table table-bordered table-striped" id='stock'>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama Supplier</th>
+                      <th>Sisa Hutang</th>
+                    </tr>
+                    <% totalnya = 0 %>
+                    <% Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").group_by(&:supplier).each_with_index{|receiving, i| %>
+                      <% next if (receiving[1].first.receiving_details.first.product_size.product.department.department_type rescue nil) != department %>
+                      <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= receiving[0].name %></td>
+                        <td><%= format_currency receiving[1].map(&:total_after_discount).sum %></td>
+                      </tr>
+                      <% totalnya += receiving[1].map(&:total_after_discount).sum %>
+                    <% } %>
+                    <tr>
+                      <th colspan="2" style="text-align: center;">Total</th>
+                      <th><%= format_currency totalnya %></th>
+                    </tr>
+                    <% grand_total << ["#{department}", totalnya] %>
+                  </table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+          <% ["test market", "Konsinyasi"].each do |statusnya| %>
+          <div id="tabs-<%= statusnya.split(' ').join('_') %>">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <h2><%= statusnya.titleize %></h2>
+                <hr>
+                <table class="table table-bordered table-striped" id='stock'>
+                  <tr>
+                    <th>SUPPLIER</th>
+                    <th>TANGGAL</th>
+                    <th>NO FAKTUR</th>
+                    <th>QTY</th>
+                    <th>NOMINAL</th>
+                    <th>LONG TERM</th>
+                    <th>JATUH TEMPO</th>
+                  </tr>
+                  <%
+                    conditions = []
+                    conditions << "account_payables.due_date BETWEEN '#{@date}' AND  '#{@date + 1.month}'" if params[:month].present? && params[:year].present?
+                    AccountPayable.where("outstanding_amount > 0").where(conditions.join(' AND ')).order(:created_at).each_with_index do |ap, i|
+                      total_amount = 0
+                      if (ap.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+                  %>
+                      <tr>
+                        <td><%= ap.supplier.name %></td>
+                        <td><%= ap.created_at.strftime("%d-%b-%Y") %></td>
+                        <td><%= ap.ap_number %></td>
+                        <td><%= 0 %></td>
+                        <td><%= ap.total_amount %></td>
+                        <td><%= ap.supplier.try(:long_term) %></td>
+                        <td><%= ap.due_date.present? ? ap.due_date.strftime("%d-%b-%Y") : '' %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-total-<%= statusnya.split(' ').join('_') %>">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <h2>Total <%= statusnya.titleize %></h2>
+                <hr>
+                <table class="table table-bordered table-striped" id='stock'>
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Supplier</th>
+                    <th>Sisa Hutang</th>
+                  </tr>
+                  <%
+                    abc, i, totalnya = 0, 0, 0
+                    conditions = []
+                    conditions << "account_payables.due_date BETWEEN '#{@date}' AND  '#{@date + 1.month}'" if params[:month].present? && params[:year].present?
+                    AccountPayable.where("outstanding_amount > 0").where(conditions.join(' AND ')).order(:supplier_id).each do |sup|
+                      next if sup.supplier_id == abc
+                      next unless (sup.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+                      abc = sup.supplier_id
+                      oa = 0
+                      i += 1
+                      AccountPayable.where(supplier_id: sup.supplier_id).where("outstanding_amount > 0").where(conditions.join(' AND ')).each do |ap|
+                        if ap.receivings.first.receiving_details.first.product.status3 == statusnya
+                          oa += ap.outstanding_amount
+                        end
+                      end
+                      totalnya += oa
+                  %>
+                    <tr>
+                      <td><%= i %></td>
+                      <td><%= sup.supplier.name %></td>
+                      <td><%= format_currency oa %></td>
+                    </tr>
+                  <% end %>
+                  <tr>
+                    <th colspan="2" style="text-align: center;">Total</th>
+                    <th><%= format_currency totalnya %></th>
+                  </tr>
+                  <% grand_total << ["#{statusnya.titleize}", totalnya] %>
+                </table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <% end %>
+          <div id="tabs-total">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <h2>Total</h2>
+                <hr>
+                <table class="table table-bordered table-striped" id='stock'>
+                <tr>
+                  <th>No</th>
+                  <th>Status</th>
+                  <th>Sisa Hutang</th>
+                </tr>
+                <% grand_gt = 0 %>
+                <% grand_total.each_with_index do |gt, i| %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= gt[0] %></td>
+                    <td><%= format_currency gt[1] %></td>
+                    <% grand_gt += gt[1] %>
+                  </tr>
+                <% end %>
+                <tr>
+                  <th colspan="2" style="text-align: center;">Total</th>
+                  <th><%= format_currency grand_gt %></th>
+                </tr>
+                </table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-rekap">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <h2>Rekap</h2>
+                <hr>
+                <table class="table table-bordered table-striped" id='stock'>
+                  <tr>
+                    <th>Jatuh Tempo</th>
+                    <% totalnya, field = 0, 3 %>
+                    <% @receivings_per_department.each{|department| %>
+                      <th><%= department %></th>
+                      <% field += 1 %>
+                    <% } %>
+                    <th>TM</th>
+                    <th>Konsinyasi</th>
+                    <th>Total</th>
+                  </tr>
+                  <%
+                    ttl_depart, ttl_status = [], [0, 0]
+                    @receivings_per_department.count.times do 
+                      ttl_depart << 0
+                    end
+                    @tanggal.each_with_index do |tanggal|
+                      total_amount = 0
+                      per_depart, per_status = [], [0, 0]
+                      @receivings_per_department.count.times do 
+                        per_depart << 0
+                      end
+                      @receivings_per_department.each_with_index{|department, io|
+                        abc, ia, totalnya, oa, ua = 0, 0, 0, 0, ''
+                        Receiving.where("id IN (#{@receivings.map(&:receiving_id).join(',')})").order(:supplier_id).each do |sup|
+                          next if sup.supplier_id == abc
+                          abc = sup.supplier_id
+                          oa = 0
+                          ap = AccountPayable.where(supplier_id: sup.supplier_id, due_date: tanggal.due_date).where("outstanding_amount > 0")
+                          ap.each do |ap|
+                            oa += ap.outstanding_amount
+                          end
+                          per_depart[io] = per_depart[io].to_i + oa
+                          ttl_depart[io] = ttl_depart[io].to_i + oa
+                        end
+                      }
+                      ["test market", "Konsinyasi"].each_with_index do |statusnya, ioi|
+                        abc, i, totalnya, oa = 0, 0, 0, 0
+                        AccountPayable.where("outstanding_amount > 0").where(due_date: tanggal.due_date).order(:supplier_id).each do |sup|
+                          next if sup.supplier_id == abc
+                          next unless (sup.receivings.first.receiving_details.first.product.status3 rescue nil) == statusnya
+                          abc = sup.supplier_id
+                          oa = 0
+                          i += 1
+                          AccountPayable.where(supplier_id: sup.supplier_id, due_date: tanggal.due_date).where("outstanding_amount > 0").each do |ap|
+                            if ap.receivings.first.receiving_details.first.product.status3 == statusnya
+                              oa += ap.outstanding_amount
+                            end
+                          end
+                          per_status[ioi] = per_status[ioi].to_i + oa
+                          ttl_status[ioi] = ttl_status[ioi].to_i + oa
+                        end
+                      end
+                  %>
+                    <tr>
+                      <td><%= tanggal.due_date.strftime("%d %B %Y") %></td>
+                      <% per_depart.each do |dprt| %>
+                        <td><%= format_currency dprt %></td>  
+                        <% total_amount += dprt.to_i %>
+                      <% end %>
+                      <% per_status.each do |dprt| %>
+                        <td><%= format_currency dprt %></td>  
+                        <% total_amount += dprt.to_i %>
+                      <% end %>
+                      <td><%= format_currency total_amount %></td>
+                    </tr>
+                  <% end %>
+                  <tr>
+                  <th style="text-align: center;">Total</th>
+                  <% total_amount = 0 %>
+                  <% ttl_depart.each do |dprt| %>
+                    <th><%= format_currency dprt %></th>  
+                    <% total_amount += dprt.to_i %>
+                  <% end %>
+                  <% ttl_status.each do |dprt| %>
+                    <th><%= format_currency dprt %></th>  
+                    <% total_amount += dprt.to_i %>
+                  <% end %>
+                  <th><%= format_currency total_amount %></th>
+                  </tr>
+                </table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/finance_reports/sisa_hutang_dagang.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

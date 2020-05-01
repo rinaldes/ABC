@@ -1,0 +1,109 @@
+<div class="container-fluid">
+	<ul class="breadcrumb">
+		<li><p>YOU ARE HERE</p></li> 
+        <li><a href="/recruitments" class="">Recruitment</a></li>
+        <li><a href="#" class="active">Detail Recruitment</a></li>
+	</ul>
+</div>
+
+<div class="page-title">
+	<i class="fa fa-puzzle-piece"></i>
+	<h3>Detail <span class="semi-bold">Recruitment</span></h3>
+</div>
+
+<div class="grid simple">
+	<div class="grid-title no-border"></div>
+		<div class="grid-body no-border">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>No Recruitment:</label>
+					<%= @recruitment.no_recruitment %>
+				</div>
+				<div class="form-group">
+					<label>Requester:</label>
+					<%= @recruitment.requester %>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Organization:</label>
+					<%= @recruitment.organization %>
+				</div>
+				<div class="form-group">
+					<label>Due Date:</label>
+					<%= @recruitment.due_date %>
+				</div>
+			</div>
+		</div>
+</div>
+
+<div class="grid simple">
+	<div class="grid-body no-border has-tab">
+	<ul class="nav nav-tabs" id="tab-01">
+                        <li class="active"><a href="#RE">Request Employee</a></li>
+                        <li><a href="#TR">Test Result</a></li>
+                        <li><a href="#IR">Interview Result</a></li>
+                        <li><a href="#S">Selected</a></li>
+                    </ul>
+		<div class="tab-content">
+			<section class="tab-pane active" id="RE">
+				<table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th width="10%">Gender</th>
+                                <th width="12%">Age</th>
+                                <th width="11%">Experience (Years)</th>
+                                <th width="11%">Fresh graduate</th>
+                                <th width="27%">Skill</th>
+                                <th width="12%">Organization</th>
+                                <th width="12%">Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <% @recruitment.recruitment_details.each do |detail| %>
+                                <tr>
+                                    <td>
+                                        <%= detail.gender %>
+                                    </td>
+                                    <td>
+                                        <%= detail.range_age %>
+                                    </td>
+                                    <td>
+                                        <%= detail.experience %>
+                                    </td>
+                                    <td>
+                                        <% if detail.fresh_graduate == true %>
+                                            Yes
+                                        <% else %>
+                                            No
+                                        <% end %>
+                                    </td>
+                                    <td>
+                                        <%= detail.skill %>
+                                    </td>
+                                    <td>
+                                        <%= detail.organization %>
+                                    </td>
+                                    <td>
+                                        <%= detail.position %>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+			</section>
+			<section class="tab-pane" id="TR">
+				        <%= render "test_result" %>
+			</section>
+			<section class="tab-pane" id="IR">
+                <%= render "interview_result" %>
+			</section>
+			<section class="tab-pane" id="S">
+                <%= render "selected" %>
+			</section>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>

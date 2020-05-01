@@ -1,0 +1,30 @@
+<% if params[:action] != "update" %>
+    <tr id="data_<%= overtime_request.id %>">
+<% end %>
+    <td>
+        <div class="checkbox check-default">
+            <input id="checkbox<%= overtime_request.id %>" type="checkbox" value="<%= overtime_request.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= overtime_request.id %>"></label>
+        </div>
+    </td>
+	<td><%= overtime_request.name %></td>
+	<td><%= overtime_request.date %></td>
+	<% if overtime_request.start_time != nil %>
+        <td><%= overtime_request.start_time.strftime("%H:%M")%></td>
+    <% else %>
+        <td></td>
+    <% end %>
+    <% if overtime_request.end_time != nil %>
+        <td><%= overtime_request.end_time.strftime("%H:%M")%></td>
+    <% else %>
+        <td></td>
+    <% end %>
+	<td><%= overtime_request.reason %></td>
+	<% if overtime_request.status == "Pending" %>
+        <td><span class="badge badge-warning"><%= overtime_request.status%></span></td>
+    <% elsif overtime_request.status == "Approved" %>
+        <td><span class="badge badge-success"><%= overtime_request.status%></span></td>
+    <% elsif overtime_request.status == "Reject" %>
+        <td><span class="badge badge-danger"><%= overtime_request.status%></span></td>
+    <% end %>
+</tr>

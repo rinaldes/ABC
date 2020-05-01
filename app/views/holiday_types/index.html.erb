@@ -1,0 +1,144 @@
+<%= javascript_tag render(:template => 'holiday_types/jsManager.js', :formats => [:js]) %>
+<div class="container-fluid">
+  <ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="#" class="active">Holiday Type</a></li>
+    </ul>
+    
+    <div class="page-title">  
+      <i class="fa fa-asterisk"></i>
+      <h3><span class="semi-bold">Holidays</span> Type</h3> 
+    </div>  
+        <div class="grid simple">
+          <div class="grid-title no-border"></div>
+          <div class="grid-body no-border">
+      <div class="row toolbar-block">
+                  <div class="col-md-4">
+                      <div class="dataTables_filter" id="example3_filter">
+                          <div class="controls">
+                              <div class="input-group">
+                                  <input type="text" class="form-control" placeholder="Search Record" onchange="search()">
+                                  <span class="input-group-addon ">
+                                    <i class="fa fa-search"></i>
+                                  </span>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                      <div class="toolbar pull-right" id="toolbar_main">
+                          <div class="table-tools-actions">
+                              <%= link_to new_holiday_type_path, :method => 'get', :class => 'btn btn-success', :id => 'button-new', :remote => true do %>
+                                  <span class="fa fa-plus"></span> Add New
+                              <% end %>
+                                <div class="btn-group">
+                                  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="fa fa-gear"></span> <span class="caret"></span></button>
+                                    <ul class="dropdown-menu right-edge">
+                                      <li><a href="#">Action</a></li>
+                                      <li><a href="#">Another action</a></li>
+                                      <li><a href="#">Something else here</a></li>
+                                      <li class="divider"></li>
+                                      <li><a href="#">Separated link</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                      <div class="toolbar pull-right" id="toolbar_def">
+                          <div class="table-tools-actions">
+                              <button class="btn" id="button_edit" onclick="edit_holiday_type()"><span class="fa fa-edit"></span> Edit</button> 
+                              <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button>
+                              <button class="btn hide" data-toggle="modal" data-target="#error_modal" id='button_error'><span class="fa fa-trash"></span> error</button> 
+                              <div class="separator">&nbsp;</div>
+                          </div>
+                      </div>
+                        
+                    </div>
+                </div>
+              <table class="table no-more-tables table-striped table-hover" id="holiday">
+                    <thead>
+                        <tr>
+                            <th style="width:1%" >
+                                <div class="checkbox check-default">
+                                    <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                                    <label for="checkbox10"></label>
+                                </div>
+                            </th>
+                            <th >code</th>
+                            <th >name</th>
+                            <th colspan='2'>As Leave ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <% if @holiday_types.count > 0 %>
+                        <% @holiday_types.each do |holiday_type| %>
+                          <%= render 'data', :holiday_type => holiday_type%>
+                        <% end %>
+                      <% else %>
+                        <tr>
+                          <td colspan='5' align='center'>No Data Found !</td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                </table>
+                
+                <div class="row dataTables_wrapper">
+                  <div class="col-md-12">
+                      <div class="dataTables_paginate paging_bootstrap pagination">
+                          <ul>
+                                <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                            </ul>
+                        </div>
+                      <div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="delete_holiday_type();">Yes</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="error_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-warning fa-7x"></i>
+          <h2><d></d> prohibited this msg from being saved:</h2>
+          <h4 id="errorMessage" class="semi-bold"></h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>

@@ -1,0 +1,29 @@
+<% if @reports.count > 0 %>
+  <% @reports.each_with_index do |po, i| %>
+    <tr>
+      <td><%= params[:page] ? (params[:page].to_i*PER_PAGE+i-PER_PAGE+1) : i+1 %></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan=8>
+      <% if @reports.present? %>
+        <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+          <%= pagination_links(@reports, options = {}) %>
+        </div>
+      <% else %>
+        <%= raw '<center>No Data Available</center>' %>
+      <% end %>
+    </td>
+  </tr>
+<% else %>
+  <tr>
+    <td colspan='8' align='center'>No Data Entries</td>
+  </tr>
+<% end %>

@@ -1,0 +1,237 @@
+ <%= javascript_tag render(:template => 'organizations/jsManager.js', :formats => [:js]) %>
+ <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="#" class="active">Organization</a></li>
+        </ul>
+        
+        <div class="page-title">    
+            <i class="fa fa-building"></i>
+            <h3><span class="semi-bold">Organization</span></h3>    
+        </div>  
+            <div class="grid simple">
+                <div class="grid-body no-border has-tab">
+                    <ul class="nav nav-tabs" id="tab-01">
+                        <li class="active"><a href="#org">Organization</a></li>
+                        <li><a href="#pos">Position</a></li>
+                    </ul>
+                
+                    <div class="tab-content">
+                        <section class="tab-pane active" id="org">
+                            <div class="row toolbar-block">
+                                <div class="col-md-4">
+                                    <div class="dataTables_filter" id="example3_filter">
+                                        <div class="controls">
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" placeholder="Search Record">
+                                              <span class="input-group-addon ">
+                                                <i class="fa fa-search"></i>
+                                              </span>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="toolbar pull-right toolbar_main">
+                                        <div class="table-tools-actions">
+                                         <%= button_to new_organization_path(:company_id => params[:id]), :method => 'get', :class => 'btn btn-success', :remote => true, id: 'button-new' do %>
+                                            <span class="fa fa-plus"></span> Add New
+                                        <% end %>
+                                       
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="toolbar pull-right hide toolbar_upload">
+                                        <div class="table-tools-actions">
+                                            <button class="btn"><span class="fa fa-cloud-download"></span> Download</button>
+                                            <div class="separator">&nbsp;</div>
+                                        </div>
+                                    </div>
+                                    <div class="toolbar pull-right" id="toolbar_def">
+                                    <div class="table-tools-actions">
+                                        <button class="btn" id="button_edit" onclick="edit_organization()"><span class="fa fa-edit"></span> Edit</button> 
+                                        <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                        <div class="separator">&nbsp;</div>
+                                    </div>
+                                </div>
+                                    
+                                </div>
+                            </div>
+                            
+                          <table class="table no-more-tables table-striped table-hover" id='organization'>
+                        <thead>
+                            <tr>
+                                <th style="width:1%" >
+                                    <div class="checkbox check-default">
+                                        <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                                        <label for="checkbox10"></label>
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Sub Organization</th>
+                                <th>Total Employee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% if @organizations.count != 0 %>
+                                    <% @organizations.each do |organization|%>
+                                        <%= render 'data', :organization => organization%>
+                                    <% end %>
+                                <% else %>
+                                    <tr>
+                                        <td colspan='8' align='center'>No Data Found !</td>
+                                    </tr>
+                                <% end %>
+                        </tbody>
+                    </table>
+                            
+                            <div class="row dataTables_wrapper">
+                                <div class="col-md-12">
+                                    <div class="dataTables_paginate paging_bootstrap pagination">
+                                        <ul>
+                                            <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                            <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                            <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="tab-pane" id="pos">
+                            <div class="row toolbar-block">
+                                <div class="col-md-4">
+                                    <div class="dataTables_filter" id="example4_filter">
+                                        <div class="controls">
+                                            <div class="input-group">
+                                              <input type="text" class="form-control" placeholder="Search Record">
+                                              <span class="input-group-addon ">
+                                                <i class="fa fa-search"></i>
+                                              </span>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="toolbar pull-right toolbar_main">
+                                    <div class="table-tools-actions">
+                                         <%= button_to position_new_organizations_path(:company_id => params[:id]), :method => 'get', :class => 'btn btn-success', :remote => true, id: 'button-new' do %>
+                                            <span class="fa fa-plus"></span> Add New
+                                        <% end %>
+                                       
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="toolbar pull-right hide toolbar_upload">
+                                        <div class="table-tools-actions">
+                                            <button class="btn"><span class="fa fa-cloud-download"></span> Download</button>
+                                            <div class="separator">&nbsp;</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="toolbar pull-right" id="toolbar_deff">
+                                    <div class="table-tools-actions">
+                                        <button class="btn" id="button_edit" onclick="edit_position()"><span class="fa fa-edit"></span> Edit</button> 
+                                        <button class="btn" data-toggle="modal" data-target="#confirm_position"><span class="fa fa-trash"></span> Remove</button> 
+                                        <div class="separator">&nbsp;</div>
+                                    </div>
+                                </div>
+
+                                    
+                                </div>
+                            </div>
+                            
+                           <table class="table no-more-tables table-striped table-hover" id='position'>
+                        <thead>
+                            <tr>
+                                <th style="width:1%" >
+                                    <div class="checkbox check-default">
+                                        <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                                        <label for="checkbox10"></label>
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Leave Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% if @positions.count != 0 %>
+                                    <% @positions.each do |position|%>
+                                        <%= render 'position_data', :position => position%>
+                                    <% end %>
+                                <% else %>
+                                    <tr>
+                                        <td colspan='8' align='center'>No Data Found !</td>
+                                    </tr>
+                                <% end %>
+                        </tbody>
+                    </table>
+                            
+                            <div class="row dataTables_wrapper">
+                                <div class="col-md-12">
+                                    <div class="dataTables_paginate paging_bootstrap pagination">
+                                        <ul>
+                                            <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                            <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                            <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                
+                </div>
+            </div>
+    </div>
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete_organization();">Yes</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="confirm_position" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete_position();">Yes</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>
+   <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+  <%= render 'new' if @organization.present? && action_name == "create" %>
+  <%= render 'edit' if @organization.present? && action_name == "update" %>
+  <%= render 'newposition' if @organization.present? && action_name == "position_create" %>
+  <%= render 'editposition' if @organization.present? && action_name == "position_update" %>
+</div>

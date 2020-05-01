@@ -1,0 +1,117 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Journal Memo Report List</h2>
+          <div style="margin-top:-10px;">
+          <fieldset>
+            <div class="row">
+              <section class="col col-md-12">
+                <section>
+                  <label class="col-md-1">Supplier</label>
+                  <label class="col-md-2 input custom-input-box">
+                    <%= select_tag :supplier, options_for_select([["All Supplier", 0]] + Supplier.all.map{|office|[office.code.to_s + " : " + office.name.to_s, office.id]},
+                      selected: (params[:supplier_id].present? ? params[:supplier_id] : 0)), {class:"form-control reload", onchange: "collect_brand(this.value)"} %>
+                  </label>
+                </section>
+                <section>
+                  <label class="col-md-1">Brand</label>
+                  <label class="col-md-2 input custom-input-box brand">
+                    <%= select_tag :brand, options_for_select(@brands.map{|office|[office.code.to_s + " : " + office.name.to_s, office.id]}, {prompt: 'Please Select'}), {class:"form-control reload"} %>
+                  </label>
+                </section>
+                <section>
+                  <label class="col-md-1">Tanggal</label>
+                  <label class="col-md-2 input custom-input-box brand">
+                    <%= text_field_tag :date, params[:date], class: 'reload3 form-control' %>
+                  </label>
+                </section>
+                <section>
+                  <label class="col-md-1">Bulan</label>
+                  <label class="col-md-2 input custom-input-box brand">
+                    <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                  </label>
+                </section>
+                <section>
+                  <label class="col-md-1">Tahun</label>
+                  <label class="col-md-2 input custom-input-box">
+                    <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                  </label>
+                </section>
+                <section>
+                  <label class="col-md-12">
+                    <%= link_to finance_reports_journal_memos_path(format: "html", year: (params[:year].present? ? params[:year] : Time.now.year),
+                      month: (params[:month].present? ? params[:month] : Time.now.month), date: params[:date]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                      <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                    <% end %>
+                    <%= link_to finance_reports_journal_memos_path(format: "html", year: (params[:year].present? ? params[:year] : Time.now.year),
+                      month: (params[:month].present? ? params[:month] : Time.now.month), date: params[:date]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload2" do %>
+                      <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                    <% end %>
+                  </label>
+                </section>
+              </section>
+            </div>
+            <br>
+          </fieldset>
+            <div class="table-responsive">
+              <table class="table table-striped table-brequested table-hover table-bordered overflow" width="100%">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Supplier</th>
+                    <th>Tanggal Masuk</th>
+                    <th>No Faktur</th>
+                    <th>Qty</th>
+                    <th>Nominal Harga</th>
+                    <th>Disc 1</th>
+                    <th>Disc 2</th>
+                    <th>Disc 3</th>
+                    <th>Disc 4</th>
+                    <th>Nominal Bayar</th>
+                    <th>Status</th>
+                    <th>Long Term</th>
+                    <th>Jatuh Tempo</th>
+                  </tr>
+                </thead>
+                <tbody id='journal_memo_list'><%= render 'list' %></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+<SCRIPT>
+  reload()
+  $(".reload").on('change', function() {
+    reload()
+  })
+  $(".reload3").on('keyup', function() {
+    reload()
+  })
+  $(".reload").select2();
+
+  function reload(){
+    $("#reload").attr("href", "/finance_reports/journal_memos.html?locale=en&supplier_id="+ $("#supplier").val() +"&brand_id="+ $("#brand").val() +"&date="+ $("#date").val() +"&month="+ $('#date_start').val() +"&year="+ $("#tahun").val())
+    $("#reload2").attr("href", "/finance_reports/journal_memos.xlsx?locale=en&supplier_id="+ $("#supplier").val() +"&brand_id="+ $("#brand").val() +"&date="+ $("#date").val() +"&month="+ $('#date_start').val() +"&year="+ $("#tahun").val())
+  }
+
+  function collect_brand(supplier_id){
+    $.ajax(
+    {
+      url: "/finance_reports/journal_memos/brands_per_supplier",
+      dataType: "script",
+      data: {supplier_id: supplier_id}
+    });
+  }
+</SCRIPT>

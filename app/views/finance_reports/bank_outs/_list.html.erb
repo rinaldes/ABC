@@ -1,0 +1,12 @@
+<% @bank_outs.each do |bank_out| %>
+  <tr>
+    <td><%= bank_out.ap_number %></td>
+    <td><%= format_date(bank_out.due_date) %></td>
+    <td><%= bank_out.supplier.try(:name) %></td>
+    <td><%= format_currency(bank_out.total_amount) %></td>
+    <td><%= format_currency(bank_out.total_paid) %></td>
+    <td><%= format_currency(bank_out.retur_amount) %></td>
+    <td><%= format_currency(bank_out.outstanding_amount) %></td>
+    <td><%= link_to raw('<i class="fa fa-eye" rel="tooltip" data-placement="left"></i>'), finance_reports_bank_out_path(bank_out.id), class: "btn btn-primary btn-xs custom-edit-btn" %></td>
+  </tr>
+<% end %>

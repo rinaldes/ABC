@@ -1,0 +1,9 @@
+<tr>
+  <td class='refTransaction'><%= @receiving.number rescue '' %></td>
+  <%= render 'rts_detail_product', product: product %>
+  <td>
+    <a href="javascript:void(0)" class="btn btn-warning btn-xs custom-edit-btn" onclick="removeList(this)">
+      <i class="fa fa-trash-o" rel="tooltip" data-placement="left" data-original-title="Delete"></i>
+    </a>
+  </td>
+</tr>

@@ -1,0 +1,29 @@
+<% @cashbacks.each_with_index do |cashback, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td><%= format_currency cashback.transaction_amount %></td>
+    <td><%= format_currency cashback.cashback_amount %></td>
+    <td><%= link_to ("level " + cashback.member_level.level.to_s), cashback_path(cashback), class: 'blue' %></td>
+    <% if current_user.can_manage_promo? %>
+    <td class="hidden-phone">
+      <%= link_to edit_cashback_path(cashback), class: "btn btn-primary btn-xs" do %>
+        <i class="fa fa-pencil"></i>
+      <% end %>
+      <%= link_to 'javascript:void(0)', onclick: "delete_one(#{cashback.id}, 'cashbacks')", class: "btn btn-danger btn-xs" do %>
+        <i class="fa fa-trash-o"></i>
+      <% end %>
+    </td>
+    <% end %>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=5>
+    <% if @cashbacks.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@cashbacks, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

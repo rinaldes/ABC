@@ -1,0 +1,8 @@
+<td>&nbsp;</td>
+<td><%= i+1 %></td>
+<td><%= apb['method'] %></td>
+<td><%= apb.bank rescue '' %></td>
+<td><%= apb.giro_number rescue '' %></td>
+<td><%= "PT. Nuansa Baru Indonesia" if apb.present? %></td>
+<td><%= apb.payment_date rescue '' %></td>
+<td class='text-right'><%= format_currency apb.amount rescue '' %></td>

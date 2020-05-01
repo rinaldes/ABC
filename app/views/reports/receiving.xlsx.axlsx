@@ -1,0 +1,225 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+subjudul = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true})
+subjudul_biru_tengah = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true}, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+subjudul_biru = styles.add_style(:b => true, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+judul = styles.add_style(:b => true, :sz => 14, :alignment => { :horizontal => :center, :wrap_text => true})
+alp = {}
+branchnya = []
+('A'..'ZZZ').each_with_index do |alpha, i|
+	alp[i] = alpha
+end
+
+wb.add_worksheet(name: "Memo Jurnal") do |sheet|
+	(0..4).each do |i|
+  	sheet.merge_cells "#{alp[i]}6:#{alp[i]}7"
+  end
+  5.times do
+  	sheet.add_row [nil]
+  end
+  a = 0
+	@branches.each_with_index do |branch, i|
+    branchnya << branch.description
+    branchnya << ""
+    branchnya << ""
+    sheet.merge_cells "#{alp[i*3+5]}6:#{alp[i*3+7]}6"
+    a = i*3+7
+  end
+  sheet.merge_cells "#{alp[a+1]}6:#{alp[a+3]}6"
+  sheet.merge_cells "#{alp[a+4]}6:#{alp[a+4]}7"
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 3, 3
+  end
+  sheet.add_row ["Supplier", "Tgl Masuk", "QTY", "Cprice", "Value"] + branchnya + ["Retur", "", "", "Keterangan"], :style => subjudul
+  branchnya = []
+  5.times do
+  	branchnya << ""
+  end
+  0.upto(@branches.size) do |branch|
+  	branchnya << "QTY"
+  	branchnya << "Cprice"
+  	branchnya << "Value"
+  end
+  sheet.add_row branchnya
+
+  @receivings.each do |receiving|
+	  next if receiving.supplier.blank?
+	  receiving_details = receiving.receiving_details.where("quantity>0")
+	  sum_qty = receiving_details.map(&:quantity).compact.sum
+	  sum_val = receiving_details.map{|rd|rd.value.to_f*rd.quantity.to_f}.compact.sum
+	  stock_ho = sum_qty
+	  price_ho = receiving.total
+	  retur = ReturnsToSupplier.where("receiving_id=#{receiving.id}")
+	  branchnya = [receiving.supplier.name, receiving.date.strftime('%d-%m-%Y'), sum_qty, receiving.total, sum_val]	    
+    @branches.each do |branch|
+      total = receiving.purchase_transfers.where("destination_warehouse_id=#{branch.id}")
+      total_qty = total.map(&:total_quantity).compact.sum
+      total_price = total.map(&:total_price).compact.sum
+      total_value = total.map(&:total_value).compact.sum
+      branchnya << total_qty
+      branchnya << total_price
+      branchnya << total_value
+    end
+    branchnya << retur.map{|rts|rts["quantity"].to_i}.sum
+    branchnya << retur.map(&:total).sum
+    branchnya << retur.map(&:total).sum
+    branchnya << receiving.note
+	  sheet.add_row branchnya
+	end
+end
+
+wb.add_worksheet(name: "Detail") do |sheet|
+  branchnya = []
+  (0..4).each do |i|
+  	sheet.merge_cells "#{alp[i]}6:#{alp[i]}7"
+  end
+  5.times do
+  	sheet.add_row [nil]
+  end
+  a = 0
+	@branches.each_with_index do |branch, i|
+    branchnya << branch.description
+    branchnya << ""
+    branchnya << ""
+    sheet.merge_cells "#{alp[i*3+5]}6:#{alp[i*3+7]}6"
+    a = i*3+7
+  end
+  sheet.merge_cells "#{alp[a+1]}6:#{alp[a+3]}6"
+  sheet.merge_cells "#{alp[a+4]}6:#{alp[a+4]}7"
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 3, 3
+  end
+  sheet.add_row ["Supplier", "Tgl Masuk", "QTY", "Cprice", "Value"] + branchnya + ["Retur", "", "", "Keterangan"], :style => subjudul
+  branchnya = []
+  5.times do
+  	branchnya << ""
+  end
+  0.upto(@branches.size) do |branch|
+  	branchnya << "QTY"
+  	branchnya << "Cprice"
+  	branchnya << "Value"
+  end
+  sheet.add_row branchnya
+
+  @receivings.each do |receiving|
+	  next if receiving.supplier.blank?
+	  receiving_details = receiving.receiving_details.where("quantity>0")
+	  sum_qty = receiving_details.map(&:quantity).compact.sum
+	  sum_val = receiving_details.map{|rd|rd.value.to_f*rd.quantity.to_f}.compact.sum
+	  stock_ho = sum_qty
+	  price_ho = receiving.total
+	  retur = ReturnsToSupplier.where("receiving_id=#{receiving.id}")
+	  branchnya = [receiving.supplier.name, receiving.date.strftime('%d-%m-%Y'), sum_qty, receiving.total, sum_val]	    
+    @branches.each do |branch|
+      total = receiving.purchase_transfers.where("destination_warehouse_id=#{branch.id}")
+      total_qty = total.map(&:total_quantity).compact.sum
+      total_price = total.map(&:total_price).compact.sum
+      total_value = total.map(&:total_value).compact.sum
+      branchnya << total_qty
+      branchnya << total_price
+      branchnya << total_value
+    end
+    branchnya << retur.map{|rts|rts["quantity"].to_i}.sum
+    branchnya << retur.map(&:total).sum
+    branchnya << retur.map(&:total).sum
+    branchnya << receiving.note
+	  sheet.add_row branchnya
+	end
+end
+
+wb.add_worksheet(name: "Global") do |sheet|
+  sheet.add_row [nil]
+  sheet.add_row ["GLOBAL PEMBELIAN DAN PENGIRIMAN BARANG KE TOKO"], :style => judul, :widths=>[:ignore]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  sheet.add_row [nil]
+  a = 0
+  branchnya = ["", "", "", ""]
+  @branches.each_with_index do |branch, i|
+    branchnya << branch.description
+    branchnya << ""
+    branchnya << ""
+    sheet.merge_cells "#{alp[i*3+4]}7:#{alp[i*3+6]}7"
+    a = i+1
+  end
+  sheet.merge_cells "A6:A8"
+  sheet.merge_cells "B6:D7"
+  sheet.merge_cells "E6:#{alp[a*3+3]}6"
+  sheet.merge_cells "A2:#{alp[a*3+3]}2"
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 3, 3
+  end
+  sheet.add_row ["Bulan", "Pembelian", "", "","Transfer"], :style => subjudul
+  sheet.add_row branchnya, :style => subjudul
+  branchnya = [""]
+  0.upto(@branches.size) do |branch|
+  	branchnya << "QTY"
+  	branchnya << "Cprice"
+  	branchnya << "Value"
+  end
+  sheet.add_row branchnya
+  @monthly_receivings.each do |receiving| 
+  	sheet.add_row [receiving[0], receiving[1].map(&:quantity).compact.sum, receiving[1].map(&:hpp).compact.sum, receiving[1].map(&:value).compact.sum]
+	end
+end
+
+wb.add_worksheet(name: "Unknown Receive") do |sheet|
+  branchnya = []
+  (0..1).each do |i|
+    sheet.merge_cells "#{alp[i]}6:#{alp[i]}7"
+  end
+  5.times do
+    sheet.add_row [nil]
+  end
+  a = 0
+  @branches.each_with_index do |branch, i|
+    branchnya << branch.description
+    branchnya << ""
+    branchnya << ""
+    sheet.merge_cells "#{alp[i*3-1]}6:#{alp[i*3+1]}6"
+    a = i*3+1
+  end
+  sheet.merge_cells "#{alp[a+1]}6:#{alp[a+3]}6"
+  img = File.expand_path(Rails.root+'public/img/logo_nuansabaru.png')
+  sheet.add_image(:image_src => img, :end_at => true) do |image|
+    image.start_at 0, 0
+    image.end_at 3, 3
+  end
+  sheet.add_row ["Tgl Masuk", "Nama Supplier"] + branchnya + ["Keterangan"], :style => subjudul
+  branchnya = []
+  2.times do
+    branchnya << ""
+  end
+  branchnya = []
+  branchnya << ""
+  branchnya << ""
+  1.upto(@branches.size) do |branch|
+    branchnya << "QTY"
+    branchnya << "Cost"
+    branchnya << "Value"
+  end
+  sheet.add_row branchnya
+  branchnya = []
+  @u_receive.each{|receiving|
+    pt = receiving.purchase_transfer
+    @branches.each{|branch|
+      if pt.destination_warehouse_id == branch.id
+        branchnya << pt.total_quantity
+        branchnya << pt.total_price
+        branchnya << pt.total_value
+      else
+        branchnya << ""
+        branchnya << ""
+        branchnya << ""
+      end
+    }
+  sheet.add_row [pt.mutation_date.strftime('%d %B %Y'), pt.supplier.name] + branchnya + [pt.note]
+  }
+end

@@ -1,0 +1,212 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Transfer Barang</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div id='notification'><%= render 'layouts/errors' %></div>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-good_transfer">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Transfer Barang</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <%= form_for @good_transfer, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <%= f.hidden_field :no_surat_jalan, value: "SJ/#{Time.now.strftime('%m%y')}-#{'%06d' % ((@last_goods_transfer.id rescue 0)+1)}", class: "input-sm" %>
+              <%= f.hidden_field :receiver_id, value: current_user.id %>
+              <%= f.hidden_field :supplier_id, class: 'supplier_id' %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-4">
+                    <section>
+                      <label class="col-md-4 label">Tanggal</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :mutation_date, value: Time.now.strftime('%d-%m-%Y'), class: "input-sm #{(error_field @good_transfer, :transfer_date)}", disabled: true %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">No. Transfer Barang</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :code, class: "input-sm", readonly: true %>
+                      </label>
+                    </section>
+                  </section> <!-- col-md-6 -->
+                  <section class="col col-md-4">
+                    <%= render 'shared/supplier_info' %>
+                  </section>
+                  <section class="col col-md-4">
+                    <section>
+                      <label class="col-md-3 label">Dari <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= (current_user.branch.office_name rescue nil) %>
+                        <%= f.collection_select(:origin_warehouse_id, (current_user.branch_id.present? ? @offices : Branch.all), :id, :office_name, {prompt: @offices.length > 1},
+                          {class: "ho_id form-control origin_branch_id #{'hide' if @offices.length == 1}", onchange: "nomor_ganti();"}) %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Tujuan <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.collection_select(:destination_warehouse_id, (current_user.branch_id.present? ? @offices : Branch.all), :id, :office_name, {prompt: true},
+                          {class: "form-control destination_warehouse_id" }) %>
+                      </label>
+                    </section>
+                  </section> <!-- col-md-6 -->
+                </div> <!-- row -->
+              </fieldset> <!-- tambah supplier -->
+              <%= render "product_search" %>
+              <fieldset class="col col-md-12"> <!-- brand person -->
+                <div class="row">
+                  <section class="col col-md-12">
+                    <table class="table table-striped table-brequested table-hover" width="100%" id="request">
+                      <thead>
+                        <tr>
+                          <th>CODE</th>
+                          <th>MERK</th>
+                          <th>JENIS</th>
+                          <th>ARTICLE</th>
+                          <th>WARNA</th>
+                          <th>HARGA POKOK</th>
+                          <th>UKURAN</th>
+                          <th class="col-md-1">ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if params[:action] == 'edit' %>
+                          <%= render 'list_detail' %>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </section>
+                </div> <!-- row -->
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-primary" onclick="return(beforeSave())">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+              <div id='product_detail_tobe_submitted' style='display: none'></div><!-- end widget div -->
+            <% end %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+<div id='product_detail'>
+  <% unless @good_transfer.new_record? %>
+    <% @good_transfer.product_mutation_details.group_by{|prd|prd.product_size.product_id}.each_with_index { |prd, i| %>
+      <% product = prd[1][0].product_size.product %>
+      <div class="modal fade" id="myModal<%= product.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <%= render partial: 'size', locals: {product: product, quantities: prd[1].map(&:quantity), product_sizes: product.product_sizes, list_product: @list_product[product.id],
+          key: "#{Time.now.to_i}#{i}"} %>
+      </div>
+    <% } %>
+  <% end %>
+</div><!-- end widget div -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#good_transfer_destination_warehouse_id").autocomplete({
+      source : function(request, response) {
+        $.ajax({
+          url : "/branches/autocomplete_branch_office_name",
+          dataType : "json",
+          data : {
+            term : request.term
+          },
+          success: function (data){
+            response(data),
+            nomor_ganti()
+          },
+        });
+      }
+    });
+    clone_details()
+    autocomplete_barcode()
+    $('.add_brand').click(function(){
+      add_brand()
+    })
+    set_barcode()
+    autocomplete_supplier_name()
+
+  });
+
+  function set_barcode(){
+    if ($('#good_transfer_origin_branch_id').val() == '')
+      $('#barcode').attr('disabled', 'disabled')
+    else
+      $('#barcode').removeAttr('disabled')
+
+  }
+  function add_brand(product_id, good_transfer_detail_id){
+    var date = new Date();
+    $.ajax({
+      url: '/good_transfers/add_brand',
+      data: {
+        key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), product_id: product_id,
+        warehouse_id: $('#good_transfer_origin_branch_id').val(), id: '<%= @good_transfer.id %>'
+      }
+    })
+  }
+
+  function merk(){
+  }
+
+  function beforeSave(){
+    var good_id = [];
+    var tot = $('#request tbody tr').length;
+    if(tot != 0){
+      for(var y=0; y < tot; y+=1){
+        good_id.push($("#request tbody tr:eq("+ y +") td:eq(0) span").text())
+      }
+      $("#good_list").val(good_id.toString());
+      clone_inputs()
+      setTimeout(function(){
+        $.ajax(
+        {
+          url: "/good_transfers",
+          dataType: "script",
+          method: 'POST',
+          data: $("form").serialize(),
+          success: function (data){
+            response(data)
+          },
+        });
+      }, 1000);
+    }else{
+      alert('Insert Data First!')
+      return false;
+    }
+  }
+
+  function deleteRow(event){
+    $(event.target).parent().parent().parent().remove();
+  }
+
+  function nomor_ganti(){
+    if ($('#good_transfer_destination_warehouse_id').val() != '' && $('#good_transfer_origin_warehouse_id').val() != '' && $('#supplier_name').val() != ''){
+      $.ajax({
+          url: '/good_transfers/get_last_number',
+          type: 'get',
+          dataType: 'json',
+          data: {
+            supplier_id: $('.supplier_id').val()
+          },
+          success: function(data){
+            //M/Nama Cabang atau Nama HO asal -Nama Cabang atau Nama HO penerima/No Supplier/Tahun-Bulan-Hari/No urut per supplier (terus berlanjut hingga 1 tahun)
+            $("#good_transfer_code").val("M/"+$('#good_transfer_origin_warehouse_id').get(0).options[$('#good_transfer_origin_warehouse_id').get(0).selectedIndex].innerHTML+" - "+$('#good_transfer_destination_warehouse_id').get(0).options[$('#good_transfer_destination_warehouse_id').get(0).selectedIndex].innerHTML+"/"+$("#supplier_code").val()+"/"+$('#good_transfer_mutation_date').val()+"/"+data.number);
+          }
+      })
+    }
+  }
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

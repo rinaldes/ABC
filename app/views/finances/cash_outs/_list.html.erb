@@ -1,0 +1,42 @@
+<tr>
+  <td>1</td>
+  <td><%= @cash_outs.first.time.strftime('%d-%m-%Y') rescue '' %></td>
+  <td>SALDO KAS</td>
+  <td>SISA KAS BULAN LALU</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td align="right"><%= format_currency @petty_cash.petty_cash_details.first.initial_budget.to_f %></td>
+  <td></td>
+  <td align="right"><%= format_currency @petty_cash.petty_cash_details.first.initial_budget.to_f %></td>
+</tr>
+<% sisa_saldo = @petty_cash.petty_cash_details.first.initial_budget %>
+<% cash_out = 0 %>
+<% cash_in = sisa_saldo.to_f %>
+<% unless @cash_outs.blank? %>
+  <% @cash_outs.each_with_index do |cash, index| %>
+    <% sisa_saldo = cash.cash_out_type == 'CASH IN' ? cash.amount.to_f + sisa_saldo.to_f : sisa_saldo.to_f-cash.amount.to_f %>
+    <tr>
+      <td><%= index+2 %></td>
+      <td><%= cash.time.strftime('%d-%m-%Y') %></td>
+      <td><%= link_to cash.description, edit_finances_cash_out_url(cash) %></td>
+      <td><%= cash.cash_out_type %></td>
+      <td><%= format_currency cash.qty %></td>
+      <td><%= cash.unit %></td>
+      <td align="right"><%= format_currency cash.price_per_unit %></td>
+      <td align="right"><%= format_currency cash.amount if cash.cash_out_type == 'CASH IN' %></td>
+      <td align="right"><%= format_currency cash.amount unless cash.cash_out_type == 'CASH IN' %></td>
+      <td align="right"><%= format_currency sisa_saldo %></td>
+    </tr>
+    <% cash_out += cash.amount unless cash.cash_out_type == 'CASH IN' %>
+    <% cash_in += cash.amount.to_f if cash.cash_out_type == 'CASH IN' %>
+  <% end %>
+<% end %>
+<tr>
+  <th colspan=3>GRAND TOTAL</th>
+  <th colspan=2></th>
+  <th colspan=2>KAS</th>
+  <th style="text-align:right;"><%= format_currency cash_in %></th>
+  <th style="text-align:right;"><%= format_currency cash_out %></th>
+  <th style="text-align:right;"><%= format_currency sisa_saldo %></th>
+</tr>

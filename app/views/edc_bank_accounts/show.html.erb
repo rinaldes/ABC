@@ -1,0 +1,93 @@
+<script src="/js/jquery-2.1.1.min.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Data Master</li><li>EdcBankAccount</li><li><%= @edc_bank_account.sale.try(:code) %></li>
+  </ol>
+</div>
+<div id="content">
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-supplier">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= @edc_bank_account.sale.try(:code) %></h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @edc_bank_account, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Sale</label>
+                      <label class="col-md-9 input custom-input-box">
+                        : <%= @edc_bank_account.sale.try(:code) %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Tipe</label>
+                      <label class="col-md-9 input custom-input-box">
+                        : <%= @edc_bank_account.tipe %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Nama Bank</label>
+                      <label class="col-md-9 input custom-input-box">
+                        : <%= @edc_bank_account.bank_name %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Nomor Akun</label>
+                      <label class="col-md-9 input custom-input-box">
+                        : <%= @edc_bank_account.account_number %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Nomor Kartu</label>
+                      <label class="col-md-9 input custom-input-box">
+                        : <%= @edc_bank_account.card_number %>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Payment Amount</label>
+                      <label class="col-md-8 input custom-input-box">
+                        : <%= @edc_bank_account.payment_amt %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Outstanding Amount</label>
+                      <label class="col-md-8 input custom-input-box">
+                        : <%= @edc_bank_account.outstanding_amount %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Nama Akun</label>
+                      <label class="col-md-8 input custom-input-box">
+                        : <%= @edc_bank_account.account_name %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Extra Charge</label>
+                      <label class="col-md-8 input custom-input-box">
+                        : <%= @edc_bank_account.extra_charge %>
+                      </label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+                <!--table class="table table-striped table-bordered" width="100%">
+                  <%#= render "/reports/sales/all_item", sales: @sales%>
+                </table-->
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

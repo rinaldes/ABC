@@ -1,0 +1,25 @@
+<% @selling_prices.each_with_index do |sp, i| %>
+  <tr>
+    <td><%= params[:page] ? (params[:page].to_i*PER_PAGE+i-PER_PAGE+1) : i+1 %></td>
+    <td><%= link_to (sp.article), selling_price_url(sp) %></td>
+    <td><%= sp.barcode %></td>
+    <td><%= sp.brand_name %></td>
+    <td><%= sp.start_date %></td>
+    <td><%= sp.end_date %></td>
+    <td class="align-right"><%= format_currency sp.purchase_price %></td>
+    <td class="align-right"><%= format_currency sp.selling_price %></td>
+    <td class="align-right"><%= sp.margin_percent.to_f.round(2) %>%</td>
+    <td class="align-right"><%= sp.updated_by.username rescue nil %></td>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=12>
+    <% if @selling_prices.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@selling_prices, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

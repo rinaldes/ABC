@@ -1,0 +1,16 @@
+<% if params[:action] != "update" %>
+    <tr id="data_<%= organization.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= organization.id %>" type="checkbox" value="<%= organization.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= organization.id %>"></label>
+        </div>
+    </td>
+    <td><%= organization.name %></td>
+    <td><%= organization.organization_parent %></td>
+    <td></td>    
+    <td></td>
+<% if params[:action] != "update" %>
+    </tr>
+<% end %>

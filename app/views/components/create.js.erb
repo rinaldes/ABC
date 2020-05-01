@@ -1,0 +1,6 @@
+<% if @component.save %>
+	$('#component tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#component tbody').prepend("<%= j(render 'data', :component => @component) %>");
+<% else %>
+<% end %>

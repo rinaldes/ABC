@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Code</Data></Cell>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Supplier Code</Data></Cell>
+        <Cell><Data ss:Type="String">Supplier Name</Data></Cell>
+        <Cell><Data ss:Type="String">Discount 1</Data></Cell>
+        <Cell><Data ss:Type="String">Discount 2</Data></Cell>
+        <Cell><Data ss:Type="String">Discount 3</Data></Cell>
+        <Cell><Data ss:Type="String">Discount 4</Data></Cell>
+        <Cell><Data ss:Type="String">Discount Nominal</Data></Cell>
+        <Cell><Data ss:Type="String">Department</Data></Cell>
+      </Row>
+    <% Brand.order("brands.created_at DESC").each do |colour| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= colour.code %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.supplier.code %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.supplier.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.discount_percent1 %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.discount_percent2 %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.discount_percent3 %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.discount_percent4 %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= colour.discount_rp %></Data></Cell>
+        <% if colour.department.present? %>
+        <Cell><Data ss:Type="String"><%= colour.department.name %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

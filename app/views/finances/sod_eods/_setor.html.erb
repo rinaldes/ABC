@@ -1,0 +1,36 @@
+<%
+  cash_at = CashAtBank.find_by_sod_eod_id_and_edc_bank_account_id(params[:id], edc_m.id)
+%>
+<section class="col col-md-6">
+  <section>
+    <b>
+    <label class="col-md-4 label">Bank</label>
+    <label class="col-md-7 input custom-input-box">
+      <strong>
+        <%= edc_m.bank_name %> - <%= edc_m.account_name %>
+        <%= hidden_field_tag "sod_eod[cash_at_banks_attributes][#{i}][sod_eod_id]", params[:id] %>
+        <%= hidden_field_tag "sod_eod[cash_at_banks_attributes][#{i}][edc_bank_account_id]", edc_m.id %>
+        <%= hidden_field_tag "sod_eod[cash_at_banks_attributes][#{i}][id]", (cash_at.id rescue nil) %>
+      </strong>
+    </label>
+    </b>
+  </section>
+  <section>
+    <label class="col-md-4 label">Saving Amount</label>
+    <label class="col-md-7 input custom-input-box">
+      <strong><%= number_field_tag "sod_eod[cash_at_banks_attributes][#{i}][saving_amount]", (cash_at.saving_amount rescue ''), class: "input-sm" %></strong>
+    </label>
+  </section>
+  <section>
+    <label class="col-md-4 label">Required Amount</label>
+    <label class="col-md-7 input custom-input-box">
+      <strong><%= number_field_tag "sod_eod[cash_at_banks_attributes][#{i}][required_amount]", (cash_at.required_amount rescue ''), class: "input-sm" %></strong>
+    </label>
+  </section>
+  <section>
+    <label class="col-md-4 label">Saving Date</label>
+    <label class="col-md-7 input custom-input-box">
+      <strong><%= text_field_tag "sod_eod[cash_at_banks_attributes][#{i}][saving_date]", (cash_at.saving_date.strftime("%d/%m/%Y") rescue Time.now.strftime("%d/%m/%Y")), class: "input-sm datepicker_form" %></strong>
+    </label>
+  </section>
+</section>

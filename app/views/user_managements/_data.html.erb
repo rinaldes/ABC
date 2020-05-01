@@ -1,0 +1,30 @@
+<% if params[:action] != "update_user_management" %>
+    <tr id="data_<%= user.id %>">
+<% end %>
+    <td>
+      <div class="checkbox check-default">
+            <input id="checkbox<%= user.id %>" type="checkbox" value="<%= user.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= user.id %>"></label>
+        </div>
+    </td>
+    <td><%= user.name %></td>
+    <td><%= user.username %></td>
+    <td><%= user.email %></td>
+    <td>
+        <% if user.confirmed_at.present? %>
+            Active Account
+        <% else %>
+            <%= user.password_generate %>
+        <% end %>
+    </td>
+    <td><%= user.role %></td>
+    <td>
+        <% if user.confirmed_at.present? %>
+            <span class='label label-success'>Active</span>
+        <% else %>
+            <span class='label label-danger'>InActive</span>
+        <% end %>
+    </td>
+<% if params[:action] != "update_user" %>
+    </tr>
+<% end %>

@@ -1,0 +1,16 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+
+wb.add_worksheet(name: "Bank Out") do |sheet|
+  sheet.add_row ["Tanggal #{format_date(@bank_out.due_date)} - Perk #{@bank_out.ap_number}"], :style => default
+  sheet.add_row ["Keterangan", "Debet", "Kredit"], :style => default
+  sheet.add_row [@bank_out.supplier.try(:name), format_currency(@bank_out.total_amount), ""], :style => default
+  sheet.add_row ["Outstanding Amount", "", format_currency(@bank_out.outstanding_amount)], :style => default
+  sheet.add_row ["Retur Amount", "", format_currency(@bank_out.retur_amount)], :style => default
+  sheet.add_row ["Tunai", "", format_currency(@bank_out.total_paid)], :style => default
+  @bank_out.other_charges.each do |other_charge|
+    sheet.add_row [other_charge.name, "", format_currency(other_charge.amount)], :style => default
+  end
+  sheet.add_row ["Total", format_currency(@bank_out.total_amount), format_currency(@debit)], :style => default
+end

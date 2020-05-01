@@ -1,0 +1,7 @@
+alert("Successfully created");
+document.getElementById("content_en").disabled = true;
+tinymce.EditorManager.execCommand('mceRemoveEditor', true, "content_en");
+document.getElementById("content_id").disabled = true;
+tinymce.EditorManager.execCommand('mceRemoveEditor', true, "content_id");
+document.getElementById("edit").disabled = false;
+document.getElementById("save").disabled = true;

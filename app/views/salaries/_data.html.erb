@@ -1,0 +1,18 @@
+<% if params[:action] != "update_salary" %>
+    <tr id="data_<%= salary.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= salary.id %>" type="checkbox" value="<%= salary.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= salary.id %>"></label>
+        </div>
+    </td>
+    <td><%= salary.reason_of_adjustment %></td>
+    <td><%= number_to_currency(salary.basic, precision: 2, unit: 'Rp ') %></td>
+    <td><%= number_to_currency(salary.transport, precision: 2, unit: 'Rp ') %></td>
+    <td><%= salary.date_of_performance %></td>
+    <td><%= salary.from %></td>
+    <td colspan='2'><%= salary.to %></td>
+<% if params[:action] != "update_salary" %>
+    </tr>
+<% end %>

@@ -1,0 +1,13 @@
+<%= "<tr id=\"data_#{position_detail.id}\">".html_safe if params[:action] != "update_position_detail" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= position_detail.id %>" type="checkbox" value="<%= position_detail.id %>" class="child-position child-box" data-section="position" data-position="child">
+    <label for="checkbox<%= position_detail.id %>"></label>
+  </div>
+</td>
+<td><%= position_detail.start %></td>
+<td><%= position_detail.end %></td>
+<td><%= position_detail.position %></td>
+<td><%= position_detail.organization %></td>
+<td><%= position_detail.reason_for_change %></td>
+<%= "</tr>".html_safe if params[:action] != "update_position_detail" %>  

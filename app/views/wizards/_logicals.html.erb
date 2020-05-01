@@ -1,0 +1,13 @@
+<div id="logical-preview" class="clearfix draggable-wrapper">
+  <% if session["#{current_user.id.to_s}"]["logical"].present? %>
+		<% session["#{current_user.id.to_s}"]["logical"].each do |id, logical| %>
+			<%= render "/questions/logical", logical: logical, id: id %>
+		<% end %>
+	<% end %>
+</div>
+<div id="set-logical-form"></div>
+
+<%= link_to "Add Logical", add_logical_surveys_path, remote: true, class: "btn btn-primary" %>
+<div id="close-logical-link" class="hide close-link">
+  <%= link_to "Cancel", add_logical_surveys_path(cancel: true), remote: true, class: "btn btn-primary" %>
+</div>

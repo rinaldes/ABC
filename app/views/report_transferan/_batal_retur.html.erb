@@ -1,0 +1,39 @@
+<br>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Tgl Kirim</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Nama Supplier</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Depan</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Belakang</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Fashion</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Parung</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Dramaga</th>
+      <th colspan=3 style="text-align: center; vertical-align: middle;">Bandung</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Keterangan</th>
+    </tr>
+    <tr>
+      <% 6.times do %>
+        <th style="text-align: center; vertical-align: middle;">QTY</th>
+        <th style="text-align: center; vertical-align: middle;">Cost</th>
+        <th style="text-align: center; vertical-align: middle;">Value</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @stock_ho.present? %>
+
+    <% else %>
+      <tr>
+      <td colspan="21"><%= raw '<center>No Data Available</center>' %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="2" style="text-align: center; vertical-align: middle;">Grand Total</th>
+      <% 19.times do %>
+        <th style="text-align: center; vertical-align: middle;"></th>
+      <% end %>
+    </tr>
+  </tbody>
+</table>
+</br>

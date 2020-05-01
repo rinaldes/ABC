@@ -1,0 +1,56 @@
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+      </button>
+      <h4 class="modal-title" id="myModalLabel">PO History</h4>
+    </div>
+    <div class="modal-body" style="color:#5E5E5E">
+      <table class="table table-striped table-brequested table-hover" width="100%">
+        <thead>
+          <tr>
+            <th><%= t(:no) %></th>
+            <th><%= t(:po_number) %></th>
+            <th>
+              <%= t(:po_date) %>
+            </th>
+            <th>
+              <%= t(:total_qty) %>
+            </th>
+            <th><%= t(:received_qty) %></th>
+            <th><%= t(:outstanding_qty) %></th>
+            <th><%= t(:cost_price) %></th>
+            <th>
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody id='product-search'>
+          <%= render 'po_history_list' %>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">
+        Cancel
+      </button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<SCRIPT>
+  function reload_products(){
+    $(document).keypress(function(e) {
+      if(e.which == 13){
+        $.ajax({
+          url: "/purchase_orders/search_in_modal?&status='APPROVED'&number="+($('#barcode').length == 1 ? $('#barcode').val() : '')+"&date="+($('#date').length == 1 ? $('#date').val() : '')+"&sup_code="+($('#colour').length == 1 ? $('#colour').val() : ''),
+          method: "get",
+          data: {
+            },
+            dataType: "script"
+        })
+      }
+    });
+  }
+</SCRIPT>

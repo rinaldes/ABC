@@ -1,0 +1,8 @@
+<div class="form-group nested-fields">
+	<div class="form-inline">
+	  <%= f.autocomplete_field :employee_id, autocomplete_employee_name_approval_levels_url, :id_element =>"#id", class: "form-control", placeholder: "Employee" %>
+	  <%= link_to_remove_association f, data: {:confirm => 'do you really want to do this?'}, class: 'btn btn-danger' do%>
+			<i class="fa fa-minus"></i>
+	  <% end %>
+	</div>
+</div>

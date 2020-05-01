@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Date</Data></Cell>
+        <Cell><Data ss:Type="String">Start</Data></Cell>
+        <Cell><Data ss:Type="String">End</Data></Cell>
+        <Cell><Data ss:Type="String">Reason</Data></Cell>
+        <Cell><Data ss:Type="String">Status</Data></Cell>
+      </Row>
+    <% @overtime_requests.each do |overtime_request| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= overtime_request.name %></Data></Cell>
+        <Cell><Data ss:Type="Date"><%= overtime_request.date %></Data></Cell>
+        <Cell><Data ss:Type="Time"><%= overtime_request.start_time.strftime("%H:%M") %></Data></Cell>
+        <Cell><Data ss:Type="Time"><%= overtime_request.end_time.strftime("%H:%M") %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= overtime_request.reason %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= overtime_request.status %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

@@ -1,0 +1,19 @@
+<% id ||= 0 %>
+<% current_value = session[current_user.id.to_s]['question'][id] %>
+<%= form_tag id == 0 ? set_question_surveys_path : manage_question_post_surveys_path(:update, id: id), class: "form-horizontal", :multipart => true, id: "new_set_question", remote: true do %>
+	<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+	<div id="question_head">
+		<%= render "/wizards/head_question", id: id %>
+	</div>
+
+  <div class="form-group ">
+  	<%= label_tag "question[type]", "Question type", class: "col-sm-2 control-label" %>
+    <div class="col-sm-4">
+      <%= select_tag "question[type]", options_for_select(@question_type, current_value.present? ? current_value['type'] : '-'), :prompt => "Select question type...", :class => "form-control", :onchange => "changeField(this);" %>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div id="question_content"></div>
+<% end %>

@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="row login-container column-seperation">  
+    <div class="col-md-4 col-md-offset-4">
+      <h2 class="text-center">Change password</h2>
+
+      <%= form_for @admin, :url => admin_password_path(params[:id]), class: "login-form" do |f| %>
+        <% if @admin.errors.any? %>
+          <% for message in @admin.errors.full_messages %>
+            <%= content_tag :p, message, class: "flash_content text-center" %>
+          <% end %>
+        <% else %>
+          <p class="text-center">Set your new password here.</p>
+        <% end %>
+
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= f.password_field :password, class: "form-control", placeholder: "Password", autofocus: true, autocomplete: "off" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="controls">
+              <div class="input-with-icon right">
+                <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Password confirmation", autofocus: true, autocomplete: "off" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br />
+        <div class="row">
+          <div class="col-md-12">
+            <button class="btn btn-primary btn-cons pull-right btn-demo-space" type="submit">Update Password</button>
+            <div class="clear"></div>
+            <hr />
+            <div class="text-center">
+              Already remember your password?.
+              <%= link_to "Login", admin_root_path %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

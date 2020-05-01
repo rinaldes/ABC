@@ -1,0 +1,115 @@
+<div class="container-fluid">
+    	<ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="#" class="active">Shift</a></li>
+        </ul>
+        
+        <div class="page-title">	
+        	<i class="fa fa-pu"></i>
+        	<h3><span class="semi-bold">Shift</span></h3>	
+        </div>  
+            <div class="grid simple">
+           	  <div class="grid-title no-border"></div>
+            	<div class="grid-body no-border">
+					<div class="row toolbar-block">
+                    	<div class="col-md-4">
+                        	<div class="dataTables_filter" id="example3_filter">
+                            	<div class="controls">
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" placeholder="Search Record">
+                                      <span class="input-group-addon ">
+                                       	<i class="fa fa-search"></i>
+                                      </span>
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                        	<div class="toolbar pull-right" id="toolbar_main">
+                            	<div class="table-tools-actions">
+                                  <%= link_to new_shift_path, id: "_new", class: "btn btn-success", remote: true do %>
+              Add New <i class="fa fa-plus"></i>
+            <% end %>
+                                    <div class="btn-group">
+                                    	<button class="btn dropdown-toggle" data-toggle="dropdown"><span class="fa fa-gear"></span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu right-edge">
+                                          <li><a href="#">Action</a></li>
+                                          <li><a href="#">Another action</a></li>
+                                          <li><a href="#">Something else here</a></li>
+                                          <li class="divider"></li>
+                                          <li><a href="#">Separated link</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        	<div class="toolbar pull-right hide" id="toolbar_upload">
+                            	<div class="table-tools-actions">
+                                	<button class="btn"><span class="fa fa-cloud-download"></span> Download</button>
+                                    <div class="separator">&nbsp;</div>
+                                </div>
+                            </div>
+                        	<div class="toolbar pull-right hide" id="toolbar_def">
+                            	<div class="table-tools-actions">
+                                	<button class="btn"><span class="fa fa-edit"></span> Edit</button> 
+                                    <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                    <div class="separator">&nbsp;</div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                	<table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                               <!--  <th width="11%" style="width:1%">
+                                    <div class="checkbox check-default">
+                                        <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                                        <label for="checkbox10"></label>
+                                    </div>
+                                </th> -->
+                                <th style="width:30%">Code</th>
+                                <th style="width:22%">Name</th>
+                                <th style="width: 9%;">Edit</th>
+                                <th style="width: 9;">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% @shifts.each do |shift| %>
+                            <tr class="new-rec">
+                                <td><%= shift.code %></td>
+                                <td><%= shift.name %></td>
+                                <td><%= link_to edit_shift_path(shift), id: "_edit", class: "btn btn-primary", remote: true do %>
+              Edit <i class="fa fa-edit"></i>
+            <% end %></td>
+                                <td><%= link_to shift_path(shift.id), :method => "delete", id: "_delete", :onclick => "return confirm('Are you sure want to permanently delete?')" , class: "btn btn-primary" do %>
+              Delete <i class="fa fa-del"></i>
+            <% end %></td>
+                            </tr>
+                            
+                           <% end %>
+                        </tbody>
+                    </table>
+                    
+                    <div class="row dataTables_wrapper">
+                    	<div class="col-md-12">
+                        	<div class="dataTables_paginate paging_bootstrap pagination">
+                            	<ul>
+                                    <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                    <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                    <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                                </ul>
+                            </div>
+                        	<div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!-- Modal -->
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+  <%= render 'new' if @shift.present? && action_name == "create" %>
+  <%= render 'edit' if @shift.present? && action_name == "update" %>
+</div>
+<!-- modal -->

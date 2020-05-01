@@ -1,0 +1,40 @@
+<fieldset>
+  <div class="row">
+    <section class="col col-6">
+      <section></section>
+      <section>
+        <label class="col-md-4 label">Year</label>
+        <label class="col-md-6 input custom-input-box">
+          <%= f.date_select :year, {:order => [:year], :start_year => Time.now.year, :end_year => Time.now.year+5, :prompt => {:year => "Select year"}}, {:class => "form-control", id: "select-year"} %>
+        </label>
+        <label class="col-md-4 label">Office</label>
+        <label class="col-md-6 input custom-input-box">
+          <%= f.select :office_id, options_for_select(Branch.all.map{|ho|[ho.office_name, ho.id]}, selected: @budget.office_id), {include_blank: 'Please Select'}, {class: 'form-control input-select'} %>
+        </label>
+        <label class="col-md-4 label">Department</label>
+        <label class="col-md-6 input custom-input-box">
+          <%= f.select :department_id, options_for_select(Department.where("parent_id IS NULL").map{|department|["#{department.code}-#{department.name}", department.id]}, selected: @budget.department_id), {include_blank: 'Please Select'}, {class: 'form-control input-select', onchange: "pilih_cat(this, '0')"} %>
+        </label>
+        <label class="col-md-4 label category">M-Class</label>
+        <label class="col-md-6 input custom-input-box m-class category">
+          <%= f.select :m_class_id, options_for_select(MClass.where("parent_id IS NOT NULL").map{|ho|["#{ho.code}-#{ho.name}", ho.id]}, selected: @budget.m_class_id), {include_blank: 'Please Select'}, {class: 'form-control'} %>
+        </label>
+        <label class="col-md-4 label">Monthly Budget</label>
+        <label class="col-md-6 input custom-input-box">
+          <%= text_field_tag 'budget[monthly_budget]', '', id: "monthly_budget", class: 'numeric' %>
+        </label>
+        <label class="col-md-4 label">Months</label>
+        <label class="col-md-6">
+          <% 12.times {f.object.monthly_budgets.build} %>
+            <%= f.fields_for :monthly_budgets  do |monthly_budget| %>
+              <%= render 'monthly_budget_fields', f: monthly_budget %>
+          <% end %>
+        </label>
+      </section>
+    </section>
+  </div>
+</fieldset>
+<footer>
+  <%= f.submit "Submit", :class => "btn btn-primary", :id => "submit-budget", data: {:disable_with => "Please wait..."} %>
+  <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+</footer>

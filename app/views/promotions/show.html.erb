@@ -1,0 +1,206 @@
+<script src="/js/jquery.min.js"></script><!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Master Data</li><li>Promotion</li><li><%= @promotion.name %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+      <h1 class="page-title txt-color-blueDark">
+        <i class="fa fa-edit fa-fw "></i>
+          Promotions
+        <span>&gt;
+          Promotion Details
+        </span>
+      </h1>
+    </div>
+  </div>
+
+  <section id="widget-grid">
+    <div class="row">
+      <!-- NEW COL START -->
+      <article class="col-sm-12 col-md-12 col-lg-12 sortable-grid ui-sortable">
+
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget jarviswidget-sortable" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false" role="widget">
+          <header role="heading">
+            <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+            <h2>Promotion <%= @promotion.name %> Details </h2>
+          </header>
+
+          <!-- widget div-->
+          <div role="content">
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <form class="smart-form">
+                <header>
+                  General Informations
+                </header>
+                <fieldset>
+                  <div class="row">
+                    <section class="col col-1">
+                      <label class="label">Name</label>
+                    </section>
+                    <section class="col col-2">
+                      <label class="input">
+                        <%= @promotion.name %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">Type</label>
+                    </section>
+                    <section class="col col-2">
+                      <label class="input">
+                        <%= @promotion.promotion_type %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">Member?</label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="input">
+                        <%= @promotion.is_member %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">Multiple?</label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="input">
+                        <%= @promotion.multi %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">Claim?</label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="input">
+                        <%= @promotion.is_claim %>
+                      </label>
+                    </section>
+                  </div>
+                  <div class="row">
+                    <section class="col col-1">
+                      <label class="label">from</label>
+                    </section>
+                    <section class="col col-2">
+                      <label class="input">
+                        <%= @promotion.from %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">to</label>
+                    </section>
+                    <section class="col col-2">
+                      <label class="input">
+                        <%= @promotion.to %>
+                      </label>
+                    </section>
+                    <section class="col col-1">
+                      <label class="label">Store</label>
+                    </section>
+                    <section class="col col-2">
+                      <label class="input">
+                        <%= @store_name %>
+                      </label>
+                    </section>
+                  </div>
+                </fieldset>
+                <header>Promo Item</header>
+                <fieldset>
+                  <div class="row">
+                    <table class="table table-condensed table-striped table-bordered table-hover no-margin">
+                      <thead>
+                        <tr>
+                          <th>Article</th>
+                          <th>Brand</th>
+                          <th>Colour</th>
+                          <th>UoM</th>
+                          <th>Qty</th>
+                        </tr>
+                      </thead>
+                      <tbody id='promo_item_list'>
+                        <% @promotion.promo_item_lists.each_with_index{|pil, i| %>
+                          <% product = Product.find(pil.product_id) %>
+                          <tr>
+                            <td><%= product.article rescue ''%></td>
+                            <td><%= product.brand.try(:name) %></td>
+                            <td><%= product.colour.try(:name) %></td>
+                            <td><%= product.unit.try(:short_name) %></td>
+                            <td><%= pil.min_qty %></td>
+                          </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div> <!-- row -->
+                </fieldset>
+                <header>Prize Lists</header>
+                <fieldset>
+                  <div class="row">
+                    <% if @promotion.discount_amount.present? %>
+                      <section class="col col-2">
+                        <h2>Discount Amount :</h2>
+                      </section>
+                      <section class="col col-4">
+                        <h2>Rp. <%= format_currency @promotion.discount_amount %></h2>
+                      </section>
+                    <% end %>
+                    <% if @promotion.prize_lists.present? %>
+                    <table class="table table-condensed table-striped table-bordered table-hover no-margin">
+                      <thead>
+                        <tr>
+                          <th>Article</th>
+                          <th>Brand</th>
+                          <th>Colour</th>
+                          <th>UoM</th>
+                          <% if @promotion.promotion_type == 'Discount Period' %>
+                            <th>Disc. Amount</th>
+                          <% elsif @promotion.promotion_type == 'Purchase to Purchase' %>
+                            <th>Prize Promo</th>
+                          <% else %>
+                            <th>Qty</th>
+                          <% end %>
+                        </tr>
+                      </thead>
+
+                      <tbody id='prize_list'>
+                        <% @promotion.prize_lists.each_with_index{|pil, i| %>
+                          <% product = Product.find(pil.product_id) %>
+                          <tr>
+                            <td><%= product.article rescue '' %></td>
+                            <td><%= product.brand.try(:name) %></td>
+                            <td><%= product.colour.try(:name) %></td>
+                            <td><%= product.unit.try(:short_name) %></td>
+                            <% if @promotion.promotion_type == 'Discount Period' %>
+                              <td><%= pil.disc_amt rescue '' %></td>
+                            <% elsif @promotion.promotion_type == 'Purchase to Purchase' %>
+                              <td>Rp. <%= format_currency pil.prize_promo rescue '' %></td>
+                            <% else %>
+                              <td><%= pil.max_qty rescue '' %></td>
+                            <% end %>
+                          </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                    <% end %>
+                  </div> <!-- row -->
+                </fieldset>
+                <footer>
+                  <button type="button" class="btn btn-default" onclick="window.history.back();">
+                    Back
+                  </button>
+                </footer>
+              </form>
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- END COL -->
+    </div>
+  </section>
+</div>

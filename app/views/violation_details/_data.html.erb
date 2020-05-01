@@ -1,0 +1,13 @@
+<%= "<tr id=\"data_#{violation_detail.id}\">".html_safe if params[:action] != "update_violation_detail" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= violation_detail.id %>" type="checkbox" value="<%= violation_detail.id %>" class="child-violation_detail child-box" data-section="violation_detail" data-violationdetail="child">
+    <label for="checkbox<%= violation_detail.id %>"></label>
+  </div>
+</td>
+    <td><%= violation_detail.violation_type %></td>
+    <td><%= violation_detail.violation_description %></td>
+    <td><%= violation_detail.start %></td>
+    <td><%= violation_detail.due_date %></td>
+    <td><%= violation_detail.punishment %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_violation_detail" %>

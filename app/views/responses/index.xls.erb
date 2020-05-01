@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="<%= @send_survey.name %>">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Timestamp</Data></Cell>
+        <Cell><Data ss:Type="String">Username</Data></Cell>
+        <% @send_survey.survey_questions.each do |question| %>
+          <Cell><Data ss:Type="String"><%= question.title %></Data></Cell>
+        <% end %>
+      </Row>
+      <% @send_survey.survey_responses.each do |response| %>
+        <Row>
+          <Cell><Data ss:Type="DateTime"><%= response.strftime("%F %T") %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= response.user.username %></Data></Cell>
+          <% response.survey.response_questions.each do |response_question| %>
+            <Cell><Data ss:Type="String"><%= response_question.answer %></Data></Cell>
+          <% end %>
+        </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

@@ -1,0 +1,43 @@
+<% @vouchers.each_with_index do |voucher, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td class="hidden-phone"><%= link_to voucher.name, voucher_url(voucher), class: 'dialog_link' %></td>
+    <td class="hidden-phone"><%= voucher.valid_from %></td>
+    <td class="hidden-phone"><%= voucher.valid_until %></td>
+    <td class="hidden-phone"><%= format_currency voucher.min_amount %></td>
+    <td class="hidden-phone">
+      <% if voucher.discount.present? %>
+        <%= voucher.discount %> %
+      <% elsif voucher.discount_amount.present? %>
+        <%= format_currency voucher.discount_amount %>
+      <% end %>
+    </td>
+    <td class="hidden-phone">
+      <% if voucher.max_voucher.present? %>
+        <%= voucher.max_voucher %> pcs
+      <% elsif voucher.max_voucher_amt.present? %>
+        <%= format_currency voucher.max_voucher_amt %>
+      <% end %>
+    </td>
+    <td class="hidden-phone">
+      <% if voucher.office_id.nil? %>
+        <%= "All Branch" %>
+      <% elsif voucher.office_id = 0 %>
+        <%= "All HO" %>
+      <% else %>
+        <%= voucher.office_name %>
+      <% end %>
+    </td>
+    <% if current_user.can_manage_voucher? %>
+    <td class="hidden-phone">
+      <%= link_to raw("<i class='fa fa-pencil'> </i>"), edit_voucher_path(voucher), class: "btn btn-primary btn-xs" %>
+      <%= link_to raw("<i class='fa fa-trash-o'></i>"), 'javascript:void(0)', onclick: "delete_one(#{voucher.id}, 'vouchers')", class: "btn btn-danger btn-xs edit-btn-dlt" %>
+    </td>
+    <% end %>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=9>
+    <%= will_paginate @vouchers %>
+  </td>
+</tr>

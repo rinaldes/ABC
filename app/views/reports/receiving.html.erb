@@ -1,0 +1,104 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Pergerakan Barang</li><li>PEMBELIAN</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>PENGIRIMAN <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to reports_receiving_path(format: "html", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to reports_receiving_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <li><a href="#tabs-a">MEMO JURNAL</a></li>
+            <li><a href="#tabs-b">DETAIL</a></li>
+            <li><a href="#tabs-c">GLOBAL</a></li>
+            <li><a href="#tabs-d">Unknown Receive</a></li>
+          </ul>
+          <div id="tabs-a">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'><%= render 'receiving' %></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-b">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'><%= render 'receiving' %></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-c">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <%= render 'finance_reports/yearly_receiving' %>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-d">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'><%= render 'unknown_receive' %></table>
+                <br><br>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/reports/receiving.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

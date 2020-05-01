@@ -1,0 +1,23 @@
+<% @products.each do |product|%>
+  <tr>
+    <td><%= product.barcode %></td>
+    <td><%= product.article %></td>
+    <td><%= product.full_colour.join('/') %></td>
+    <td><%= product.size.description rescue '' %></td>
+    <td><%= product.brand.supplier.name %></td>
+    <td><%= product.brand.name %></td>
+    <td><%= product.department.name %></td>
+    <td><a href="javascript:void(0)" onclick="changeBarcode('<%= product.barcode %>')" class="btn btn-primary"> Choose </a></td>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=10>
+    <% if @products.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@products, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

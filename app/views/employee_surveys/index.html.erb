@@ -1,0 +1,79 @@
+
+<div class="container-fluid">
+	<ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><a href="#" class="active">Employee</a></li>
+  </ul>    
+    <div class="page-title">	
+    	<i class="fa fa-users"></i>
+    	<h3><span class="semi-bold">Employee</span></h3>	
+    </div>  
+      <div class="grid simple">
+        <div class="grid-body no-border has-tab">
+          <%= render '/employees/tab_nav'%>
+          <div class="tab-content">
+            <section class="tab-pane active" id="survey">
+              <%= form_for(EmployeeSurvey.new , html: { role: "form", multipart: true}, remote: true) do |f| %>
+                <div class="form-group row">
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">1</strong> What is Your personal vision for yourself ?</label>
+                  <div class="controls col-sm-12">           
+                    <%= f.text_area :question_1,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">2</strong> What do you have to do realize this vision ?</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_2,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>               
+
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">3</strong> How will you know you're progressing towards your vision ?</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_3,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">4</strong> What is you single major strength as a person ?</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_4,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">5</strong> What is your single major area for improvement</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_5,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                                 
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">6</strong> What is the greatest lesson your parents tought you that you continue to use to goide you in life ?</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_6,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">7</strong> What important role(s) do you see yourself doing to keep your work and family line balanced ?</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_7,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">8</strong> During your free time, what do you line doing? hobbies, interest, etc</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_8,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                
+                  <label class="form-label col-sm-12"><strong class="badge badge-success">9</strong> (How do You see yourself five years from now?)</label>
+                  <div class="controls col-sm-12">             
+                    <%= f.text_area :question_9,  :class => "form-group row full-width", :rows => "4", :placeholder => "Write your answer here"%>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <div class="pull-right">
+                  <%= f.hidden_field :employee_id, :value => params[:id]%>
+                    <%= f.submit "Next", :class => "btn btn-success",:render => employees_path(:employee_id => params[:employee_id]) %>       
+                  <!--<button class="btn btn-success btn-cons" type="submit">Next <i class="fa fa-arrow-circle-o-right"></i> </button>-->
+                  </div>
+                </div>
+<%end%>
+            </section>
+          </div>
+        </div>            
+        
+      </div>
+    </div>

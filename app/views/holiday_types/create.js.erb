@@ -1,0 +1,9 @@
+<% if @holiday_type.save %>
+	$('#holiday tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#holiday tbody').prepend("<%= j(render 'data', :holiday_type => @holiday_type) %>");
+<% else %>
+	$('#error_modal h2 d').html("<%= @holiday_type.errors.full_messages.count %>")
+	$('#errorMessage').html("<%= j(render 'error', :message => @holiday_type.errors.full_messages) %>")
+	$("#button_error").click();
+<% end %>

@@ -1,0 +1,42 @@
+<tr class='nested-fields'>
+	<td><%= f.select :gender, options_for_select(['Male', 'Famele']), {:prompt => '--select--'},{:class => "size-auto"}%></td>
+	<td>
+		<%= f.number_field :first_age, :class => 'size-ultra-small small-padding' %>
+		-
+		<%= f.number_field :last_age, :class => 'size-ultra-small small-padding' %>
+	</td>
+	<td>
+		<%= f.number_field :experience, :class => 'input-sm small-padding' %>
+		Year(s)
+	</td>
+	<td>
+		<%= f.check_box :fresh_graduate %>
+	</td>
+	<td>
+		<section class="add-group col-xs-12">
+            <div class="addform clearfix visiblebutton">
+                <input type="text" class="col-xs-10" placeholder="Indicator" autocomplete=""/>
+            </div>
+            
+            <%= link_to_add_association f, :recruitment_skills, :"data-association-insertion-method" => "append" do %>
+	            
+	            <button class="btn btn-primary" data-addform=""><i class="fa fa-plus"></i></button>
+	        <% end %>
+
+            <%= f.fields_for :recruitment_skills do |recruitment_skill| %>
+            	<%= render 'recruitment_skill_fields', :f => recruitment_skill %>
+            <% end %>
+        </section>
+	</td>
+	<td>
+		<%= f.select :organization, options_for_select(['wgs', 'netkrom', 'solusindoIT']), {:prompt => '--select--'},{:class => "size-auto"}%>
+	</td>
+	<td>
+		<%= f.select :position, options_for_select(['PC', 'developer']), {:prompt => '--select--'},{:class => "size-auto"}%>
+	</td>
+	<td>
+		<%= link_to_remove_association f do %>
+			<span class='fa fa-trash-o'></span>
+		<% end %>
+	</td>
+</tr>

@@ -1,0 +1,2 @@
+module ProductMutationHistoryHelper
+end

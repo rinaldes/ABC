@@ -1,0 +1,60 @@
+<%= tinymce_assets %>
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><a href="#" class="active">Code Of Conduct</a></li>
+  </ul>
+  <div class="page-title">
+    <i class="fa fa-bookmark-o"></i>
+    <h3>Code Of Conduct</h3>
+  </div>
+  <%= form_tag setup_code_of_conducts_path, remote: true do %>
+    <div class="grid simple">
+      <div class="grid-title no-border"></div>
+        <div class="grid-body no-border multi-lang">
+          <ul class="nav nav-tabs" id="tab-01">
+            <li><a href="#indonesia">Indonesia</a></li>
+            <li class="active"><a href="#english">English</a></li>
+          </ul>
+          <div class="tab-content">
+          <% if @code_of_conduct != nil %>
+            <div class="tab-pane active" id='english'>
+              <%= text_area_tag "content[en]", @code_of_conduct.content_eng , placeholder: 'Enter text ...', class: 'form-control', rows: '10' , disabled: true %>
+            </div>
+            <div class="tab-pane" id='indonesia'>
+              <%= text_area_tag "content[id]", @code_of_conduct.content_ind , placeholder: 'Masukkan teks ...', class: 'form-control', rows: '10' , disabled: true %>
+            </div>
+          <% else %>
+          <div class="tab-pane active" id='english'>
+              <%= text_area_tag "content[en]", @code_of_conduct , placeholder: 'Enter text ...', class: 'form-control', rows: '10' , disabled: true %>
+            </div>
+            <div class="tab-pane" id='indonesia'>
+              <%= text_area_tag "content[id]", @code_of_conduct , placeholder: 'Masukkan teks ...', class: 'form-control', rows: '10' , disabled: true %>
+            </div>
+          <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="pull-right">
+        <button id = "save" type="submit" class="btn btn-success btn-cons" disabled="disabled"><i class="icon-ok"></i> Save</button>
+        <button id = "edit" type="button" class="btn btn-success btn-cons" onclick="EditButton()" ><i class="icon-ok"></i> Edit </button>
+        <a href =<%= code_of_conduct_path(1) %> target="_blank" class = "btn btn-white btn-cons"> Preview </a>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+</div>
+<script type="text/javascript">
+  function EditButton(){
+    document.getElementById("content_en").disabled = false;
+    tinymce.EditorManager.execCommand('mceAddEditor', true, "content_en");
+    document.getElementById("content_id").disabled = false;
+    tinymce.EditorManager.execCommand('mceAddEditor', true, "content_id");
+    document.getElementById("save").disabled = false;
+    document.getElementById("edit").disabled = true; 
+    }
+</script>
+<%= tinymce %>

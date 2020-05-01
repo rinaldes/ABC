@@ -1,0 +1,31 @@
+<table class="table no-more-tables table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Gender</th>
+            <th>Age</th>
+            <th>Experiance</th>
+            <th>Fresh Graduate</th>
+            <th>Skill</th>
+            <th>Organization</th>
+            <th>Position</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <div id='form_details'>
+            <tr>
+                <td>
+                    <%= select_tag :phone_type, options_for_select(["Select One", "Cell", "Work", "Office", "Home", "Other"],:disabled => ["Select One"]), :class => 'genForm_dropBox' %>
+                </td>
+                <td>
+                    <%= %>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </div>
+    	
+    </tbody>
+</table>

@@ -1,0 +1,165 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Pergerakan Barang</li><li>Sisa Hutang Dagang</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>Sisa Hutang Dagang <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : Time.now.month].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to finance_reports_sisa_hutang_dagang_index_path(
+                      format: "html", year: (params[:year].present? ? params[:year] : Time.now.year), month: (params[:month].present? ? params[:month] : Time.now.month)
+                    ), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to export_finance_reports_sisa_hutang_dagang_index_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, (params[:year].present? ? params[:year] : Time.now.year), min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <% grand_total = [] %>
+            <% @discount_percents.group_by{|a|a.product_size.product.department}.each{|department| %>
+              <li><a href="#tabs-department-<%= department[0].id %>"><%= department[0].name %></a></li>
+            <% } %>
+          </ul>
+            <% @discount_percents.group_by{|a|a.product_size.product.department}.each{|department| %>
+            <%# discount_percents = SalesDetail.where("discount>0 AND transaction_date BETWEEN '#{params[:year]}-#{sprintf('%02d', params[:month].to_i)}-#{sprintf('%02d', params[:date].to_i)}' AND departments.id=#{department.id}").joins(:sale, product_size: [product: :department]) %>
+            <div id="tabs-department-<%= department[0].id %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <h2><%= department[0].name.titleize %></h2>
+                  <hr>
+                  <table class="table table-bordered table-striped" id='stock'>
+                    <tr>
+                      <th>FLAG</th>
+                      <th>CODE</th>
+                      <th>DESC</th>
+                      <th>DESC2</th>
+                      <th>QTY</th>
+                      <th>PRICE</th>
+                      <th>CPRICE</th>
+                      <th>VOLUME</th>
+                      <th>TQTY</th>
+                      <th>UNIT</th><th>PPN</th><th>NORCP</th><th>ETYPE</th><th>CHKDT</th><th>DDATE</th>
+                      <th>DEPT</th>
+                      <th>GROUP</th>
+                      <th>HPHR</th>
+                      <th>SALES</th>
+                      <th>CUSCODE</th>
+                      <th>DUEDATE</th>
+                      <th>FLPRC</th>
+                      <th>GPROMO</th>
+                      <th>ADGPROMO</th>
+                      <th>GRSPPN</th>
+                      <th>SUPLIER</th>
+                      <th>JARE</th>
+                      <th>SHIFT</th>
+                      <th>POINT</th>
+                      <th>PERSON</th>
+                    </tr>
+                    <% @discount_percents.each{|discount| %>
+                      <% product = discount.product_size.product %>
+                      <% sale = discount.sale %>
+                      <tr>
+                        <td>D%1</td>
+                        <td><%= product.barcode %></td>
+                        <td>DISC. %</td>
+                        <td></td>
+                        <td></td>
+                        <td>(<%= format_currency discount.total_discount_amt %>)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><%= sale.code %></td>
+                        <td>K</td>
+                        <td></td>
+                        <td><%= sale.transaction_date.strftime('%d/%m/%Y') %></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>00</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>0</td>
+                        <td></td>
+                      </tr>
+                    <% } %>
+                    <% @sales_details.each{|sales| %>
+                      <% product = sales.product_size.product %>
+                      <% sale = sales.sale %>
+                      <tr>
+                        <td>PLU</td>
+                        <td><%= product.barcode %></td>
+                        <td><%= product.article %></td>
+                        <td></td>
+                        <td><%= sales.quantity %></td>
+                        <td><%= format_currency sales.price %></td>
+                        <td><%= format_currency sales.capital_price %></td>
+                      </tr>
+                    <% } %>
+                  </table>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/finance_reports/sisa_hutang_dagang.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

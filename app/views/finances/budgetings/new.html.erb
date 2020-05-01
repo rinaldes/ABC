@@ -1,0 +1,42 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid" class="">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+          <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+            <h2>New Budget </h2>
+          </header>
+          <div>
+            <div class="jarviswidget-editbox"></div>
+            <div class="widget-body no-padding">
+              <%= form_for @budget, url: finances_budgetings_path, html: {class: "smart-form", id: "form-update-verify", :multipart => true } do |f| %>
+                <%= render partial: 'form',  locals: { f: f }%>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(".input-select").select2();
+    $(".category").hide();
+  })
+
+  function pilih_cat(obj, num){
+    $.ajax({
+      url: "/products/mclass_per_department",
+      dataType: "script",
+      data: {cat_id: obj.value, cat_num: num},
+      success: function (data){
+        response(data)
+      }
+    });
+  }
+</script>

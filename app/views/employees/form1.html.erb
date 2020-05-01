@@ -1,0 +1,655 @@
+<div class="container-fluid">
+      <ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="#" class="active">Employee</a></li>
+        </ul>
+        
+        <div class="page-title">  
+          <i class="fa fa-user"></i>
+          <h3><span class="semi-bold">Employee</span></h3>  
+        </div>  
+            <div class="grid simple">
+              <div class="grid-body no-border has-tab">
+                    <%= render '/employees/tab_nav'%>
+                    <div class="tab-content">
+                     <%= form_for @employee, html: {class: "form-horizontal"} do |f| %>
+                        <section class="tab-pane active" id="survey">
+                          <div class="row">
+                              <div class="col-sm-3">
+                                 
+                                  <div class="form-group">
+                                    
+                                      <%= f.label :Change_Profile, class: "col-sm-6 control-label" %>
+                                        <%= f.file_field :sample, autocomplete: "off"%>
+                                       
+                                      <!-- <figure>
+                                            <img src="/assets/profiles/user_def.png" alt="profile">
+                                        </figure> -->
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                  <div class="gen-form">
+                                      <div class="form-group row">
+                                              <label class="form-label col-sm-4">First Name </label>
+                                              <div class="controls col-sm-8">            
+                                                 <input type="text" class="full-width">
+                                              </div>
+                                          </div>
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Last Name </label>
+                                              <div class="controls col-sm-8">            
+                                                 <input type="text" class="full-width">
+                                              </div>
+                                          </div>
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Gender </label>
+                                              <div class="controls col-sm-8">            
+                                                 <div class="radio">
+                                                      <input id="male" type="radio" name="gender" value="male" checked="checked">
+                                                      <label for="male">Male</label>
+                                                      <input id="female" type="radio" name="gender" value="female">
+                                                      <label for="female">Female</label>
+                                                    </div>
+
+                                              </div>
+                                          </div>
+                                          
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Place/Date if Birth </label>
+                                              <div class="controls col-sm-4">            
+                                                 <input type="text" class="full-width">
+                                              </div>
+                                              <div class="controls col-sm-4">            
+                                                 <div class="input-append success date" id='datepicker'>
+                                                        <input type="text" class="form-control full-width">
+                                                        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                                                    </div>
+                                              </div>
+                                          </div>
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Age </label>
+                                              <div class="controls col-sm-8">            
+                                                 <input type="text" class="form-control full-width">
+                                              </div>
+                                          </div>
+                                          
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Religion </label>
+                                              <div class="controls col-sm-8">            
+                                                 <select>
+                                                  <option>Islam</option>
+                                                  <option>Kristen</option>
+                                                  <option>Hindu</option>
+                                                  <option>Budha</option>
+                                                 </select>
+                                              </div>
+                                          </div>
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Status </label>
+                                              <div class="controls col-sm-8">            
+                                                 <select>
+                                                  <option>Menikah</option>
+                                                  <option>Lajang</option>
+                                                 </select>
+                                              </div>
+                                          </div>
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Nationaly </label>
+                                              <div class="controls col-sm-8">            
+                                                 <input type="text" class="full-width">
+                                              </div>
+                                          </div>
+                                          
+                                          <div class="form-group row">
+                                              <label class="form-label col-sm-4">Email </label>
+                                              <div class="controls col-sm-8">            
+                                                 <input type="email" class="full-width">
+                                              </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        
+            <div class="panel-group" id="accordion" data-toggle="collapse">
+                          <div class="panel panel-default">
+              <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a class="bold text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                   <i class="fa fa-stethoscope"></i> Health Info and Affair
+                                </a>
+                              </h4>
+                            </div>
+              <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body gen-form">
+                
+                <!-- Health Inro -->
+                
+                <section class="row column-seperation">
+                  <div class="col-sm-6">
+                    <form class="gen-form">
+                      <div class="form-group">
+                        <h5 class="bold">Health Informmation</h5>
+                     </div>
+                     <div class="form-group row">
+                        <label class="form-label col-sm-5">Color Blind</label>
+                        <div class="controls col-sm-7">            
+                          <div class="radio">
+                          : <input id="colory" type="radio" name="color" value="y">
+                          <label for="colory">Yes</label>
+                          <input id="colorn" type="radio" name="color" value="n" checked="">
+                          <label for="colorn">No</label>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Blood Type</label>
+                        <div class="controls col-sm-7">            
+                          <div class="radio">
+                          : <input id="blooda" type="radio" name="blood" value="blooda" checked="">
+                          <label for="blooda">A</label>
+                          <input id="bloodb" type="radio" name="blood" value="blooda">
+                          <label for="bloodb">B</label>
+                          <input id="bloodab" type="radio" name="blood" value="bloodab">
+                          <label for="bloodab">AB</label>
+                          <input id="bloodo" type="radio" name="blood" value="bloodo">
+                          <label for="bloodo">O</label>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Height</label>
+                        <div class="controls col-sm-7">            
+                          : <input type="number"> cm
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Weight</label>
+                        <div class="controls col-sm-7">            
+                          : <input type="number"> kg
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">History of Disease</label>
+                        <div class="controls col-sm-7">            
+                          : <textarea class="full-width" rows="8"></textarea>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Health Benefit</label>
+                        <div class="controls col-sm-7">
+                          <div class="addgroups">
+                          <div class="addform clearfix">
+                            <span class="pull-left">:</span>
+                            <input type="text" style="width: 217px;margin-left: 8px;" class="col-xs-11" placeholder="" autocomplete="">
+                            <a><i class="fa fa-remove"></i></a>
+                          </div>
+                          <button class="btn btn-primary pull-right" style="margin-top: -41px;" data-addform=""><i class="fa fa-plus"></i></button>
+                          </div>
+                        </div>
+                       </div>
+                    </form>
+                  </div>
+                  <!-- END -->
+                  
+                  <!-- Employee Affair-->
+                  <div class="col-sm-6">
+                    <form class="gen-form">
+                      <div class="form-group">
+                        <h5 class="bold">Employee Affair</h5>
+                     </div>
+                     <div class="form-group row">
+                        <label class="form-label col-sm-5">NIK</label>
+                        <div class="controls col-sm-7">            
+                          : <input type="text" class="full-width">
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Date of Start Work</label>
+                        <div class="controls col-sm-7">
+                        <span class="pull-left">:</span>
+                          <div class="input-append success date">
+                           <input type="text" class="form-control full-width" id='datepicker2'>
+                            <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                          </div>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Organization</label>
+                        <div class="controls col-sm-7">            
+                          : <select class="full-width">
+                          <option>Option 1</option>
+                          </select>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Position</label>
+                        <div class="controls col-sm-7">            
+                          : <select class="full-width">
+                          <option>Option 1</option>
+                          </select>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Tax Status</label>
+                        <div class="controls col-sm-7">            
+                          : <select>
+                          <option>Option 1</option>
+                          </select>
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">No. NPWP</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">No. ID</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div>
+                    </form>
+                  </div>
+                </section>
+                <!-- END -->
+                
+                </div>
+              </div>
+              </div>
+            </div> 
+                        
+                    
+            <div class="panel-group" id="accordion2" data-toggle="collapse">
+                          <div class="panel panel-default">
+              <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a class="bold text-uppercase" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                                   <i class="fa fa-phone"></i> Contact
+                                </a>
+                              </h4>
+                            </div>
+              <div id="collapseTwo" class="panel-collapse collapse in">
+                <div class="panel-body gen-form">
+                
+                <!-- Contact Inro -->
+                
+                <section class="row column-seperation">
+                  <div class="col-sm-6">
+                    <form class="gen-form">
+                      <div class="form-group">
+                        <h5 class="bold">Emergency Contact</h5>
+                     </div>
+                      <div class="form-group row">
+                        <label class="form-label col-sm-5">Name</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div> 
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Phone Number</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Relationship</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div> 
+                    </form>
+                  </div>
+                  <!-- END -->
+                  
+                  <!-- Employee Affair-->
+                  <div class="col-sm-6">
+                    <form class="gen-form">
+                      <div class="form-group">
+                        <h5 class="bold">Contact Number</h5>
+                     </div>
+                      <div class="form-group row">
+                        <label class="form-label col-sm-5">Home</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div> 
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Handphone</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div>
+                       <div class="form-group row">
+                        <label class="form-label col-sm-5">Office</label>
+                        <div class="controls col-sm-7">            
+                         : <input type="text" class="full-width">
+                        </div>
+                       </div> 
+                    </form>
+                  </div>
+                </section>
+                <!-- END -->
+                
+                </div>
+              </div>
+              </div>
+            </div>
+            
+            
+            <div class="panel-group" id="accordion3x" data-toggle="collapse">
+                          <div class="panel panel-default">
+              <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a class="bold text-uppercase" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+                                   <i class="fa fa-home"></i> Address Info
+                                </a>
+                              </h4>
+                            </div>
+              <div id="collapseThree" class="panel-collapse collapse in">
+                <div class="panel-body gen-form">
+                
+                <div class="row toolbar-block">
+                                  <div class="col-md-8 col-md-offset-4">
+                                    <div class="toolbar pull-right hide" id="toolbar_upload">
+                                            <div class="table-tools-actions">
+                                                <button class="btn"><span class="fa fa-cloud-upload"></span> Upload</button>
+                                                <div class="separator">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        <div class="toolbar pull-right hide" id="toolbar_def">
+                                            <div class="table-tools-actions">
+                                                <button class="btn"><span class="fa fa-edit"></span> Edit</button> 
+                                                <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                                <div class="separator">&nbsp;</div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <table class="table no-more-tables table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:1%">
+                                                <div class="checkbox check-default">
+                                                    <input id="checkbox10" type="checkbox" value="1" class="checkall">
+                                                    <label for="checkbox10"></label>
+                                                </div>
+                                            </th>
+                                            <th style="width:10%">Province</th>
+                                            <th style="width:10%">Kota/kabupaten</th>
+                                            <th style="width:10%">KEC/KEL</th>
+                                            <th style="width:15%">RT/RW</th>
+                                            <th style="width:5%">Kode POS</th>
+                                            <th style="width:10%">Street</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="new-rec">
+                                            <td>
+                                                <div class="checkbox check-default">
+                                                    <input id="checkbox12" type="checkbox" value="1">
+                                                    <label for="checkbox12"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <select class="select_autocomplete" style="width:100%">
+                                                    <optgroup label="Alaskan/Hawaiian Time Zone">
+                                                    <option value="AK">Alaska</option>
+                                                    <option value="HI">Hawaii</option>
+                                                    </optgroup>
+                                                    <optgroup label="Pacific Time Zone">
+                                                    <option value="CA">California</option>
+                                                    <option value="NV">Nevada</option>
+                                                    <option value="OR">Oregon</option>
+                                                    <option value="WA">Washington</option>
+                                                    </optgroup>
+                                                    <optgroup label="Mountain Time Zone">
+                                                    <option value="AZ">Arizona</option>
+                                                    <option value="CO">Colorado</option>
+                                                    <option value="ID">Idaho</option>
+                                                    <option value="MT">Montana</option>
+                                                    <option value="NE">Nebraska</option>
+                                                    <option value="NM">New Mexico</option>
+                                                    <option value="ND">North Dakota</option>
+                                                    <option value="UT">Utah</option>
+                                                    <option value="WY">Wyoming</option>
+                                                    </optgroup>
+                                                    <optgroup label="Central Time Zone">
+                                                    <option value="AL">Alabama</option>
+                                                    <option value="AR">Arkansas</option>
+                                                    <option value="IL">Illinois</option>
+                                                    <option value="IA">Iowa</option>
+                                                    <option value="KS">Kansas</option>
+                                                    <option value="KY">Kentucky</option>
+                                                    <option value="LA">Louisiana</option>
+                                                    <option value="MN">Minnesota</option>
+                                                    <option value="MS">Mississippi</option>
+                                                    <option value="MO">Missouri</option>
+                                                    <option value="OK">Oklahoma</option>
+                                                    <option value="SD">South Dakota</option>
+                                                    <option value="TX">Texas</option>
+                                                    <option value="TN">Tennessee</option>
+                                                    <option value="WI">Wisconsin</option>
+                                                    </optgroup>
+                                                    <optgroup label="Eastern Time Zone">
+                                                    <option value="CT">Connecticut</option>
+                                                    <option value="DE">Delaware</option>
+                                                    <option value="FL">Florida</option>
+                                                    <option value="GA">Georgia</option>
+                                                    <option value="IN">Indiana</option>
+                                                    <option value="ME">Maine</option>
+                                                    <option value="MD">Maryland</option>
+                                                    <option value="MA">Massachusetts</option>
+                                                    <option value="MI">Michigan</option>
+                                                    <option value="NH">New Hampshire</option>
+                                                    <option value="NJ">New Jersey</option>
+                                                    <option value="NY">New York</option>
+                                                    <option value="NC">North Carolina</option>
+                                                    <option value="OH">Ohio</option>
+                                                    <option value="PA">Pennsylvania</option>
+                                                    <option value="RI">Rhode Island</option>
+                                                    <option value="SC">South Carolina</option>
+                                                    <option value="VT">Vermont</option>
+                                                    <option value="VA">Virginia</option>
+                                                    <option value="WV">West Virginia</option>
+                                                    </optgroup>
+                                                  </select>
+
+                                            </td>
+                                            <td>
+                                                <select class="select_autocomplete" style="width:100%">
+                                                    <optgroup label="Alaskan/Hawaiian Time Zone">
+                                                    <option value="AK">Alaska</option>
+                                                    <option value="HI">Hawaii</option>
+                                                    </optgroup>
+                                                    <optgroup label="Pacific Time Zone">
+                                                    <option value="CA">California</option>
+                                                    <option value="NV">Nevada</option>
+                                                    <option value="OR">Oregon</option>
+                                                    <option value="WA">Washington</option>
+                                                    </optgroup>
+                                                    <optgroup label="Mountain Time Zone">
+                                                    <option value="AZ">Arizona</option>
+                                                    <option value="CO">Colorado</option>
+                                                    <option value="ID">Idaho</option>
+                                                    <option value="MT">Montana</option>
+                                                    <option value="NE">Nebraska</option>
+                                                    <option value="NM">New Mexico</option>
+                                                    <option value="ND">North Dakota</option>
+                                                    <option value="UT">Utah</option>
+                                                    <option value="WY">Wyoming</option>
+                                                    </optgroup>
+                                                    <optgroup label="Central Time Zone">
+                                                    <option value="AL">Alabama</option>
+                                                    <option value="AR">Arkansas</option>
+                                                    <option value="IL">Illinois</option>
+                                                    <option value="IA">Iowa</option>
+                                                    <option value="KS">Kansas</option>
+                                                    <option value="KY">Kentucky</option>
+                                                    <option value="LA">Louisiana</option>
+                                                    <option value="MN">Minnesota</option>
+                                                    <option value="MS">Mississippi</option>
+                                                    <option value="MO">Missouri</option>
+                                                    <option value="OK">Oklahoma</option>
+                                                    <option value="SD">South Dakota</option>
+                                                    <option value="TX">Texas</option>
+                                                    <option value="TN">Tennessee</option>
+                                                    <option value="WI">Wisconsin</option>
+                                                    </optgroup>
+                                                    <optgroup label="Eastern Time Zone">
+                                                    <option value="CT">Connecticut</option>
+                                                    <option value="DE">Delaware</option>
+                                                    <option value="FL">Florida</option>
+                                                    <option value="GA">Georgia</option>
+                                                    <option value="IN">Indiana</option>
+                                                    <option value="ME">Maine</option>
+                                                    <option value="MD">Maryland</option>
+                                                    <option value="MA">Massachusetts</option>
+                                                    <option value="MI">Michigan</option>
+                                                    <option value="NH">New Hampshire</option>
+                                                    <option value="NJ">New Jersey</option>
+                                                    <option value="NY">New York</option>
+                                                    <option value="NC">North Carolina</option>
+                                                    <option value="OH">Ohio</option>
+                                                    <option value="PA">Pennsylvania</option>
+                                                    <option value="RI">Rhode Island</option>
+                                                    <option value="SC">South Carolina</option>
+                                                    <option value="VT">Vermont</option>
+                                                    <option value="VA">Virginia</option>
+                                                    <option value="WV">West Virginia</option>
+                                                    </optgroup>
+                                                  </select>
+
+                                            </td>
+                                            <td>
+                                                <select class="select_autocomplete" style="width:100%">
+                                                    <optgroup label="Alaskan/Hawaiian Time Zone">
+                                                    <option value="AK">Alaska</option>
+                                                    <option value="HI">Hawaii</option>
+                                                    </optgroup>
+                                                    <optgroup label="Pacific Time Zone">
+                                                    <option value="CA">California</option>
+                                                    <option value="NV">Nevada</option>
+                                                    <option value="OR">Oregon</option>
+                                                    <option value="WA">Washington</option>
+                                                    </optgroup>
+                                                    <optgroup label="Mountain Time Zone">
+                                                    <option value="AZ">Arizona</option>
+                                                    <option value="CO">Colorado</option>
+                                                    <option value="ID">Idaho</option>
+                                                    <option value="MT">Montana</option>
+                                                    <option value="NE">Nebraska</option>
+                                                    <option value="NM">New Mexico</option>
+                                                    <option value="ND">North Dakota</option>
+                                                    <option value="UT">Utah</option>
+                                                    <option value="WY">Wyoming</option>
+                                                    </optgroup>
+                                                    <optgroup label="Central Time Zone">
+                                                    <option value="AL">Alabama</option>
+                                                    <option value="AR">Arkansas</option>
+                                                    <option value="IL">Illinois</option>
+                                                    <option value="IA">Iowa</option>
+                                                    <option value="KS">Kansas</option>
+                                                    <option value="KY">Kentucky</option>
+                                                    <option value="LA">Louisiana</option>
+                                                    <option value="MN">Minnesota</option>
+                                                    <option value="MS">Mississippi</option>
+                                                    <option value="MO">Missouri</option>
+                                                    <option value="OK">Oklahoma</option>
+                                                    <option value="SD">South Dakota</option>
+                                                    <option value="TX">Texas</option>
+                                                    <option value="TN">Tennessee</option>
+                                                    <option value="WI">Wisconsin</option>
+                                                    </optgroup>
+                                                    <optgroup label="Eastern Time Zone">
+                                                    <option value="CT">Connecticut</option>
+                                                    <option value="DE">Delaware</option>
+                                                    <option value="FL">Florida</option>
+                                                    <option value="GA">Georgia</option>
+                                                    <option value="IN">Indiana</option>
+                                                    <option value="ME">Maine</option>
+                                                    <option value="MD">Maryland</option>
+                                                    <option value="MA">Massachusetts</option>
+                                                    <option value="MI">Michigan</option>
+                                                    <option value="NH">New Hampshire</option>
+                                                    <option value="NJ">New Jersey</option>
+                                                    <option value="NY">New York</option>
+                                                    <option value="NC">North Carolina</option>
+                                                    <option value="OH">Ohio</option>
+                                                    <option value="PA">Pennsylvania</option>
+                                                    <option value="RI">Rhode Island</option>
+                                                    <option value="SC">South Carolina</option>
+                                                    <option value="VT">Vermont</option>
+                                                    <option value="VA">Virginia</option>
+                                                    <option value="WV">West Virginia</option>
+                                                    </optgroup>
+                                                  </select>
+
+                                            </td>
+                                            <td>
+                                              <input type="text" class="size-small"> / <input type="text" class="size-small">
+                                            </td>
+                                            <td>
+                                              <input type="text" class="size-small">
+                                            </td>
+                                            <td>
+                                              <input type="text">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="checkbox check-default">
+                                                    <input id="checkbox13" type="checkbox" value="1">
+                                                    <label for="checkbox13"></label>
+                                                </div>
+                                            </td>
+                                            <td>Jawa Tengah</td>
+                                            <td>Solo</td>
+                                            <td>Jumapolo</td>
+                                            <td>05/06</td>
+                                            <td>40171</td>
+                                            <td>Jalan Ngori</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="checkbox check-default">
+                                                    <input id="checkbox13" type="checkbox" value="1">
+                                                    <label for="checkbox13"></label>
+                                                </div>
+                                            </td>
+                                            <td>Jawa Barat</td>
+                                            <td>Bandung</td>
+                                            <td>Cicendo/Pasirkaliki</td>
+                                            <td>05/06</td>
+                                            <td>40171</td>
+                                            <td>Jalan Cicendo</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                
+                </div>
+              </div>
+              </div>
+            </div> 
+          </div>
+                </div>
+                <div class="form-actions">
+                            <div class="pull-right">
+                              <a class="btn btn-success btn-cons" href="employee_working_data.html" type="submit">Next <i class="fa fa-arrow-circle-o-right"></i> </a>
+                            </div>
+                          </div>
+                          <% end %>
+            </div>
+    </div>
+    <script type="text/javascript">
+    $(function () {
+        $('#datepicker').datepicker({format: 'yyyy/dd/mm'});
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('#datepicker2').datepicker();
+    });
+</script>

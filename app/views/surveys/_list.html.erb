@@ -1,0 +1,13 @@
+<% surveys.each{|survey| %>
+  <tr>
+    <td><%= survey.name %></td>
+    <td><%= survey.description %></td>
+    <td><%= survey.period_start %></td>
+    <td><%= survey.period_end %></td>
+    <td nowrap="nowrap">
+      <%= link_to raw('<i class="icon-pencil icon-white"></i>'), edit_survey_path(survey), class: 'btn btn-warning', 'data-no-turbolink' => true %>
+      <%= link_to raw('<i class="icon-trash icon-white"></i>'), survey_path(survey), method: 'DELETE', 'data-confirm' => 'Are you sure you wish to delete this survey?',
+        class: 'btn delete-survey btn-danger' %>
+    </td>
+  </tr>
+<% } %>

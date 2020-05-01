@@ -1,0 +1,24 @@
+<% if params[:action] != "update" %>
+    <tr id="data_<%= leave_request.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= leave_request.id %>" type="checkbox" value="<%= leave_request.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= leave_request.id %>"></label>
+        </div>
+    </td>
+    <td><%= leave_request.name %></td>
+    <td><%= leave_request.start_date %></td>
+    <td><%= leave_request.end_date %></td>
+    <td><%= leave_request.reason %></td>
+    <td><%= leave_request.description %></td>
+      <% if leave_request.status == "Pending" %>
+        <td><span class="badge badge-warning"><%= leave_request.status%></span></td>
+      <% elsif leave_request.status == "Approved" %>
+        <td><span class="badge badge-success"><%= leave_request.status%></span></td>
+      <% elsif leave_request.status == "Reject" %>
+        <td><span class="badge badge-danger"><%= leave_request.status%></span></td>
+      <% end %>
+<% if params[:action] != "update" %>
+    </tr>
+<% end %>

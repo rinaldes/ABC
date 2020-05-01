@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="/css/jquery-ui.css">
+<script src="/js/jquery-1.10.2.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Master Data</li><li>Petty Cash</li><li>New</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <%= render 'layouts/errors' %>
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <div> <!-- widget div-->
+          <div class="widget-body no-padding"> <!-- widget content -->
+            <%= form_for @cash_out, url: finances_cash_out_path(@cash_out), html: {class: "smart-form", id: "form-update-verify", :autocomplete => "off"} do |f| %>
+              <%= f.hidden_field :petty_cash_id, value: params[:id] %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Date</label>
+                      <label class="col-md-9 input custom-input-box"><%= @cash_out.time.to_s.gsub('UTC', '') %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Amount</label>
+                      <label class="col-md-9 input custom-input-box"><%= format_currency @cash_out.amount %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Type</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @cash_out.cash_out_type %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Description</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_area :description, size: "47x4" %>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Qty</label>
+                      <label class="col-md-9 input custom-input-box"><%= @cash_out.qty %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Unit</label>
+                      <label class="col-md-9 input custom-input-box"><%= @cash_out.unit %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Price Per Unit</label>
+                      <label class="col-md-9 input custom-input-box"><%= @cash_out.price_per_unit %></label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            <% end %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+<SCRIPT>
+  $(document).ready(function() {
+    $('#tanggal').datepicker({
+      changeMonth: false,
+      changeYear: false,
+      dateFormat: 'yy-mm-dd',
+      defaultDate: new Date("<%=PettyCash.find(@cash_out.petty_cash_id).year.strftime('%Y')%>","<%=PettyCash.find(@cash_out.petty_cash_id).year.strftime('%m').to_i - 1%>","01"),
+      duration: 'fast',
+      stepMonths: 0
+    }).focus(function() {
+      $(".ui-datepicker-prev, .ui-datepicker-next").remove();
+    })
+  });
+</SCRIPT>
+<script src="/js/jquery.min.js"></script><!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->

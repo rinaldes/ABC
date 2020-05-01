@@ -1,0 +1,17 @@
+<% if params[:action] != "update_test_result" %>
+    <tr id="data_<%= test_result.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= test_result.id %>" type="checkbox" value="<%= test_result.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= test_result.id %>"></label>
+        </div>
+    </td>
+    <td><%= test_result.applicant_name %></td>
+    <td><%= link_to test_result.attachment.to_s.split('/').last, test_result.attachment_url %></td>
+    <td><%= test_result.position %></td>
+    <td><%= test_result.score %></td>
+    <td><%= test_result.status %></td>
+<% if params[:action] != "update_test_result" %>
+    </tr>
+<% end %>

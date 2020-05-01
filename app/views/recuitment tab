@@ -1,0 +1,28 @@
+<section class="panel">
+                <header class="panel-heading tab-bg-dark-navy-blue ">
+                    <ul class="nav nav-tabs">
+                        <li class="">
+                            <a data-toggle="tab" href="#home">Request Employee</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#about">Test Result</a>
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#profile">Interview Result</a>
+                        </li>
+                        <li class="active">
+                            <a data-toggle="tab" href="#contact">Selected</a>
+                        </li>
+                    </ul>
+                </header>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div id="home" class="tab-pane">
+                            Request Employee
+                        </div>
+                        <div id="about" class="tab-pane">Test Result</div>
+                        <div id="profile" class="tab-pane">Interview Result</div>
+                        <div id="contact" class="tab-pane active">Selected</div>
+                    </div>
+                </div>
+            </section>

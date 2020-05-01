@@ -1,0 +1,172 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Reports</li><li>Pergerakan Barang</li><li>PEMBELIAN</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Pembayaran Bulan <%= "#{params[:year]}-#{params[:month]}-01".to_date.strftime('%B %Y') %></h2> <!-- header content -->
+        </header>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to finances_monthly_payments_path(format: "html", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to finances_monthly_payments_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <li><a href="#tabs-a">DETAIL</a></li>
+            <li><a href="#tabs-b">GLOBAL</a></li>
+          </ul>
+          <div id="tabs-a">
+            <div class="widget-body"><!-- TABEL -->
+              <div class="table-responsive">
+                <% @payments_by_giro.each{|payments_by_giro| %>
+                  <img src="/img/logo_nuansabaru.png" alt="SmartAdmin">
+                  <h2 style="color:#BF1E2D; margin-top:-5px; text-align: center">PEMBAYARAN GIRO ABC</h2> <!-- header content -->
+                  <h3 style="color:#BF1E2D; margin-top:-5px;">Periode <%= payments_by_giro.payment_date.strftime('%d %B %Y') %></h3> <!-- header content -->
+                  <table class="table table-striped table-brequested table-hover" width="100%">
+                    <thead>
+                      <tr>
+                        <th>No.Urut</th>
+                        <th>Nama Supplier</th>
+                        <th>Tanggal Giro</th>
+                        <th>Nama Bank</th>
+                        <th>No. Giro</th>
+                        <th>Nominal</th>
+                        <th>Tanggal Kontra</th>
+                        <th>Keterangan</th>
+                      </tr>
+                    </thead>
+                    <tbody id='account_payable_list'>
+                      <% ap_details = AccountPayableDetail.where("#{@giro} AND payment_date='#{payments_by_giro.payment_date}'") %>
+                      <% ap_details.each_with_index{|payment, i| %>
+                        <tr>
+                          <% receiving = payment.account_payable.receivings.where("supplier_id=#{payment.account_payable.supplier_id}")[i] %>
+                          <td><%= i+1 %></td>
+                          <td><%= payment.account_payable.supplier.name %></td>
+                          <td><%= payments_by_giro.payment_date.strftime('%d %B %Y') %></td>
+                          <td><%= payment.bank %></td>
+                          <td><%= payment.giro_number %></td>
+                          <td><%= format_currency payment.amount %></td>
+                          <td><%= payments_by_giro.payment_date.strftime('%d %B %Y') %></td>
+                          <td><%= payments_by_giro.note rescue '' %></td>
+                        </tr>
+                      <% } %>
+                      <tr>
+                        <th style='text-align: center' colspan=5>Jumlah</th>
+                        <th><%= format_currency ap_details.map(&:amount).sum %></th >
+                      </tr>
+                    </tbody>
+                  </table>
+                </div><!-- end widget content -->
+              <% } %>
+              <img src="/img/logo_nuansabaru.png" alt="SmartAdmin">
+              <h2 style="color:#BF1E2D; margin-top:-5px; text-align: center">PEMBAYARAN TUNAI DAN TRANSFER ABC</h2> <!-- header content -->
+              <h3 style="color:#BF1E2D; margin-top:-5px;">Periode <%= "#{params[:year]}-#{params[:month]}-01".to_date.strftime('%B %Y') %></h3> <!-- header content -->
+              <table class="table table-striped table-brequested table-hover" width="100%">
+                <thead>
+                  <tr>
+                    <th>No. Urut</th>
+                    <th>Nama Supplier</th>
+                    <th>Tanggal Bayar</th>
+                    <th>Nominal</th><th>Tanggal Kontra</th>
+                    <th>Keterangan</th>
+                  </tr>
+                </thead>
+                <tbody id='account_payable_list'>
+                  <% @payments_by_cash_and_trf.each_with_index{|payment, i| %>
+                    <% receiving = payment.account_payable.receivings.where("supplier_id=#{payment.account_payable.supplier_id}")[i] %>
+                    <tr>
+                      <td><%= i+1 %></td>
+                      <td><%= payment.account_payable.supplier.name %></td>
+                      <td><%= payment.payment_date.strftime('%d %B %Y') %></td>
+                      <td><%= format_currency payment.amount %></td>
+                      <td><%= receiving.faktur_date rescue '' %></td>
+                      <td><%= payment.note %></td>
+                    </tr>
+                  <% } %>
+                  <tr>
+                    <th style='text-align: center' colspan=3>Jumlah</th>
+                    <th><%= format_currency @payments_by_cash_and_trf.map(&:amount).sum %></th>
+                  </tr>
+                </tbody>
+              </table>
+            </div><!-- end widget content -->
+          </div>
+          <div id="tabs-b">
+            <img src="/img/logo_nuansabaru.png" alt="SmartAdmin">
+            <h2 style="color:#BF1E2D; margin-top:-5px; text-align: center">TOTAL PEMBAYARAN SUPPLIER</h2> <!-- header content -->
+            <h3 style="color:#BF1E2D; margin-top:-5px;">Periode <%= "#{params[:year]}-#{params[:month]}-01".to_date.strftime('%B %Y') %></h3> <!-- header content -->
+            <table class="table table-striped table-brequested table-hover" width="100%">
+              <thead>
+                <tr>
+                  <th>TRANSFER TUNAI</th>
+                  <th><%= format_currency @payments_by_cash_and_trf.map(&:amount).sum %></th>
+                </tr>
+                <% @payments_by_giro.each{|payments_by_giro| %>
+                  <tr>
+                    <th>BILYET GIRO <%= payments_by_giro.payment_date.strftime('%d %B') %></th>
+                    <th><%= format_currency payments_by_giro.amount %></th>
+                  </tr>
+                <% } %>
+                <tr>
+                  <th>TOTAL</th>
+                  <th><%= format_currency @payments_by_cash_and_trf.map(&:amount).sum+@payments_by_giro.map(&:amount).sum %></th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/finances/monthly_payments.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

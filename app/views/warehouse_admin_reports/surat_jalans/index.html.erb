@@ -1,0 +1,145 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Reports</li><li>Pergerakan Barang</li><li>PEMBELIAN</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>PENGIRIMAN <%= params[:month] %> <%= params[:year] %></h2>
+        </header>
+        <%#= link_to "Eksport ke Excel", reports_receiving_path(:id => params[:id], format: "xls") %>
+        <div id="tabs">
+        <fieldset>
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to finance_reports_global_finances_path(format: "html", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to warehouse_admin_reports_surat_jalans_path(format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload2" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+        </fieldset>
+          <ul>
+            <% @dates.each{|date| %>
+              <li><a href="#tabs-<%= date %>"><%= "#{params[:year]}-#{params[:month]}-#{date}".to_date.strftime("%d") %></a></li>
+            <% } %>
+          </ul>
+          <% @dates.each{|date| %>
+            <% product_mutations = ProductMutation.where("mutation_date BETWEEN '#{params[:year]}-#{params[:month]}-#{date} 00:00:00' AND '#{params[:year]}-#{params[:month]}-#{date} 23:59:59'") %>
+            <div id="tabs-<%= date %>">
+              <div class="widget-body no-padding"><!-- TABEL -->
+                <div class="table-responsive">
+                  <% product_mutations.each{|pm| %>
+                    <h3 style='text-align: center'>SURAT JALAN GLOBAL</h3>
+                    <p>TOKO: <%= pm.origin_warehouse.office_name %></p>
+                    <p>NO. SJ : <%= pm.code %></p>
+                    <table class="table table-bordered table-striped" id='stock'>
+                      <tr>
+                        <th>NO</th>
+                        <th>SUPPLIER</th>
+                        <th>MEREK BARANG</th>
+                        <th>QTY</th>
+                        <th>NO. FAKTUR ASLI</th>
+                      </tr>
+                      <% pm.product_mutation_details.where("quantity>0").group_by{|x|x.product_size.product.brand}.each_with_index{|pmd, i| %>
+                        <% next if pmd.blank? %>
+                        <tr>
+                          <td><%= i+1 %></td>
+                          <td><%= pm.supplier.code %></td>
+                          <td><%= "#{pm.supplier.name} #{pmd[0].name}" %></td>
+                          <td><%= pmd[1].map(&:quantity).sum %></td>
+                          <td><%= pm.code %></td>
+                        </tr>
+                      <% } %>
+                      <tr>
+                        <th colspan=3>TOTAL</th>
+                        <th><%= pm.product_mutation_details.map(&:quantity).compact.sum %></th>
+                        <th></th>
+                      </tr>
+                    </table>
+                  <% } %>
+                </div>
+              </div><!-- END TABEL -->
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  function filter_stock(){
+    $.ajax(
+    {
+      url: "/products/stock",
+      dataType: "script",
+      data: $("form").serialize(),
+      success: function (data){
+        response(data)
+      },
+    });
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+    $("#search_brand").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/brands/autocomplete_brand_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#supplier_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+  })
+</SCRIPT>

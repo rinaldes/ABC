@@ -1,0 +1,4 @@
+class MutationHistoryController < ApplicationController
+    def index
+        @mutationhistory = MutationHistory.all
+end

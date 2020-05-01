@@ -1,0 +1,69 @@
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>m-Class</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <%= render 'layouts/errors' %>
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-department">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> M-Class</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <%= form_for @m_class, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <%= hidden_field_tag :tobe_deleted %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <label class="col-md-2 label">Kode</label>
+                    <label class="col-md-9 input custom-input-box"><%= f.text_field :code, class: "input-sm", :placeholder => "Auto Generate", :disabled => true %></label>
+                  </section>
+                  <section class="col col-md-6">
+                    <label class="col-md-3 label">Department <span class='important'>*</span></label>
+                    <label class="col-md-8 custom-input-box">
+                      <%= f.select :parent_id, options_for_select(@departments.map{|department|[department.name, department.id]}, selected: @m_class.parent_id), include_blank: 'Please Choose',
+                        class: "input-sm" %>
+                    </label>
+                    <label class="col-md-3 label">Nama <span class='important'>*</span></label>
+                    <label class="col-md-8 input custom-input-box"><%= f.text_field :name, :class => "input-sm" %></label>
+                  </section>
+                  <%= link_to 'Tambah Level 2', 'javascript:void(0)', onclick: "add_sub_m_class(2, '2-#{0}')", id: "2-0", class: 'btn btn-primary btn-sm marginL15px' %>
+                </div> <!-- row -->
+                <header>Detail Sub M-Class</header>
+                <div id='level2'>
+                  <% @m_class.m_classes.each{|mclass| %>
+                    <%= render partial: 'sub_m_class', locals: {level: 2, key: "#{Time.now.to_i}#{mclass.id}", parent: '', m_class: mclass} %>
+                  <% } %>
+                <div>
+              </fieldset>
+              <footer>
+                <button type="submit" class="btn btn-primary">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+            <% end %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  function add_sub_m_class(level, id, parent, m_class_id){
+    var date = new Date();
+    $.ajax({
+      url: '/m_classes/add_sub_m_class',
+      data: {
+        key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), level: level, id: id, parent: parent, m_class_id: m_class_id
+      }
+    })
+  }
+</SCRIPT>

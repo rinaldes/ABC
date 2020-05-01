@@ -1,0 +1,25 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Store Cash Report List</h2>
+          <header>
+            <span class="widget-icon"><i class="fa fa-edit"></i></span>
+            <h2>Petty Cash for <%= @month %>-<%= @year %> </h2>
+          </header>
+          <div>
+            <div class="widget-body no-padding">
+              <%= render 'filter' %>
+            </div>
+            <div class="widget-body no-padding" id="petty-cash-details-list">
+              <%= render partial: 'petty_cash_details' %>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

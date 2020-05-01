@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Language</Data></Cell>
+        <Cell><Data ss:Type="String">Reading</Data></Cell>
+        <Cell><Data ss:Type="String">Writing</Data></Cell>
+        <Cell><Data ss:Type="String">Speaking</Data></Cell>
+      </Row>
+    <% @language_skills.each do |language_skill| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= language_skill.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= language_skill.language %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= language_skill.reading %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= language_skill.writing %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= language_skill.speaking %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Reports</li><li>Sales Realizations</li>
+  </ol>
+</div>
+<div id="content">
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>PENCAPAIAN HARIAN TARGET PENJUALAN KARYAWAN TOKO ABC FASHION & SHOES</h2>
+        </header>
+        <div id="tabs">
+          <div class="row">
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Bulan</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= select_month Date::MONTHNAMES[params[:month].to_i].to_date, {field_name: 'start'}, {class:"form-control reload"} %>
+                </label>
+              </section>
+              <section>
+                <label class="col-md-12">
+                  <%= link_to store_admin_reports_sales_realizations_path(format: "html", year: (params[:year].present? ? params[:year] : Time.now.year), month:(params[:month].present? ? params[:month].to_i : Time.now.month), start_date: Time.now.beginning_of_month.day, end_date: Time.now.end_of_month.day), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-repeat"></i></span>Load
+                  <% end %>
+                  <%= link_to store_admin_reports_sales_realizations_path(format: "xlsx", year: (params[:year].present? ? params[:year] : Time.now.year), month: (params[:month].present? ? params[:month] : Time.now.month)), :class => "btn btn-labeled btn-primary edit-btn-success", id: "reload2" do %>
+                    <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+                  <% end %>
+                </label>
+              </section>
+            </section>
+            <section class="col col-md-6">
+              <section>
+                <label class="col-md-3">Tahun</label>
+                <label class="col-md-8 input custom-input-box">
+                  <%= number_field_tag :tahun, params[:year], min: 1990, max: 2100, class:"form-control reload", onkeyup: "reload()" %>
+                </label>
+              </section>
+            </section>
+          </div>
+          <br>
+          <ul>
+            <% @branches.each{|branch| %>
+              <li><a href="#tabs-<%= branch.id %>"><%= branch.office_name %> : <%= branch.description %></a></li>
+            <% } %>
+          </ul>
+          <% @branches.each{|branch| %>
+            <div id="tabs-<%= branch.id %>">
+              <div class="widget-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped" id='stock'><%= render 'store_admin_reports/sales_realizations/list', branch_id: branch.id %></table>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<SCRIPT>
+  $(".reload").on('change', function() {
+    reload()
+  })
+
+  function reload(){
+    $("#reload").attr("href", "/store_admin_reports/sales_realizations.html?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+    $("#reload2").attr("href", "/store_admin_reports/sales_realizations.xlsx?locale=en&month="+ getMonth($("#date_start").val()) +"&year="+ $("#tahun").val())
+  }
+
+  function getMonth(mon){
+   return new Date(Date.parse(mon +" 1, 2017")).getMonth()+1
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+  })
+</SCRIPT>

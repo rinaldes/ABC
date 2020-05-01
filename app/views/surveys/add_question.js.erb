@@ -1,0 +1,11 @@
+<% params[:cancel] ||= false %>
+<% unless params[:cancel] %>
+	$("#set-question-form").html("<%= j(render '/wizards/set_question') %>")
+	$("#close-question-link").removeClass("hide")
+	$('html, body').animate({
+    scrollTop: $("#set-question-form").offset().top
+	}, 2000);
+<% else %>
+	$("#set-question-form").html("")
+	$("#close-question-link").addClass("hide")
+<% end %>

@@ -1,0 +1,713 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="jquery.maskMoney.js" type="text/javascript"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Product</li><li><%= label %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div id='notification'><%= render 'layouts/errors' %></div>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Product</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <%= form_for @product, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <%= hidden_field_tag :product_list %>
+              <% 1.upto(4) {|i| %>
+                <%= hidden_field_tag "brand_discount#{i}" %>
+              <% } %>
+              <%= hidden_field_tag :brand_price %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-12">
+                    <section class="col col-md-4">
+                      <section class="form-group">
+                        <label class="col-md-4 label">Barcode</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <% if @product.new_record? %>
+                            <%= text_field_tag :barcode, '', class: "input-sm", readonly: true, placeholder: 'Autogenerate' %>
+                          <% else %>
+                            <%= f.text_field :barcode, class: "input-sm", readonly: true %>
+                          <% end %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <%= render 'products/supplier_info' %>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label"><%= t(:brand) %> <span class='important'>*</span></label>
+                        <label class="col-md-8 input custom-input-box" id='brands'><%= f.select :brand_id, options_for_select((brands rescue [])), {}, class: 'form-control', style: "width: 217px" %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Artikel <span class='important'>*</span></label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= f.text_field :article, class: "input-sm" %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label"><%= t(:unit) %><span class='important'>*</span></label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= f.select :unit_id, options_for_select(Unit.all.map{|unit|[unit.name, unit.id]}), {}, class: 'form-control', style: "width: 217px" %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4 label">Size <span class='important'>*</span></label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= f.select :size_id, options_for_select(Size.all.map{|size|[size.description, size.id]}, selected: @product.size_id), {}, onchange: "generate_details(this.value)" %>
+                        </label>
+                      </section>
+                      </section>
+                      <section class="col col-md-8">
+                        <section class="col col-md-5">
+                          <section class="form-group">
+                            <label class="col-md-4 label">Department<span class='important'>*</span></label>
+                            <label class="col-md-8 input custom-input-box">
+                              <%= f.select :department_id, options_for_select(Department.where("parent_id IS NULL").map{|department|["#{department.code}-#{department.name}", department.id]},
+                                selected: @product.department_id), {prompt: 'Please Select'}, onchange: "pilih_cat(this, '0');" %>
+                            </label>
+                          </section>
+                          <% 1.upto(4) do |i| %>
+                            <section class="form-group category<%= i if i>1 %>">
+                              <label class="col-md-4 label">M Class <%= i %><span class='important'>*</span></label>
+                              <label class="col-md-8 input custom-input-box">
+                                <%= select_tag "m_class_id#{i if i>1}", options_for_select(
+                                    MClass.where("parent_id=#{i == 1 ? (@product.department_id || 0) : (@product.m_class.parent_id rescue 0)}").order("code ASC")
+                                    .map{|m_class|[m_class.code_and_name, m_class.id]},
+                                    selected: i == (@product.m_class.level rescue 0) ? @product.m_class_id : (@product.m_class.parent_id rescue nil)
+                                  ),
+                                  {prompt: 'Please Select', onchange: "pilih_cat(this, '#{i}');hidden_mclass(this);", style: "width: 163px"} %>
+                              </label>
+                            </section>
+                          <% end %>
+                        </section>
+                        <section class="col col-md-4">
+                          <% 1.upto(4).each{|i| %>
+                            <section class="form-group">
+                              <label class="col-md-4 label"><%= t(:colour) %> <%= i %></label>
+                              <label class="col-md-6 input custom-input-box">
+                                <%= text_field_tag "colour#{i}", (params["colour#{i}"] || (eval("@colour#{i}.name") rescue '')), class: "colour input-sm autocomplete-field",
+                                  placeholder: "Type to autocomplete" %>
+                              </label>
+                            </section>
+                          <% } %>
+                          <section class="form-group">
+                            <label class="col-md-4 label"><%= t(:colour_code) %></label>
+                            <label class="col-md-6 input custom-input-box"><%= f.text_field :colour_code, class: "input-sm" %></label>
+                          </section>
+                        </section>
+                        <section class="col col-md-3">
+                          <div class="profile-user del-mrg">
+                            <%= f.file_field :image, class: "hidden", :onchange =>"readURL(this);"%>
+                            <a class="opt-profile change tip btn-upload" data-toggle="tooltip" title="Upload Photo" data-original-title="Upload" onclick="$('#product_image').click();" style="cursor: pointer;">
+                              <img id="img_prev" src="/img/Actions-insert-image-icon.png" width='135px'/>
+                            </a>
+                          </div>
+                          <label class="col-md-12 label" style="text-align: center; margin-top: 10px;">Upload Photo</label>
+                        </section>
+                      </section>
+                    </section> <!-- col-md-6 -->
+                    <section class="col col-md-12">
+                      <section class="col col-md-12">
+                        <table class="table table-striped table-bordered" width="100%" id='pi'>
+                          <tr>
+                            <td></td>
+                            <% 1.upto(14).each{|i| %>
+                              <td><%= i %></td>
+                            <% } %>
+                            <td rowspan=9><b>Total</b></td>
+                          </tr>
+                          <tr>
+                            <td>Size</td>
+                            <% @size_details.each{|size_detail| %>
+                              <td class='size_details'><%= size_detail.size_number %></td>
+                            <% } %>
+                            <% 1.upto(14-@size_details.size).each{|size_detail| %>
+                              <td class='size_details'></td>
+                            <% } %>
+                          </tr>
+                          <tr>
+                            <td class='nowrap'>Min Stock</td>
+                            <% @size_details.each_with_index{|size_detail, i| %>
+                              <td class='p3px min_stock'>
+                                <%= number_field_tag "product[product_sizes_attributes][#{i}][default_min_stock]",
+                                  (
+                                    params[:product][:product_sizes_attributes]["#{i}"]['default_min_stock'] rescue (
+                                      ProductSize.find_by_product_id_and_size_detail_id(@product.id, size_detail.id).default_min_stock rescue ''
+                                    )
+                                  ), class: 'qty_detail', min: 0 %>
+                                <%= hidden_field_tag "product[product_sizes_attributes][#{i}][size_detail_id]", size_detail.id %>
+                              </td>
+                            <% } if @size_details.present? %>
+                            <% 1.upto(14-@size_details.size).each{|size_detail| %>
+                              <td class='min_stock'></td>
+                            <% } %>
+                          </tr>
+                          <% %w(available_qty freezed_qty defect_qty rejected_qty online_qty allocated_qty).each{|qty| %>
+                            <tr>
+                              <td class='nowrap'>
+                                <%= %w(online_qty allocated_qty).include?(qty) ? raw("<b>#{qty.humanize}<b/>") : qty.humanize %>
+                              </td>
+                              <% @size_details.each_with_index{|size_detail, i| %>
+                                <td class='p3px <%= qty %>'>
+                                  <%= text_field_tag "product[product_sizes_attributes][#{i}][product_details_attributes][#{i}][#{qty}]", '', class: 'qty_detail', disabled: true %>
+                                </td>
+                              <% } if @size_details.present? %>
+                              <% 1.upto(14-@size_details.size).each{|size_detail| %>
+                                <td class='<%= qty %>'></td>
+                              <% } %>
+                            </tr>
+                          <% } %>
+                          <tr>
+                            <td><b>Qty Total</b></td>
+                            <% 1.upto(14).each{|i| %>
+                              <td></td>
+                            <% } %>
+                            <td></td>
+                          </tr>
+                        </table>
+                      </section>
+                    </section>
+                  </section>
+                  <section class="col col-md-12">
+                    <%= render partial: 'status', locals: {f: f} %>
+                  </section>
+                  <section class="form-group">
+                    <section class="col col-md-4">
+                      <label class="col-md-8 label">First PO</label>
+                      <label class="col-md-8 input custom-input-box"><%= f.text_field :first_po, class: "input-sm", disabled: true %></label>
+                    </section>
+                    <section class="col col-md-4">
+                      <label class="col-md-8 label">Harga Modal</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :cost_of_products, class: "input-sm", readonly: true %>
+                      </label>
+                    </section>
+                    <section class="col col-md-4">
+                      <label class="col-md-8 label">Harga Jual</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= f.text_field :selling_price, class: "input-sm", readonly: true %>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-3">
+                    <label class="col-md-8 label">Harga Faktur</label>
+                    <label class="col-md-8 input custom-input-box">
+                      <%= f.text_field :purchase_price, class: "input-sm" %>
+                    </label>
+                  </section>
+                  <section class="col col-md-4">
+                    <% ['Harga Bandrol', 'Harga Eceran', 'Harga Member Eceran', 'Harga Kredit'].each_with_index{|lbl, i| %>
+                      <section class="form-group">
+                        <label class="col-md-4 label"><%= lbl %></label>
+                        <label class="col-md-4 input custom-input-box">
+                          <div class="icon-append" style="padding: 0 3px 0 5px;">%</div>
+                          <%= f.text_field "margin_percent#{4-i}", class: "input-sm" %>
+                        </label>
+                        <label class="col-md-1 label labelPercent<%= 4-i %>"></label>
+                        <label class="col-md-3 input custom-input-box">
+                          <%= f.text_field lbl.gsub(' ', '_').downcase, class: 'input-sm', readonly: true %>
+                        </label>
+                      </section>
+                    <% } %>
+                  </section>
+                  <section class="col col-md-5">
+                    <section class="col col-md-10">
+                      <section class="form-group">
+                        <label class="col-md-3 input custom-input-box">
+                          <%= f.number_field :margin_percent, class: "input-sm" %>
+                          <div class="icon-append" style="padding: 0 3px 0 5px;">%</div>
+                        </label>
+                        <label class="col-md-1 label"></label>
+                        <label class="col-md-3 input custom-input-box">
+                          <%= f.text_field :margin_rp, class: 'input-sm', readonly: true %>
+                        </label>
+                      </section>
+                    </section>
+                  </section>
+                  <section class="col col-md-12">
+                    <section class="col col-md-10">
+                      <section class="form-group">
+                        <label class="col-md-10 label">Harga Jual Cabang</label>
+                        <%= link_to t(:add_branch), 'javascript:void(0)', style: "padding:5px;", class: "add_branch btn btn-primary" %>
+                        <table class="table table-striped table-bordered" id='branch' style="margin-top:10px;">
+                          <tr><th>Nama Cabang</th><th>%</th><th>IDR</th><th>Min Stock</th><th>Action</th></tr>
+                          <% @product.branch_prices.each{|branch_price| %>
+                            <%= render 'branch', key: branch_price.id, obj: branch_price if @product.id.present? %>
+                          <% } %>
+                        </table>
+                      </section>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-primary" onclick="return(beforeSave())">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+              <%= hidden_field_tag :floated_margin_rp %>
+              <%= hidden_field_tag :floated_purchase_price %>
+              <%= hidden_field_tag :floated_harga_bandrol %>
+              <%= hidden_field_tag :floated_harga_eceran %>
+              <%= hidden_field_tag :floated_harga_member_eceran %>
+              <%= hidden_field_tag :floated_harga_kredit %>
+              <%= hidden_field_tag :floated_cost_of_products %>
+              <%= hidden_field_tag :floated_selling_price %>
+              <%= hidden_field_tag :floated_margin_percent4 %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<SCRIPT>
+  $("#product_brand_id").select2();
+  $("#product_unit_id").select2();
+  $("#product_size_id").select2();
+  $("#product_department_id").select2();
+  <% 1.upto(4) do |i| %>
+    <% if (@product.m_class.level rescue 0) < i %>
+      $(".category<%= i if i>1 %>").hide();
+    <% else %>
+      $("#m_class_id<%= i if i>1 %>").select2();
+    <% end %>
+  <% end %>
+
+  function pilih_cat(obj, num){
+    $.ajax({
+      url: "/products/mclass_per_department",
+      dataType: "script",
+      data: {cat_id: obj.value, cat_num: num},
+      success: function (data){
+        response(data)
+      }
+    });
+  }
+
+  function separate_number(){
+    $('#product_margin_rp').val(addCommas($('#product_margin_rp').val().split(',').join('')))
+    $('#product_purchase_price').val(addCommas($('#product_purchase_price').val().split(',').join('')))
+    $('#product_harga_bandrol').val(addCommas($('#product_harga_bandrol').val().split(',').join('')))
+    $('#product_harga_eceran').val(addCommas($('#product_harga_eceran').val().split(',').join('')))
+    $('#product_harga_member_eceran').val(addCommas($('#product_harga_member_eceran').val().split(',').join('')))
+    $('#product_harga_kredit').val(addCommas($('#product_harga_kredit').val().split(',').join('')))
+    $('#product_cost_of_products').val(addCommas($('#product_cost_of_products').val().split(',').join('')))
+    $('#product_selling_price').val(addCommas($('#product_selling_price').val().split(',').join('')))
+    $('#product_margin_percent4').val(addCommas($('#product_margin_percent4').val().split(',').join('')))
+  }
+
+  function restore_separated_number(){
+    $('#floated_margin_rp').val($('#product_margin_rp').val().split(',').join(''))
+    $('#floated_purchase_price').val($('#product_purchase_price').val().split(',').join(''))
+    $('#floated_harga_bandrol').val($('#product_harga_bandrol').val().split(',').join(''))
+    $('#floated_harga_eceran').val($('#product_harga_eceran').val().split(',').join(''))
+    $('#floated_harga_member_eceran').val($('#product_harga_member_eceran').val().split(',').join(''))
+    $('#floated_harga_kredit').val($('#product_harga_kredit').val().split(',').join(''))
+    $('#floated_cost_of_products').val($('#product_cost_of_products').val().split(',').join(''))
+    $('#floated_selling_price').val($('#product_selling_price').val().split(',').join(''))
+    $('#floated_margin_percent4').val($('#product_margin_percent4').val().split(',').join(''))
+  }
+
+  function beforeSave(){
+    var good_id = [];
+    var tot = $('#pi tbody tr').length;
+    if(tot != 0){
+      for(var y=0; y < tot; y+=1){
+        good_id.push($("#pi tbody tr:eq("+ y +") td:eq(0) span:eq(0)").text())
+      }
+      $("#product_list").val(good_id.toString());
+      restore_separated_number()
+      setTimeout(function(){
+        $('form').submit()
+      }, 1000);
+    }else{
+      alert('Insert Data First!')
+      return false;
+    }
+  }
+  $(document).ready(function() {
+    if ($('#brand').val() == ''){
+      $('#brand').attr('disabled', true)
+      $('#brand').next().addClass('disabled')
+    }
+    $("#product_harga_eceran").keyup(function(e) {
+      if($(this).val() != '') {
+    //    $("#product_margin_percent3").attr('disabled','disabled');
+      } else {
+      //  $("#product_margin_percent3").removeAttr('disabled');
+      }
+    });
+    $("#product_harga_member_eceran").keyup(function(e) {
+      if($(this).val() != '') {
+        //$("#product_margin_percent2").attr('disabled','disabled');
+      } else {
+//        $("#product_margin_percent2").removeAttr('disabled');
+      }
+    });
+    $("#product_harga_kredit").keyup(function(e) {
+      if($(this).val() != '') {
+  //      $("#product_margin_percent1").attr('disabled','disabled');
+      } else {
+    //    $("#product_margin_percent1").removeAttr('disabled');
+      }
+    });
+    $("#product_margin_rp").keyup(function(e) {
+      if($(this).val() != '') {
+      //  $("#product_margin_percent").attr('disabled','disabled');
+      } else {
+        //$("#product_margin_percent").removeAttr('disabled');
+      }
+    });
+
+
+    $('#product_purchase_price, #product_margin_percent1, #product_margin_percent2, #product_margin_percent3, #product_margin_percent4, #product_margin_percent, #product_harga_bandrol, #product_harga_eceran, #product_harga_member_eceran, #product_harga_kredit').keyup(function(){
+      set_price()
+      separate_number()
+    })
+    $('#product_first_po').datepicker()
+    add_branch()
+    add_m_class()
+    $('.status4 input').attr('disabled', 'disabled')
+
+    $("#brand").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/brands/autocomplete_brand_name",
+          dataType: "json",
+          data: {term: request.term, supplier_name: $('#supplier').val()},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        generate_data_brand(ui.item.id)
+      },
+      minLength: 1
+    });
+
+    $("#supplier").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        collect_brand(ui.item.id)
+        $('#supplier_code').val(ui.item.code)
+      },
+      minLength: 1
+    });
+
+    $("#supplier_code").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_code",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        collect_brand(ui.item.id)
+        $('#supplier_code').val(ui.item.code)
+        $('#supplier').val(ui.item.name)
+      },
+      minLength: 1
+    });
+
+    $(".colour").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/colours/autocomplete_colour_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#size").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/sizes/autocomplete_size_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      select: function( event, ui ) {
+        generate_details(ui.item.id)
+      },
+      minLength: 1
+    });
+    $("#m_class_0").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/departments/autocomplete_department_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#unit").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/units/autocomplete_unit_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+
+  })
+
+  function generate_details(item_id){
+    $.ajax({
+      dataType: "script",
+      type: "get",
+      url: "/sizes/generate_details",
+      data: {size_id: item_id}
+    })
+  }
+
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $('#img_prev')
+          .attr('src', e.target.result)
+          .width(135)
+          .height(135);
+      };
+      reader.readAsDataURL(input.files[0]);
+      $('.profile-user').next().html($('#product_image').val())
+    }
+  }
+
+  function set_price(){
+    purchase_price = parseFloat($('#product_purchase_price').val().split(',').join(''))
+    price_after_discount1 = $('#product_purchase_price').val() == '' ? 0 : purchase_price*(100-($('#brand_discount1').val() == '' ? 0 : parseFloat($('#brand_discount1').val())))/100
+    price_after_discount2 = price_after_discount1*(100-parseFloat($('#brand_discount2').val() == '' ? 0 : ($('#brand_discount2').val() == '' ? 0 : parseFloat($('#brand_discount2').val()))))/100
+    price_after_discount3 = price_after_discount2*(100-parseFloat($('#brand_discount3').val() == '' ? 0 : ($('#brand_discount3').val() == '' ? 0 : parseFloat($('#brand_discount3').val()))))/100
+    price_after_discount4 = price_after_discount3*(100-parseFloat($('#brand_discount4').val() == '' ? 0 : ($('#brand_discount4').val() == '' ? 0 : parseFloat($('#brand_discount4').val()))))/100
+    margin_percent3 = $('#product_margin_percent3').val() == '' ? 0 : parseFloat($('#product_margin_percent3').val())
+    margin_percent2 = $('#product_margin_percent2').val() == '' ? 0 : parseFloat($('#product_margin_percent2').val())
+    margin_percent1 = $('#product_margin_percent1').val() == '' ? 0 : parseFloat($('#product_margin_percent1').val())
+    margin_percent4 = $('#product_margin_percent4').val() == '' ? 0 : parseFloat($('#product_margin_percent4').val())
+    harga_bandrol = 0
+    mod = price_after_discount4 % 500
+    $('#product_cost_of_products').val(price_after_discount4)
+    if ($('#brand_price').val() == 'Normal'){
+      $('#product_margin_percent4, #product_margin_percent3, #product_margin_percent2, #product_margin_percent1').removeAttr('readOnly')
+      $('.labelPercent4').show()
+      $('#product_margin_rp').val(price_after_discount4/parseFloat($('#product_margin_percent').val())*100)
+      $('#product_margin_rp, #product_margin_percent').removeAttr('disabled')
+
+      harga_kredit = parseFloat($('#product_margin_rp').val())/margin_percent1*100
+      harga_kredit_mod = harga_kredit % 500
+      kredit = harga_kredit_mod > 250 ? harga_kredit+500-harga_kredit_mod : harga_kredit-harga_kredit_mod
+
+      harga_bandrol = parseInt(harga_kredit/margin_percent4*100)
+      harga_bandrol_mod = harga_bandrol % 500
+      bandrol = harga_bandrol_mod > 250 ? harga_bandrol+500-harga_bandrol_mod : harga_bandrol-harga_bandrol_mod
+
+      harga_eceran = parseInt(harga_bandrol-harga_bandrol*margin_percent3/100)
+      harga_eceran_mod = harga_eceran % 500
+      eceran = harga_eceran_mod > 250 ? harga_eceran+500-harga_eceran_mod : harga_eceran-harga_eceran_mod
+
+      harga_member_eceran = parseInt(harga_bandrol-harga_bandrol*margin_percent2/100)
+      harga_member_eceran_mod = harga_member_eceran % 500
+      member_eceran = harga_member_eceran_mod > 250 ? harga_member_eceran+500-harga_member_eceran_mod : harga_member_eceran-harga_member_eceran_mod
+
+      $('#product_harga_member_eceran').val(member_eceran)
+      $('#product_harga_eceran').val(eceran)
+      $('#product_harga_bandrol').val(bandrol)
+      $('#product_selling_price').val(bandrol)
+      $('#product_harga_kredit').val(kredit)
+    }
+    else if ($('#brand_price').val() == 'Pabrik'){
+      $('#product_margin_percent4, #product_margin_percent3, #product_margin_percent2, #product_margin_percent1').removeAttr('readOnly')
+      $('.labelPercent4').hide()
+      $('#product_margin_rp').val('')
+      $('#product_margin_percent').val('')
+      $('#product_margin_rp, #product_margin_percent').attr('disabled', true)
+
+/* membulatkan harga --START-- */
+      harga_bandrol = purchase_price+margin_percent4
+      harga_bandrol_mod = harga_bandrol % 500
+      bandrol = harga_bandrol_mod > 250 ? harga_bandrol+500-harga_bandrol_mod : harga_bandrol-harga_bandrol_mod
+
+      harga_kredit = bandrol-bandrol*margin_percent1/100
+      harga_kredit_mod = harga_kredit % 500
+      kredit = harga_kredit_mod > 250 ? harga_kredit+500-harga_kredit_mod : harga_kredit-harga_kredit_mod
+
+      harga_member_eceran = parseInt(bandrol-bandrol*margin_percent2/100)
+      harga_member_eceran_mod = harga_member_eceran % 500
+      member_eceran = harga_member_eceran_mod > 250 ? harga_member_eceran+500-harga_kredit_mod : harga_member_eceran-harga_member_eceran_mod
+
+      harga_eceran = parseInt(bandrol-bandrol*margin_percent3/100)
+      harga_eceran_mod = harga_eceran % 500
+      eceran = harga_eceran_mod > 250 ? harga_eceran+500-harga_eceran_mod : harga_eceran-harga_eceran_mod
+/* --END--*/
+
+      $('#product_harga_kredit').val(kredit)
+      $('#product_harga_member_eceran').val(member_eceran)
+      $('#product_harga_eceran').val(eceran)
+      $('#product_harga_bandrol').val(harga_bandrol)
+      $('#product_selling_price').val(parseInt(harga_bandrol))
+    }
+    else if ($('#brand_price').val() == 'Obral'){
+      $('#product_margin_percent4, #product_margin_percent3, #product_margin_percent2, #product_margin_percent1').removeAttr('readOnly')
+      product_margin_rp = price_after_discount4/parseFloat($('#product_margin_percent').val())*100
+      $('#product_margin_rp').val(product_margin_rp)
+      harga_eceran = parseFloat(product_margin_rp)/margin_percent3*100
+      harga_eceran_mod = harga_eceran % 500
+      eceran = harga_eceran_mod > 250 ? harga_eceran+500-harga_eceran_mod : harga_eceran-harga_eceran_mod
+
+      harga_member_eceran = parseInt(harga_eceran/margin_percent2*100)
+      harga_member_eceran_mod = harga_member_eceran % 500
+      member_eceran = harga_member_eceran_mod > 250 ? harga_member_eceran+500-harga_member_eceran_mod : harga_member_eceran-harga_member_eceran_mod
+
+      $('#product_harga_eceran').val(eceran)
+      $('#product_harga_member_eceran').val(member_eceran)
+      harga_bandrol = harga_eceran/margin_percent4*100
+      harga_bandrol_mod = harga_bandrol % 500
+      bandrol = harga_bandrol_mod > 250 ? harga_bandrol+500-harga_bandrol_mod : harga_bandrol-harga_bandrol_mod
+
+      harga_kredit = parseInt(bandrol-bandrol*margin_percent1/100)
+      harga_kredit_mod = harga_kredit % 500
+      kredit = harga_kredit_mod > 250 ? harga_kredit+500-harga_kredit_mod : harga_kredit-harga_kredit_mod
+
+      $('#product_harga_kredit').val(kredit)
+      $('#product_harga_bandrol').val(bandrol)
+      $('#product_selling_price').val(bandrol)
+    }
+    else{
+      $('#product_selling_price').val($('#product_harga_bandrol').val())
+      $('#product_harga_kredit, #product_harga_member_eceran, #product_harga_eceran, #product_harga_bandrol').removeAttr('readOnly')
+      $('#product_margin_percent4, #product_margin_percent3, #product_margin_percent2, #product_margin_percent1').attr('readOnly', 'readOnly')
+    }
+  }
+
+  function add_m_class(){
+    $('.add_m_class').click(function(){
+      $(this).attr('disabled', 'disabled')
+      var date = new Date();
+      $.ajax({
+        url: '/products/add_m_class',
+        data: {
+          key: $('#product_m_class section').length+1, parent_id: $('#m_class_'+$('#product_m_class section').length).val()
+        }
+      })
+    })
+  }
+
+  function mundur(i){
+    for(x=0; x< $('#product_m_class section').length+10; x++){
+        $('#mclass'+(i+x)).remove()
+      }
+  }
+
+  function reload_mclass(i, val){
+    if ($('#mclass'+(i+1)).length > 0 && $('#mclass'+(i+1)).html() != '') {
+      for(x=1; x< $('#product_m_class section').length+10; x++){
+        $('#mclass'+(i+x)).remove()
+      }
+      var date = new Date();
+      $.ajax({
+        url: '/products/add_m_class',
+        data: {
+          key: $('#product_m_class section').length+1, parent_id: val
+        }
+      })
+    }
+  }
+
+  function add_branch(){
+    $('.add_branch').click(function(){
+      var date = new Date();
+      $.ajax({
+        url: '/products/add_branch',
+        data: {
+           key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds()
+        }
+      })
+    })
+  }
+
+  function collect_brand(supplier_id){
+      $.ajax(
+      {
+        url: "/brands/brands_per_supplier",
+        dataType: "script",
+        data: {supplier_id: supplier_id}
+      });
+  }
+
+  function generate_data_brand(item_id){
+    $.ajax({
+      url: '/brands/generate_data_brand',
+      data: {brand_id: item_id}
+    })
+  }
+</SCRIPT>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+
+<STYLE>
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+}
+</STYLE>

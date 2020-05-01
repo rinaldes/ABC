@@ -1,0 +1,17 @@
+<% if params[:action] != "update_holiday_type" %>
+    <tr id="data_<%= holiday_type.id %>">
+<% end %>
+    <td>
+        <div class="checkbox check-default">
+            <input id="checkbox<%= holiday_type.id %>" type="checkbox" value="<%= holiday_type.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= holiday_type.id %>"></label>
+        </div>
+    </td>
+    <td><%= holiday_type.code %></td>
+    <td class="v-align-middle text-left"><span class="muted"><%= holiday_type.name %></span>
+    </td>
+    <td class="v-align-middle text-left" colspan='2'><span class="muted"><%= holiday_type.as_leave %></span>
+    </td>
+<% if params[:action] != "update_holiday_type" %>
+    </tr>
+<% end %>

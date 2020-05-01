@@ -1,0 +1,80 @@
+<%# if params[:action] == "new"%>
+	<tr id="data_<%= contract.id %>">
+<%# end %>
+	<%= form_for(contract, html: { role: "form", multipart: true}, remote: true) do |f| %>
+			<% if params[:action] == "new"%>
+				<%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+			<% else %>
+				<%= f.hidden_field :id, :value => params[:id] %>
+			<% end %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+
+		<td>
+			<%= f.text_field :contract_type, :class => "full-width", :placeholder => "Contract_Type" %>
+		</td>
+
+		<td>
+			<div class="input-append success date">
+          <%= f.text_field :start, :class => "form-control", value: (f.object.start.present? ? f.object.start.to_date.strftime("%d/%m/%Y") : (params[:contract].present? ? params[:contract][:start] : "")) %>
+          <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+      </div>
+		</td>
+
+		<td>
+			<div class="input-append success date">
+	        <%= f.text_field :end, :class => "form-control", value: (f.object.end.present? ? f.object.end.to_date.strftime("%d/%m/%Y") : (params[:contract].present? ? params[:contract][:end] : "")) %>
+	        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+	    </div>
+		</td>
+		
+		<td>
+  			<%= f.file_field :attachment %>
+		</td>
+
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+        	<%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 0 0 30px;", :onclick => "submit_contract();"%>
+        	<button class="btn btn-danger" onclick="$(this).parent().parent().parent().remove(); $('.new-rec').remove()"> cancel </button>
+      	<% else %>
+      		<%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 0 0 30px;", :onclick => "update_contract();"%>
+        	<button class="btn btn-danger" onclick="reset_view_<%= f.object.id %>()"> cancel </button>
+      	<% end %>
+      </div>
+      <% if f.object.id.present? %>
+				<script type="text/javascript">
+					function reset_view_<%= f.object.id %>() {
+						$("#data_<%= f.object.id %>").replaceWith("<%= j(render 'data', :contract => f.object) %>");
+						$('#toolbar_contract').addClass('hide');
+						$('#button_edit_contract').addClass('hide');
+						$('#button_remove_contract').addClass('hide');
+						$(".child-box").each(function(){
+						  $(this).click(function() {
+						    section = $(this).attr("data-section")
+						    children = $(".child-" + section)
+						    // $(this).parent().parent().parent().toggleClass('row_selected')
+
+						    show_button($(this))
+						    
+						    selected_count = 0
+						    children.each(function(){ if ($(this).is(':checked')) { selected_count += 1 } })
+						    if (selected_count==children.length) {
+						      $(".parent-" + section).prop('checked', true)
+						    } else{
+						      $(".parent-" + section).prop('checked', false)
+						    };
+						  })
+						})
+					}
+				</script>
+			<% end %>
+		</td>
+	<% end %>
+<%# if params[:action] == "new"%>
+	</tr>
+<%# end %>

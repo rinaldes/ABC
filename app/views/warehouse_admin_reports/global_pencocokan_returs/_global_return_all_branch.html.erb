@@ -1,0 +1,81 @@
+<thead>
+  <tr><td align='center' colspan=<%= @branches.count*3+1 %>>RETUR</td></tr>
+  <tr>
+    <td rowspan=3>BULAN</td>
+  </tr>
+  <tr>
+    <% @branches.each{|branch| %>
+      <td align='center' colspan=3><%= branch.description %></td>
+    <% } %>
+  </tr>
+  <tr>
+    <% @branches.each{|branch| %>
+      <td>QTY</td>
+      <td>COST</td>
+      <td>VALUE</td>
+    <% } %>
+  </tr>
+</thead>
+<% week = 0 %>
+<% total_qty = {} %>
+<% total_cost = {} %>
+<% total_value = {} %>
+<% grand_total_qty = {} %>
+<% grand_total_cost = {} %>
+<% grand_total_value = {} %>
+<% @branches.each{|branch| %>
+  <% grand_total_qty[branch.id.to_s] = 0 %>
+  <% grand_total_cost[branch.id.to_s] = 0 %>
+  <% grand_total_value[branch.id.to_s] = 0 %>
+  <% total_qty[branch.id.to_s] = 0 %>
+  <% total_cost[branch.id.to_s] = 0 %>
+  <% total_value[branch.id.to_s] = 0 %>
+<% } %>
+<tbody>
+  <% 8.upto(Time.now.month > 8 ? Time.now.month : 12).each_with_index{|month, i| %>
+    <% date = "#{params[:year]}-#{sprintf('%02d', month)}-01".to_date %>
+    <tr>
+      <td><%= date.strftime('%B') %></td>
+      <% @branches.each_with_index{|branch, idx| %>
+        <% rthb = ReturnsToHo.where("mutation_date BETWEEN '#{date.strftime('%Y-%m-%d')} 00:00:00' AND '#{date.end_of_month.strftime('%Y-%m-%d')} 23:59:59' AND origin_warehouse_id=#{branch.id}") %>
+        <% total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+        <% total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+        <% total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+        <td class='nowrap'><%= rthb.map(&:total_quantity).sum %></td>
+        <% grand_total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+        <% grand_total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+        <% grand_total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+        <td class='nowrap'><%= format_currency rthb.map(&:total_price).sum %></td>
+        <td class='nowrap'><%= format_currency rthb.map(&:sell_price).sum %></td>
+      <% } %>
+    </tr>
+  <% } %>
+  <% if Time.now.month < 8 %>
+    <% 1.upto(Time.now.month).each_with_index{|month, i| %>
+      <% date = "#{params[:year]}-#{sprintf('%02d', month)}-01".to_date %>
+      <tr>
+        <td><%= date.strftime('%B') %></td>
+        <% @branches.each_with_index{|branch, idx| %>
+          <% rthb = ReturnsToHo.where("mutation_date BETWEEN '#{date.strftime('%Y-%m-%d')} 00:00:00' AND '#{date.end_of_month.strftime('%Y-%m-%d')} 23:59:59' AND origin_warehouse_id=#{branch.id}") %>
+          <% total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+          <% total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+          <% total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+          <td class='nowrap'><%= rthb.map(&:total_quantity).sum %></td>
+          <% grand_total_qty[branch.id.to_s] += rthb.map(&:total_quantity).sum %>
+          <% grand_total_cost[branch.id.to_s] += rthb.map(&:total_price).sum %>
+          <% grand_total_value[branch.id.to_s] += rthb.map(&:sell_price).sum %>
+          <td class='nowrap'><%= format_currency rthb.map(&:total_price).sum %></td>
+          <td class='nowrap'><%= format_currency rthb.map(&:sell_price).sum %></td>
+        <% } %>
+      </tr>
+    <% } %>
+  <% end %>
+  <tr>
+    <td>TOTAL</td>
+    <% @branches.each{|branch| %>
+      <td class='nowrap'><%= format_currency grand_total_qty[branch.id.to_s] %></td>
+      <td class='nowrap'><%= format_currency grand_total_cost[branch.id.to_s] %></td>
+      <td class='nowrap'><%= format_currency grand_total_value[branch.id.to_s] %></td>
+    <% } %>
+  </tr>
+</tbody>

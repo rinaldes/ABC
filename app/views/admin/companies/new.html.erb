@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li>
+    <li><%= link_to "Master Company", admin_companies_path, class: "active" %></li>
+    <li><a onclick="return false;" class="active">New</a></li>
+  </ul>
+  
+  <div class="page-title">
+    <% if flash.any? %>
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+      <%- end -%> 
+    <% end %>
+  </div>
+
+  <div class="page-title">  
+    <i class="fa fa-building-o"></i>
+    <h3>Master Company <span class="semi-bold">New</span></h3>
+  </div>
+
+  <div class="grid simple">
+    <div class="grid-title no-border"></div>
+		<%= render 'form' %>
+  </div>
+</div>

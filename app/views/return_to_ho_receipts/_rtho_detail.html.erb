@@ -1,0 +1,35 @@
+<fieldset>
+  <div class="row">
+    <section class="col col-md-6">
+      <section>
+        <label class="col-md-4 label">Tanggal</label>
+        <label class="col-md-8 input custom-input-box"><%= @good_transfer.mutation_date %></label>
+      </section>
+      <section>
+        <label class="col-md-4 label">No. Transfer Barang</label>
+        <label class="col-md-8 input custom-input-box"><%= @good_transfer.code %></label>
+      </section>
+    </section> <!-- col-md-6 -->
+    <section class="col col-md-6">
+      <section class="col col-md-12">
+        <label class="col-md-3 label">Dari</label>
+        <label class="col-md-9 input custom-input-box"><%= @good_transfer.origin_warehouse.office_name %>
+        </label>
+      </section>
+      <% if params[:controller] != "dibeliowners" %>
+      <section>
+        <label class="col-md-3 label">Tujuan</label>
+        <label class="col-md-9 input custom-input-box"><%= @good_transfer.destination_warehouse.office_name %>
+      </section>
+      <% end %>
+    </section> <!-- col-md-6 -->
+  </div> <!-- row -->
+</fieldset> <!-- tambah supplier -->
+<fieldset class="col col-md-12"> <!-- brand person -->
+  <h3>Transfered Products</h3>
+  <div class="row">
+    <section class="col col-md-12">
+      <%= render 'shared/table_product_detail', details: @good_transfer.product_mutation_details.group_by{|prd|prd.product_size.product_id} %>
+    </section>
+  </div> <!-- row -->
+</fieldset>

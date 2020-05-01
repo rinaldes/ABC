@@ -1,0 +1,6 @@
+<% if @holiday.save %>
+	$('#holiday tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#holiday tbody').prepend("<%= j(render 'data', :holiday => @holiday) %>"); 
+<% else %>
+<% end %>

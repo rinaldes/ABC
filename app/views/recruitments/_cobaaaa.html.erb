@@ -1,0 +1,8 @@
+<fieldset id="recipe-ingredients"> 
+    <ol> 
+      <%= f.fields_for :quantities do |quantity| %> 
+        <%= render 'quantity_fields', f: quantity %> 
+      <% end %> 
+    </ol> 
+    <%= link_to_add_association 'add ingredient', f, :quantities, 'data-association-insertion-node' => "#recipe-ingredients ol", 'data-association-insertion-method' => "append", :wrap_object => Proc.new {|quantity| quantity.build_ingredient; quantity } %> 
+  </fieldset> 

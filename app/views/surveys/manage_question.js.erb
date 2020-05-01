@@ -1,0 +1,17 @@
+<% if params[:section] == "remove" %>
+	<% unless @error.present? %>
+		$("#question-preview-<%= params[:id].to_s %>").remove()
+	<% end %>
+	
+<% elsif params[:section] == "duplicate" %>
+	<% unless @error.present? %>
+		$("#question-preview").append("<%= j(render '/questions/index', question: session[current_user.id.to_s]['question'][@current_id], id: @current_id, disabled: true) %>")
+	<% end %>
+
+<% elsif params[:section] == "update" %>
+	<% unless @error.present? %>
+		$("#set-question-form").html("")
+		$("#question-preview-<%= params[:id].to_s %>").replaceWith("<%= j(render '/questions/index', question: params[:question], id: params[:question][:id], disabled: true) %>")
+	<% end %>
+
+<% end %>

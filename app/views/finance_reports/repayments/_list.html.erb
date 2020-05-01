@@ -1,0 +1,47 @@
+<% if @repayments.present? %>
+  <% total = 0 %>
+  <% @repayments.each_with_index do |repayment,index| %>
+    <tr>
+      <td><%= repayment.supplier.name %></td>
+      <td><%= repayment.date %></td>
+      <td><%= repayment.consigment_number %></td>
+      <td><%= repayment.received_qty %></td>
+      <td><%= format_currency repayment.total_before_discount %></td>
+      <td><%= repayment.discount_percent1 %></td>
+      <td><%= repayment.discount_percent2 %></td>
+      <td><%= repayment.discount_percent3 %></td>
+      <td><%= repayment.discount_percent4 %></td>
+      <td><%= format_currency repayment.total_after_discount %></td>
+      <td><%= repayment.receiving_details.first.product_size.product.status3.titleize rescue nil %></td>
+      <td><%= repayment.supplier.long_term %></td>
+      <td><%= repayment.account_payables.last.due_date %></td>
+      <td><%= repayment.account_payables.last.returns_to_suppliers.map(&:quantity).sum %></td>
+      <td><%= format_currency repayment.account_payables.last.returns_to_suppliers.map(&:total).sum %></td>
+      <% total_potongan = repayment.account_payables.last.returns_to_suppliers.map(&:total).sum %>
+      <% @results.map{|a|a.other_charges.map(&:name).delete_if{|a|a.blank?}}.delete_if{|a|a.blank?}.each{|oc| %>
+        <% oc.each{|o| %>
+          <% potongan = OtherCharge.find_by_account_payable_id_and_name(repayment.account_payables.last.id, o).amount rescue 0 %>
+          <td><%= format_currency potongan %></td>
+          <% total_potongan += potongan %>
+        <% } %>
+      <% } %>
+      <% total_pembayaran = 0 %>
+      <% repayment.account_payables.each{|ap| %>
+        <td><%= ap.account_payable_details.first.payment_date.strftime('%d-%m-%Y') rescue nil %></td>
+        <td><%= format_currency ap.account_payable_details.where("method IN ('Cash', 'Transfer')").map(&:amount).sum %></td>
+        <% total_pembayaran += ap.account_payable_details.where("method IN ('Cash', 'Transfer')").map(&:amount).sum %>
+        <td><%= ap.account_payable_details.first.payment_date.strftime('%d-%m-%Y') rescue nil %></td>
+        <td><%= ap.account_payable_details.first.bank rescue nil %></td>
+        <td><%= ap.account_payable_details.first.giro_number rescue nil %></td>
+        <td><%= format_currency ap.account_payable_details.where("method='Giro'").map(&:amount).sum %></td>
+        <% total_pembayaran += ap.account_payable_details.where("method='Giro'").map(&:amount).sum %>
+      <% } %>
+      <td><%= format_currency total_potongan %></td>
+      <td><%= format_currency total_pembayaran %></td>
+      <td><%= format_currency repayment.total_after_discount.to_f - total_potongan.to_f - total_pembayaran.to_f %></td>
+      <td>
+        <%= repayment.total_after_discount.to_f - total_potongan.to_f - total_pembayaran.to_f > 0 ? 'Hutang' : repayment.total_after_discount.to_f - total_potongan.to_f - total_pembayaran.to_f < 0 ? 'Piutang' : 'Lunas' %>
+      </td>
+    </tr>
+  <% end %>
+<% end %>

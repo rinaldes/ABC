@@ -1,0 +1,157 @@
+<%= tinymce_assets %>
+<div class="container-fluid">
+      <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><a onclick="return false;" class="active">Blast Message</a></li>
+  </ul>
+  
+  <div class="page-title">
+    <% if flash.any? %>
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+      <%- end -%> 
+    <% end %>
+  </div>
+        <div class="page-title">  
+          <i class="fa fa-envelope"></i>
+          <h3>Blast <span class="semi-bold">Message</span></h3> 
+        </div>  
+            <div class="grid simple">
+                <div class="grid-title no-border">  
+                </div>
+              <div class="grid-body no-border">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                        <label class="form-label"><strong>Send To</strong>
+                        </label>
+                       <%= form_for BlastMessage.new do |f| %> 
+                            <div class="controls">  
+                            <select id="select_send" name="blast_message[send_type]" class="form-control">
+                              <option value="all">Employee(s)</option>
+                                <option value="emp">Employee/Each</option>
+                                <option value="dvi">Division/Each</option>
+                                <option value="com">Company</option>
+                            </select>          
+                                <!--  <%= f.select :message, options_for_select(@employees), {:prompt => '--select--'},{:class => "form-control"} %>   -->                    
+                            </div>
+
+                            
+                            
+                    </div>
+                    </div>
+
+                    <div class="col-md-6">
+                             <div class="form-group row" id="emp_text" style="display:none">
+                               <div class="col-sm-12" class="full-width">
+                                 <label class="form-label"><strong>Employee/Each</strong>
+                                  </label>
+                               </div>
+                              <div class="controls col-sm-12">  
+                                        
+                            <%= f.autocomplete_field :sender_id, autocomplete_employee_name_blast_messages_url, 'data-delimiter' => ',', :multiple => true, class: "autocomplete-field-input", placeholder: "Employee" %>           
+                            </div>
+                            </div>
+                             <div class="form-group row" id="dvi_text" style="display:none">
+                               <div class="col-sm-12" class="full-width">
+                                 <label class="form-label col-sm-12"><strong>Divisi/Each</strong>
+                                  </label>
+                               </div>
+                              <div class="controls col-sm-12">          
+                            <%= f.autocomplete_field :sender_id, autocomplete_organization_name_blast_messages_url, 'data-delimiter' => ',', :multiple => true, class: "autocomplete-field-input", placeholder: "Organization" %>          
+                            </div>
+                            </div>
+                             <div class="form-group row" id="com_text" style="display:none">
+                               <div class="col-sm-12" class="full-width">
+                                 <label class="form-label"><strong>Company</strong></label>
+                               </div>
+                              <div class="controls col-sm-12">  
+                            <%= f.autocomplete_field :sender_id, autocomplete_company_email_admin_blast_messages_url, 'data-delimiter' => ',', :multiple => true, class: "autocomplete-field-input", placeholder: "Company email" %>     
+                            </div>
+                            </div>
+                    </div>
+                    <div class="col-md-12"> 
+                       <div class="row">
+                            <p class="bm_type">                              
+                                <%= f.radio_button :blastmessage_type, '1' %> Message<br />
+  
+                                <%= f.radio_button :blastmessage_type, '2' %> Motivate<br />
+                           </p>
+                            
+                        </div>       
+                    </div>
+                        <div class="grid simple">
+                         <div class="tab-pane" id="msg">
+                           <%= f.text_area :message, id: "text-editor" , placeholder: "Enter text ...", class: "form-control tinymce", rows: "10"%><br>
+                           <input id='colorpicker' />
+
+                              <script>
+                              $("#colorpicker").spectrum({
+                                  color: "#f00"
+                              });
+                              </script>
+                         </div>    
+                        </div>
+                </div>
+            </div>
+            <div class="form-actions">  
+                <div class="pull-right">
+                 <%= f.submit "Save", class: "btn btn-success btn-cons", type: "submit" %>
+                  
+                </div>
+            </div>
+            <% end %>
+</div>
+ <script type="text/javascript">
+$(document).ready(function(){
+$(".ind").hide();
+    $("#showing").click(function(){
+        $(".ind").hide();
+$(".ing").show();
+    });
+    $("#showing2").click(function(){
+        $(".ind").show();
+$(".ing").hide();
+    });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#motivate").hide();
+  $('#submit_button').click(function() {
+    if (!$("input[name='name']:checked").val()) {
+       alert('Nothing is checked!');
+        return false;
+    }
+    else {
+      alert('One of the radio buttons is checked!');
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+  $('#select_send').change(function(){
+      var value = $(this).val();
+      if(value == 'emp'){
+        $('#emp_text').show('fast');
+        $('#dvi_text').hide('fast');
+        $('#com_text').hide('fast');
+      }else if(value == 'dvi'){
+        $('#dvi_text').show('fast');
+        $('#emp_text').hide('fast');
+        $('#com_text').hide('fast');
+      }else if(value == 'com'){
+        $('#com_text').show('fast');
+        $('#emp_text').hide('fast');
+        $('#dvi_text').hide('fast');
+      }else{
+        $('#dvi_text').hide('fast');
+        $('#emp_text').hide('fast');
+        $('#com_text').hide('fast');
+      }
+    });
+</script>
+<%= tinymce %> 
+
+   

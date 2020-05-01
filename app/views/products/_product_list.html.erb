@@ -1,0 +1,31 @@
+<% @products.each_with_index do |product, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td><span class="name"><%= link_to product.barcode, product_url(product) %></span></td>
+    <td class="hidden-phone"><%= product.article %></td>
+    <td class="hidden-phone"><%= product.colour_code %></td>
+    <td class="hidden-phone"><%= product.size_name %></td>
+    <td class="hidden-phone"><%= product.supplier_name %></td>
+    <td class="nowrap"><%= product.brand_name %></td>
+    <td class="hidden-phone"><%= product.department.name  %></td>
+    <td class="hidden-phone"><%= format_currency product.purchase_price %></td>
+    <td class="hidden-phone"><%= format_currency product.selling_price %></td>
+    <% if current_user.can_manage_product? %>
+    <td class="nowrap">
+      <%= link_to raw('<i class="fa fa-pencil" rel="tooltip" data-placement="left" data-original-title="Edit"></i>'), edit_product_path(product), class: "btn btn-primary btn-xs custom-edit-btn" %>
+      <%= link_to raw('<i class="fa fa-trash-o"></i>'), 'javascript:void(0)', onclick: "delete_one(#{product.id}, 'products')", class: "btn btn-danger btn-xs edit-btn-dlt" %>
+    </td>
+    <% end %>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=10>
+    <% if @products.present? %>
+      <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+        <%= pagination_links(@products, options = {}) %>
+      </div>
+    <% else %>
+      <%= raw '<center>No Data Available</center>' %>
+    <% end %>
+  </td>
+</tr>

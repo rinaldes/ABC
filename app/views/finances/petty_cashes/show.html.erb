@@ -1,0 +1,85 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content"><!-- MAIN CONTENT -->
+  <section id="widget-grid">
+    <!-- START ROW -->
+    <div class="row">
+      <!-- NEW COL START -->
+      <article class="col-sm-12 col-md-12 col-lg-12">
+        <!-- Widget ID (each widget will need unique ID)-->
+        <div class="jarviswidget" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+          <header>
+            <span class="widget-icon"><i class="fa fa-edit"></i></span>
+            <h2>REKAP KAS <%= @office.description %> Periode <%= @petty_cash.year.strftime('%B') %> <%= @petty_cash.year.year %></h2>
+          </header>
+           <!-- widget div-->
+          <div>
+            <!-- widget content -->
+            <div class="widget-body no-padding">
+              <%= link_to new_finances_cash_out_url(id: params[:id]), :class => "btn btn-labeled btn-primary edit-btn-primary" do %>
+                <span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Add New
+              <% end %>
+              <%= link_to finances_petty_cash_path(@petty_cash.id, format: "xlsx", year: params[:year], month: params[:month]), :class => "btn btn-labeled btn-primary edit-btn-primary", id: "reload2" do %>
+                <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+              <% end %>
+              <%= form_tag finances_petty_cash_path(@petty_cash.id), class: "smart-form petty-cash", :id => "petty-cash-details-filter-form", :remote => true  do %>
+                <fieldset>
+                  <div class="row">
+                    <section class="col col-6">
+                      <section></section>
+                      <section>
+                        <label class="col-md-4 label">Periode</label>
+                        <label class="col-md-6 input custom-input-box"><%= @petty_cash.year.strftime('%B') %> <%= @petty_cash.year.year %></label>
+                      </section>
+                    </section>
+                  </div>
+                </fieldset>
+              <% end %>
+            </div>
+            <!-- widget edit box -->
+            <div class="jarviswidget-editbox">
+              <!-- This area used as dropdown edit box -->
+            </div>
+            <!-- end widget edit box -->
+            <div class="widget-body no-padding" id="petty-cash-details-list">
+              <table class="table table-striped table-brequested table-hover" width="100%">
+                <thead>
+                  <tr>
+                    <th>NO</th>
+                    <th>TANGGAL</th>
+                    <th>NAMA BARANG</th>
+                    <th>KET</th>
+                    <th>QTY</th>
+                    <th>UNIT</th>
+                    <th>Harga per unit</th>
+                    <th>DEBIT</th>
+                    <th>KREDIT</th>
+                    <th>Sisa Saldo</th>
+                  </tr>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th><%= text_field_tag "description", '', class: 'search' %></th>
+                    <th><%= text_field_tag "cash_out_type", '', class: 'search' %></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id='petty_cash_list'><%= render 'finances/cash_outs/list' %></tbody>
+              </table>
+            </div>
+            <!-- end widget content -->
+          </div>
+          <!-- end widget div -->
+        </div>
+        <!-- end widget -->
+      </article>
+      <!-- END COL -->
+    </div>
+  <!-- END ROW -->
+  </section>
+  <!-- end widget grid -->
+</div>  <!-- end row -->

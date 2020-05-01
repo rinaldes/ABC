@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Data Master</li><li>Supplier</li><li><%= @supplier.name %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-supplier">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= @supplier.name %></h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <form class='smart-form'>
+              <fieldset> <!-- tambah supplier -->
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Kode</label>
+                      <label class="col-md-9 input custom-input-box">: <%= @supplier.code %></label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Nama</label>
+                      <label class="col-md-9 input custom-input-box">: <%= @supplier.name %></label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Alamat</label>
+                      <label class="col-md-9 textarea custom-input-box">: <%= @supplier.address %></label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Kota</label>
+                      <label class="col-md-9 input custom-input-box">: <%= @supplier.city %></label>
+                    </section><br>
+                    <fieldset>
+                      <div class="form-group">
+                        <label class="col-md-3 control-label">Kons/Non-Kons</label>
+                        <div class="col-md-9"><%= @supplier.suptype %></div> <!-- col-md-10 -->
+                      </div> <!-- form-group -->
+                    </fieldset>
+                    <header>Kontak Person</header>
+                    <fieldset class="col col-md-12"> <!-- contact person -->
+                      <div class="row">
+                        <section id='contact' class="col col-md-12">
+                          <% @supplier.contact_people.each_with_index{|cp, i| %>
+                            <div class="alert alert-info alert-block" style='float: left; width: 98%'>
+                              <div style="margin-bottom: 25px;">Contact Person <%= i+1 %></div>
+                              <section class="form-group col-md-12">
+                                <label class="col-md-2 label">Nama </label>
+                                <label class="col-md-10 input custom-input-box"><%= cp.name %></label>
+                              </section><br>
+                              <section class="form-group col-md-12">
+                                <label class="col-md-2 label">No HP</label>
+                                <label class="col-md-10 input custom-input-box"><%= cp.phone %></label>
+                              </section><br>
+                              <section class="form-group col-md-12">
+                                <label class="col-md-2 label">Pin BB</label>
+                                <label class="col-md-10 input custom-input-box"><%= cp.pinbb || '-' %></label>
+                              </section><br>
+                              <section class="form-group col-md-12">
+                                <label class="col-md-2 label">Email</label>
+                                <label class="col-md-10 input custom-input-box"><%= cp.email %></label>
+                              </section><br>
+                            </div>
+                          <% } %>
+                        </section>
+                      </div> <!-- row -->
+                    </fieldset> <!-- contact person -->
+                  </section> <!-- col-md-6 -->
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-2 label">Alamat Retur</label>
+                      <label class="col-md-10 textarea custom-input-box">: <%= @supplier.send_address %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Tlp</label>
+                      <label class="col-md-10 input custom-input-box">: <%= @supplier.phone %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">No Fax</label>
+                      <label class="col-md-10 input custom-input-box">: <%= @supplier.fax %></label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">Jatuh Tempo</label>
+                      <label class="col-md-8 input custom-input-box">: <%= @supplier.long_term %> Hari</label>
+                    </section><br>
+                    <section class="form-group">
+                      <label class="col-md-2 label">Departement</label>
+                      <label class="col-md-8 label">: 
+                      <% @depart.map(&:department).uniq.each_with_index do |depart, i| %>
+                          <%= depart.department.name %> <br> 
+                        <% end %></label>
+                    </section>
+                    <fieldset class="col col-md-12"> <!-- rekening bank -->
+                      <header>Rekening Bank</header>
+                      <fieldset class="col col-md-12"> <!-- rekening bank -->
+                        <div class="row">
+                          <section id='bank_account' class="col col-md-12">
+                            <% @supplier.bank_accounts.each_with_index{|cp, i| %>
+                              <div class="alert alert-info alert-block" style='float: left; width: 98%'>
+                                <div style="margin-bottom: 25px;">Rekening Bank <%= i+1 %></div>
+                                <section class="form-group">
+                                  <label class="col-md-3 label">Nama</label>
+                                  <label class="col-md-9 input custom-input-box"><%= cp.name %></label>
+                                </section><br>
+                                <section class="form-group">
+                                  <label class="col-md-3 label">No Rekening</label>
+                                  <label class="col-md-9 input custom-input-box"><%= cp.account_number %></label>
+                                </section><br>
+                                <section class="form-group">
+                                  <label class="col-md-3 label">Bank</label>
+                                  <label class="col-md-9 input custom-input-box"><%= cp.bank_name %></label>
+                                </section><br>
+                                <section class="form-group">
+                                  <label class="col-md-3 label">Cabang</label>
+                                  <label class="col-md-9 input custom-input-box"><%= cp.branch %></label>
+                                </section><br>
+                                <section class="form-group">
+                                  <label class="col-md-3 label">Kota</label>
+                                  <label class="col-md-9 input custom-input-box"><%= cp.city %></label>
+                                </section>
+                              </div>
+                            <% } %>
+                          </section>
+                        </div> <!-- row -->
+                      </fieldset> <!-- rekening bank -->
+
+                    </section> <!-- col-md-6 -->
+                  </fieldset> <!-- tambah supplier -->
+                </div> <!-- row -->
+              </fieldset> <!-- tambah supplier -->
+              <footer>
+                <%= link_to "Edit", edit_supplier_path(params[:id]), class: "btn btn-primary", style: "float: right;" %>
+                <button type="button" class="btn btn-default" onclick="window.history.back();" style="float: right;">Back</button>
+              </footer>
+            </form>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

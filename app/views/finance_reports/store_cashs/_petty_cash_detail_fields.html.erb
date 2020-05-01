@@ -1,0 +1,10 @@
+<tr class="nested-fields">
+  <td align="center"><%= f.object.date.strftime("%d-%m-%y") %></td>
+  <td align="right"><span class="petty-cash-details-text"><%= format_currency(f.object.initial_budget.to_f) %></span></td>
+  <td align="right"><span class="petty-cash-details-text"><%= format_currency(f.object.cash_in.to_f) %></span></td>
+  <td align="right"><span class="petty-cash-details-text"><%= format_currency(f.object.balance.to_f) %></span></td>
+  <% cash_out_types.each do |cash_out_type| %>
+    <td align="right"><%= format_currency(cash_outs.where("cash_out_type = ? AND DATE(time) = ?", cash_out_type, f.object.date.strftime("%d-%b-%y")).sum(:amount)) %></td>
+  <% end %>
+  <td align="right"><span class="petty-cash-details-text"><%= format_currency(f.object.cash_out.to_f) %></span></td>
+</tr>

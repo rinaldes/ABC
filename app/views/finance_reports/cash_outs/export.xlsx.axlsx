@@ -1,0 +1,21 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+
+wb.add_worksheet(name: "Cash Out") do |sheet|
+  sheet.merge_cells 'B1:C1'
+  sheet.add_row ["Tanggal: #{Time.now.try(:strftime, "%d-%m-%Y")}", "Bukti Kas Keluar"]
+  sheet.add_row ["Perk", "Keterangan", "Jumlah"], :style => default
+  sum_amount = 0
+  index = 0
+  @cash_outs.each do |cash_out|
+    sheet.add_row [cash_out.time.try(:strftime, "%d-%m-%Y"), cash_out.description, cash_out.amount], :style => default
+    sum_amount += cash_out.amount
+    index += 1
+  end
+  if @cash_outs.present?
+    sheet.merge_cells 'A#{index}:B#{index}'
+    sheet.add_row ["Total", "", sum_amount], :style => default
+    sheet.add_row ["Dibuat", "Diketahui", "Disetujui"]
+  end
+end

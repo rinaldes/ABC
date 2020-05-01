@@ -1,0 +1,124 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li><%= t(:purchasing) %></li><li><%= t(:purchase_order) %></li><li><%= t(:list) %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <section id="widget-grid" class=""><!-- widget grid -->
+    <div class="row"><!-- row -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><!-- NEW WIDGET START -->
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false"><!-- Widget ID (each widget will need unique ID)-->
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i>Purchase Order History</h2> <!-- header content -->
+          <div>
+            <div class="widget-body"><!-- widget content -->
+              <%= form_tag po_histories_url, method: 'GET', html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+                <fieldset>
+                  <div class="row">
+                    <section class="col col-md-6">
+                      <section class="form-group">
+                        <label class="col-md-4">Start Date</label>
+                        <label class="col-md-8 input custom-input-box"><%= text_field_tag :start_date, params[:start_date], class: "input-sm" %></label>
+                      </section>
+                      <section>
+                        <label class="col-md-4">End Date</label>
+                        <label class="col-md-8 input custom-input-box"><%= text_field_tag :end_date, params[:end_date], class: "input-sm" %></label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4">Article</label>
+                        <label class="col-md-8 input custom-input-box"><%= text_field_tag "search[article]", (params[:search][:article] rescue ''), class: "input-sm" %></label>
+                      </section>
+                    </section>
+                    <section class="col col-md-6">
+                      <section class="form-group">
+                        <label class="col-md-4">MClass</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= select_tag "search[m_classes.name]",
+                            options_for_select(MClass.where("id IN (SELECT m_class_id FROM products)").map(&:name), selected: (params[:search]["m_classes.name"] rescue '')), include_blank: 'All',
+                              id: 'm_class', style: "width: 417px" %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4">Supplier</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= select_tag "search[suppliers.name]",
+                            options_for_select(Supplier.all.map{|supplier|["#{supplier.code} - #{supplier.name}", supplier.code]}, selected: (params[:search]["suppliers.code"] rescue '')), include_blank: 'All', id: 'supplier', style: "width: 417px" %>
+                        </label>
+                      </section>
+                      <section class="form-group">
+                        <label class="col-md-4">Store</label>
+                        <label class="col-md-8 input custom-input-box">
+                          <%= select_tag :store_id, options_for_select(Branch.all.map{|branch|["#{branch.office_name}", branch.id]}), include_blank: 'All', style: "width: 417px" %>
+                        </label>
+                      </section>
+                    </section>
+                  </div>
+                </fieldset>
+                <footer>
+                  <%= submit_tag 'Search', class: 'btn btn-sm btn-primary', style: "margin-bottom: 7px; float: left" %>
+                </footer>
+              <% end %>
+              <table class="table table-striped table-bordered table-hover" width="100%">
+                <thead>
+                  <tr>
+                    <th rowspan=2><%= t(:Item) %></th>
+                    <th rowspan=2><%= t(:Size) %></th>
+                    <th rowspan=2><%= t(:MClass) %></th>
+                    <th rowspan=2>
+                      <%= t(:Supplier) %>
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'code-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'code-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                    <th rowspan=2>
+                      <%= t(:Jumlah_PO) %>
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'name-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'name-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                    <th colspan=<%= Branch.count %>>
+                      <%= t(:Sales_Count) %>
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'supplier_code-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'supplier_code-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                    <th rowspan=2>
+                      <%= t(:Total_Sales) %>
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'name-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'name-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                  </tr>
+                  <tr>
+                    <% Branch.all.each{|branch| %>
+                      <td><%= branch.office_name %></td>
+                    <% } %>
+                  </tr>
+                </thead>
+                <tbody id='purchase_order-list'>
+                  <%= render 'purchase_order_list' %>
+                </tbody>
+              </table>
+            </div><!-- end widget content -->
+          </div>
+        </div><!-- end widget -->
+      </article><!-- WIDGET END -->
+    </div>	<!-- end row -->
+  </section><!-- end widget grid -->
+</div>	<!-- end row -->
+<SCRIPT>
+  $(document).ready(function() {
+    $('#start_date, #end_date').datepicker({
+      dateFormat : 'yy-mm-dd',
+      prevText : '<i class="fa fa-chevron-left"></i>',
+      nextText : '<i class="fa fa-chevron-right"></i>'
+    });
+    $('#m_class, #supplier, #store_id').select2()
+  })
+</SCRIPT>

@@ -1,0 +1,14 @@
+<%= "<tr id=\"data_#{history_of_organization.id}\">".html_safe if params[:action] != "update_history_of_organization" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= history_of_organization.id %>" type="checkbox" value="<%= history_of_organization.id %>" class="child-history_of_organization child-box" data-section="history_of_organization" data-historyoforganization="child">
+    <label for="checkbox<%= history_of_organization.id %>"></label>
+  </div>
+</td>
+    <td><%= history_of_organization.name %></td>
+    <td><%= history_of_organization.phone_number %></td>
+    <td><%= history_of_organization.position %></td>
+    <td><%= history_of_organization.statue %></td>
+    <td><%= history_of_organization.start %></td>
+    <td><%= history_of_organization.end %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_history_of_organization" %>

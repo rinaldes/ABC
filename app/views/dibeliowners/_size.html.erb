@@ -1,0 +1,109 @@
+<style type="text/css">
+  .label{
+    color: #151313;
+  }
+</style>
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+      </button>
+      <h4 class="modal-title" id="myModalLabel">Size Detail</h4>
+    </div>
+    <div class="modal-body" style="color:#5E5E5E">
+      <div class="row">
+        <%= render partial: 'shared/product_info', locals: {product: product} %>
+        <section class="col col-md-12">
+          <label class="col-md-12 input custom-input-box">
+            <table class="table table-striped table-bordered" id="table_size">
+              <thead>
+                <tr>
+                  <th>Size</th>
+                  <% product.size.sorted_size_details.each do |size_detail| %>
+                    <% product_size = ProductSize.find_by_product_id_and_size_detail_id(product.id, size_detail.id) %>
+                    <% if product_size.present? %>
+                      <td><%= size_detail.size_number.to_s %></td>
+                    <% end %>
+                  <% end %>
+                </tr>
+                <tr>
+                  <th>Available Qty HO</th>
+                  <% product.size.sorted_size_details.each do |size_detail| %>
+                    <% product_size = ProductSize.find_by_product_id_and_size_detail_id(product.id, size_detail.id) %>
+                    <% if product_size.present? %>
+                      <td><%= ProductDetail.find_by_product_size_id_and_warehouse_id(product_size.id, params[:origin_warehouse_id]).available_qty.to_i rescue 0 %></td>
+                    <% end %>
+                  <% end %>
+                </tr>
+                <tr>
+                  <th>Available Qty Branch</th>
+                  <% product.size.sorted_size_details.each do |size_detail| %>
+                    <% product_size = ProductSize.find_by_product_id_and_size_detail_id(product.id, size_detail.id) %>
+                    <% if product_size.present? %>
+                      <td><%= ProductDetail.find_by_product_size_id_and_warehouse_id(product_size.id, params[:destination_warehouse_id]).available_qty.to_i rescue 0 %></td>
+                    <% end %>
+                  <% end %>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @purchase_request.present? %>
+                  <tr>
+                    <th>Approved PR Quantity</th>
+                    <% product_sizes.each_with_index do |product_size, i| %>
+                      <td>
+                        <%= quantities[i] %>
+                        <%= hidden_field_tag "receiving[receiving_details_attributes][#{key}#{i}][product_size_id]", product_size.id %>
+                      </td>
+                    <% end %>
+                  </tr>
+                <% end %>
+                <% @received_products.each_with_index{|receive, idx| %>
+                  <% received_qty = DibeliownerDetail.where("dibeliowner_id=#{receive.id} AND product_size_id IN (#{product_sizes.map(&:id).join(', ')})").sort_by{|p|p.product_size.size_detail.size_number} %>
+                  <tr>
+                    <th><%= hierarchy idx+1 %> Received</th>
+                    <td colspan=<%= product_sizes.length %>> Received Date: <%= receive.mutation_date %></td>
+                  </tr>
+                  <tr>
+                    <th>Received <%= idx+1 %></th>
+                    <% received_qty.each do |rd| %>
+                      <td><%= rd.quantity %></td>
+                    <% end %>
+                    <% 0.upto(product_sizes.length-received_qty.length-1){ %>
+                      <td></td>
+                    <% } %>
+                  </tr>
+                  <tr>
+                    <th>Outstanding</th>
+                    <% received_qty.each_with_index do |rd, i| %>
+                      <% @quantities["#{idx}#{i}"] = @quantities["#{idx-1}#{i}"].to_i + rd.quantity.to_i %>
+                      <td><%= quantities[i].to_i - @quantities["#{idx}#{i}"] > 0 ? quantities[i].to_i - @quantities["#{idx}#{i}"] : 0 %></td>
+                    <% end %>
+                    <% 0.upto(product_sizes.length-received_qty.length-1){ %>
+                      <td></td>
+                    <% } %>
+                  </tr>
+                <% } if @received_products.present? %>
+                <tr>
+                  <th>Transfered Qty</th>
+                  <% product.size.sorted_size_details.each_with_index do |size_detail, i| %>
+                    <% product_size = ProductSize.find_by_product_id_and_size_detail_id(product.id, size_detail.id) %>
+                    <% if product_size.present? %>
+                      <td>
+                        <%= text_field_tag "dibeliowner[dibeliowner_details_attributes][#{key}#{i}][quantity]", quantities[i], style: 'width: 27px', class: 'qty' %>
+                        <%= hidden_field_tag "dibeliowner[dibeliowner_details_attributes][#{key}#{i}][product_size_id]", product_size.id %>
+                      </td>
+                    <% end %>
+                  <% end %>
+                </tr>
+              </tbody>
+            </table>
+          </label>
+        </section>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+    </div>
+  </div> 
+</div> 

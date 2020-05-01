@@ -1,0 +1,25 @@
+  <div class="grid simple">
+      <div class="grid-title no-border"></div>
+        <div class="grid-body no-border multi-lang">
+          <ul class="nav nav-tabs" id="tab-01">
+            <li><a href="#indonesia">Indonesia</a></li>
+            <li class="active"><a href="#english">English</a></li>
+          </ul>
+          <div class="tab-content">
+          <% @visions.each{|visi| %>
+            <div class="tab-pane active" id='english'>
+            <div id="content_en">
+            <%= visi.content_eng.gsub('system/images/files/', '/system/images/files/').html_safe %><br/>
+            </div>
+            <hr/>
+            </div>
+            <div class="tab-pane" id='indonesia'>
+            <div id="content_en">
+            <%= visi.content_ind.gsub('system/images/files/', '/system/images/files/').html_safe%><br/>
+            </div>
+            <hr/>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>

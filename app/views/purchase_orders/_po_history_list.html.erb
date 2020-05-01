@@ -1,0 +1,35 @@
+<% if @purchase_orders.count > 0 %>
+  <% @purchase_orders.each_with_index do |po, i| %>
+    <tr>
+      <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+      <td class='nowrap'><%= link_to po.number, purchase_order_url(po), class: 'blue' %></td>
+      <td><%= po.date %></td>
+      <td class='text-right'><%= po.total_qty %></td>
+      <td class='text-right'><%= po.purchase_order_details.where("quantity>0").map{|pod|po.received_qty(pod.product_size)}.sum %></td>
+      <td class='text-right'><%= po.purchase_order_details.where("quantity>0").map{|pod|po.outstanding_qty(pod.product_size)}.sum %></td>
+      <td class='text-right'><%= format_currency po.grand_total %></td>
+      <td><%= po.status %></td>
+      <td>
+        <% unless po.is_closed? %>
+          <%= link_to 'Close', 'javascript:void(0)', class: "btn btn-danger btn-xs", onclick: "close_po(#{po.id})" %>
+          <%= link_to 'Continue', 'javascript:void(0)', class: "btn btn-primary btn-xs", onclick: "cont_po(#{po.id})" %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan=9>
+      <% if @purchase_orders.present? %>
+        <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+          <%= pagination_links(@purchase_orders, options = {}) %>
+        </div>
+      <% else %>
+        <%= raw '<center>No Data Available</center>' %>
+      <% end %>
+    </td>
+  </tr>
+<% else %>
+  <tr>
+    <td colspan='9' align='center'>No Data Entries</td>
+  </tr>
+<% end %>

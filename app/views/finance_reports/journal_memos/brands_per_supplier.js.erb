@@ -1,0 +1,2 @@
+$(".brand").html("<%= select_tag :brand, options_for_select(@brands.map{|office|[office.code.to_s + ' : ' + office.name.to_s, office.id]}, {prompt: 'Please Select'}), {class:'form-control reload'} %>");
+$("#brand").select2();

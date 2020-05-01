@@ -1,0 +1,6 @@
+<% if @fingerprint.errors.present? %>
+	$(".modal-dialog #error_explanation").html("<%= j(render 'error_message', :fingerprint => @fingerprint) %>")
+<% else %>
+	$('#data_<%= @fingerprint.id%>').html("<%= j(render 'update_data', :fingerprint => @fingerprint) %>")
+	$("#myModal").modal('hide')
+<% end %>

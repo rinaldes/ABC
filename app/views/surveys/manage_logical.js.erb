@@ -1,0 +1,12 @@
+<% if params[:section] == "remove" %>
+	<% unless @error.present? %>
+		$("#logical-preview-<%= params[:id].to_s %>").remove()
+	<% end %>
+
+<% elsif params[:section] == "update" %>
+	<% unless @error.present? %>
+		$("#set-logical-form").html("")
+		$("#logical-preview-<%= params[:id].to_s %>").replaceWith("<%= j(render '/questions/logical', logical: params[:logical], id: params[:logical][:target], disabled: true) %>")
+	<% end %>
+
+<% end %>

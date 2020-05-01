@@ -1,0 +1,10 @@
+<%= "<tr id=\"data_#{skill.id}\">".html_safe if params[:action] != "update_skill" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= skill.id %>" type="checkbox" value="<%= skill.id %>" class="child-skill child-box" data-section="skill" data-skill="child">
+    <label for="checkbox<%= skill.id %>"></label>
+  </div>
+</td>
+    <td><%= skill.skill_type %></td>
+    <td><%= skill.skill_type %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_skill" %>

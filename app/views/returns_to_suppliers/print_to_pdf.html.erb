@@ -1,0 +1,136 @@
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>Return to Supplier</h2>
+        </header>
+        <div> <!-- widget div-->
+          <div class="widget-body no-padding"> <!-- widget content -->
+              
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-2 label">Retur No</label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @returns_to_supplier.number rescue ''%></label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Retur Date </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box">
+                        <%= @returns_to_supplier.date rescue ''%>
+                      </label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Status </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box">
+                        <%= @returns_to_supplier.status rescue ''%>
+                      </label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Note </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @returns_to_supplier.note rescue ''%></label>
+                    </section>
+                    <br/>
+                  </section>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-2 label">Receive No</label>
+                      &nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @receiving.number rescue ''%></label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Receive Date </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @receiving.date rescue ''%></label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Supplier Code </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.code rescue ''%></label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Supplier Name </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.name rescue ''%></label>
+                    </section>
+                    <br/>
+                    <section>
+                      <label class="col-md-2 label">Supplier Address </label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.address rescue ''%></label>
+                    </section>
+                    <br/>
+                  </section>
+                </div>
+              
+
+
+                <br/>
+                <section class="col col-md-12">
+                  <div class="row">
+                    <table class="table" border="1" width="100%" id="orders">
+                      <thead>
+                        <tr>
+                          <th>BARCODE</th>
+                          <th>BRAND</th>
+                          <th>ARTICLE</th>
+                          <th>COLOR</th>
+                          <th>DEPARTMENT</th>
+                          <th>TOTAL PRICE</th>
+                          <th>SIZE</th>
+                        </tr>
+                      </thead>
+                      <tbody id='list_detail'>
+                        <% @returns_to_supplier.returns_to_supplier_details.group_by{|prd|prd.product_size.product_id}.each do |prd| %>
+                          <% detail = prd[1][0].product_size %>
+                          <% product = detail.product %>
+                          <tr>
+                            <td >
+                              <span><%= product.barcode rescue '' %></span>
+                            </td>
+                            <td ><%= product.brand.name rescue '' %></td>
+                            <td ><%= product.article rescue '' %></td>
+                            <td ><%= product.colour.name rescue '' %></td>
+                            <td ><%= product.m_class.department.name rescue '' %></td>
+                            <td ><%= product.cost_of_products rescue '' %></td>
+                            <td>
+                              <table>
+                                <tr>
+                                  <% @returns_to_supplier.returns_to_supplier_details.joins(:product_size).where("product_sizes.product_id = ?", prd[1].first.product_size.product_id).each do |prod| %>
+                                    
+                                    <td><%= prod.product_size.size_detail.size_number %></td>
+                                  <% end %>
+                                </tr>
+
+                                <tr>
+                                  <% @returns_to_supplier.returns_to_supplier_details.joins(:product_size).where("product_sizes.product_id = ?", prd[1].first.product_size.product_id).each do |prod| %>
+                                    <td><%= @returns_to_supplier.returns_to_supplier_details.find_by_product_size_id(prod.product_size_id).quantity %></td>
+                                  <% end %>
+                                </tr>
+                                
+                              </table>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+        
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->

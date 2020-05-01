@@ -1,0 +1,13 @@
+<fieldset>
+    <%= render :partial => 'details', :locals => { :f => f } %>
+    <%= render :partial => 'purchased_items' %>
+    <%= f.hidden_field :outstanding_amount, value: @account_payable.count_outstanding %>
+</fieldset>
+
+<footer>
+    <%= link_to 'Print To PDF', print_to_pdf_finances_account_payable_url(@account_payable), class: 'btn btn-primary' %>
+    <%= f.submit "Submit", :class => "btn btn-primary", :id => "submit-account-payable", data: { :disable_with => "Please wait..." }  %>
+    <button type="button" class="btn btn-default" onclick="window.history.back();">
+      Back
+    </button>
+</footer>

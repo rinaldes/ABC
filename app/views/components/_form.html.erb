@@ -1,0 +1,40 @@
+<% if params[:action] == "new"%>
+  <tr>
+<% end %>
+  <%= form_for(component, html: { role: "form", multipart: true}, remote: true) do |f| %>
+    <td>
+      <div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+    </td>
+    <td>
+      <%= f.text_field :component, :class => "full-width", :placeholder => "Component" %>
+    </td>
+    <td>
+			<section class="add-group col-xs-12">
+        <div class="addform clearfix visiblebutton">
+          <input type="text" class="col-xs-10" placeholder="Indicator" autocomplete=""/>
+        </div>   
+        <%= link_to_add_association f, :indicators, :"data-association-insertion-method" => "append" do %>  
+	       	<button class="btn btn-primary" data-addform=""><i class="fa fa-plus"></i></button>
+	      <% end %>
+        <%= f.fields_for :indicators do |indicators| %>
+         	<%= render 'indicators', :f => indicators %>
+        <% end %>
+      </section>
+	</td>
+    <td>
+      <div>
+        <% if params[:action] == "new" %>
+          <%= f.submit "Add", class: "btn btn-success", :onclick => "submit_component();"%>
+        <% else %>
+        <%= f.hidden_field :id, :value => params[:id] %>
+          <%= f.submit "Update", class: "btn btn-success", :onclick => "update_component();"%>
+        <% end %>
+      </div>
+    </td>
+  <% end %>
+<% if params[:action] == "new"%>
+  </tr>
+<% end %>

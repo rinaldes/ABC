@@ -1,0 +1,435 @@
+<header id="header"><!-- HEADER -->
+  <div id="logo-group">
+    <span id="logo"> <img src="/img/logo_nuansabaru.png" alt="SmartAdmin"> </span><!--
+    <span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> 21 </b> </span>-->
+    <div class="ajax-dropdown"><!--
+      <div class="btn-group btn-group-justified" data-toggle="buttons">
+        <label class="btn btn-default"><input type="radio" name="activity" id="ajax/notify/mail.html">Msgs (14) </label>
+        <label class="btn btn-default"><input type="radio" name="activity" id="ajax/notify/notifications.html">notify (3) </label>
+        <label class="btn btn-default"><input type="radio" name="activity" id="ajax/notify/tasks.html">Tasks (4) </label>
+      </div> notification content
+      <div class="ajax-notifications custom-scroll">
+        <div class="alert alert-transparent">
+          <h4>Click a button to show messages here</h4>
+          This blank page message helps protect your privacy, or you can show the first message here automatically.
+        </div>
+        <i class="fa fa-lock fa-4x fa-border"></i>
+      </div> -->
+      <span> Last updated on: 12/12/2013 9:43AM<!-- footer: refresh area -->
+        <button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Loading..." class="btn btn-xs btn-default pull-right">
+          <i class="fa fa-refresh"></i>
+        </button>
+      </span><!-- end footer -->
+    </div><!-- END AJAX-DROPDOWN -->
+  </div>
+  <div class="project-context hidden-xs">
+    <span class="label"><%= current_user.role.name %><%= " @ #{current_user.offices.first.office_name}" if current_user.offices.present? %></span>
+    <span class="project-selector dropdown-toggle" data-toggle="dropdown"><%= current_user.fullname %> <i class="fa fa-angle-down"></i></span>
+    <ul class="dropdown-menu">
+      <li><%= link_to "User Profile",user_profiles_path %></a></li>
+      <li class="divider"></li>
+      <li><a href="javascript:void(0);" onclick="delete_one(0, '<%= destroy_user_session_path %>')"><i class="fa fa-power-off"></i> Logout</a></li>
+    </ul>
+  </div>
+  <div class="pull-right"><!-- pulled right: nav area -->
+    <div id="hide-menu" class="btn-header pull-right"><!-- collapse menu button -->
+      <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+    </div><!-- end collapse menu -->
+    <ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5"><!-- #MOBILE --><!-- Top menu profile link : this shows only when top menu is active -->
+      <li class="">
+        <a href="#" class="dropdown-toggle no-margin userdropdown" data-toggle="dropdown">
+          <img src="/img/avatars/sunny.png" alt="<%= current_user.username %>" class="online" />
+        </a>
+        <ul class="dropdown-menu pull-right">
+          <li>
+            <a href="javascript:void(0);" class="padding-10 padding-top-0 padding-bottom-0"><i class="fa fa-cog"></i> Setting</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="profile.html" class="padding-10 padding-top-0 padding-bottom-0"> <i class="fa fa-user"></i> <u>P</u>rofile</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="javascript:void(0);" class="padding-10 padding-top-0 padding-bottom-0" data-action="toggleShortcut"><i class="fa fa-arrow-down"></i> <u>S</u>hortcut</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="javascript:void(0);" class="padding-10 padding-top-0 padding-bottom-0" data-action="launchFullscreen"><i class="fa fa-arrows-alt"></i> Full <u>S</u>creen</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="login.html" class="padding-10 padding-top-5 padding-bottom-5" data-action="userLogout"><i class="fa fa-sign-out fa-lg"></i> <strong><u>L</u>ogout</strong></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <!-- search mobile button (this is hidden till mobile view port) -->
+    <div id="search-mobile" class="btn-header transparent pull-right">
+      <span> <a href="javascript:void(0)" title="Search"><i class="fa fa-search"></i></a> </span>
+    </div>
+    <!-- end search mobile button -->
+    <!-- fullscreen button -->
+    <div id="fullscreen" class="btn-header transparent pull-right">
+      <span> <a href="javascript:void(0);" data-action="launchFullscreen" title="Full Screen"><i class="fa fa-arrows-alt"></i></a> </span>
+    </div>
+    <!-- end fullscreen button -->
+    <!-- multiple lang dropdown : find all flags in the flags page
+    <ul class="header-dropdown-list hidden-xs">
+      <li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="/img/blank.gif" class="flag flag-us" alt="United States"> <span> English (US) </span> <i class="fa fa-angle-down"></i> </a>
+        <ul class="dropdown-menu pull-right">
+          <li class="active"><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-us" alt="United States"> English (US)</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-fr" alt="France"> Français</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-es" alt="Spanish"> Español</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-de" alt="German"> Deutsch</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-jp" alt="Japan"> 日本語</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-cn" alt="China"> 中文</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-it" alt="Italy"> Italiano</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-pt" alt="Portugal"> Portugal</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-ru" alt="Russia"> Русский язык</a></li>
+          <li><a href="javascript:void(0);"><img src="/img/blank.gif" class="flag flag-kr" alt="Korea"> 한국어</a></li>
+        </ul>
+      </li>
+    </ul>-->
+    <!-- end multiple lang -->
+  </div><!-- end pulled right: nav area -->
+</header><!-- END HEADER -->
+<aside id="left-panel"><!-- Left panel : Navigation area, This width of the aside area can be adjusted through LESS variables -->
+  <div class="login-info"><!-- User info -->
+    <span> <!-- User image size is adjusted inside CSS, it should stay as it -->
+      <a href="javascript:void(0);">
+        <img src="/img/avatars/sunny.png" alt="me" class="online" />
+        <span><%= current_user.username %></span>
+      </a>
+    </span>
+  </div><!-- end user info -->
+  <nav><!-- NAVIGATION : This navigation is also responsive-->
+    <ul>
+      <li class="<%= 'active' if params[:controller] == 'dashboards' %>" >
+        <a href="<%= root_url %>" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">Dashboard</span></a>
+      </li>
+      <% if current_user.can_view_master_data? %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-folder-open"></i> <span class="menu-item-parent">Master Data</span></a>
+          <ul>
+            <% if current_user.can_view_department? %>
+              <li class='<%= 'active' if params[:controller] == 'departments' %>'><%= link_to raw("<i class='fa fa-building'></i> #{t(:department)}"), departments_path %></li>
+            <% end %>
+            <% if current_user.can_view_mclass? %>
+              <li class='<%= 'active' if params[:controller] == 'm_classes' %>'><%= link_to raw('<i class="fa fa-list-alt"></i> M-Class'), m_classes_path %></li>
+            <% end %>
+            <% if current_user.can_view_colour? %>
+              <li class='<%= 'active' if params[:controller] == 'colours' %>'><%= link_to raw("<i class='fa fa-adjust'></i> #{t(:colour)}"), colours_path %></li>
+            <% end %>
+            <% if current_user.can_view_unit? %>
+              <li class='<%= 'active' if params[:controller] == 'units' %>'><%= link_to raw("<i class='fa fa-database'></i> #{t(:unit_of_measure)}"), units_path %></li>
+            <% end %>
+            <% if current_user.can_view_size? %>
+              <li class='<%= 'active' if params[:controller] == 'sizes' %>'><%= link_to raw('<i class="fa fa-tag"></i> Size'), sizes_path %></li>
+            <% end %>
+            <% if current_user.can_view_ho? %>
+              <li class='<%= 'active' if params[:controller] == 'head_offices' %>'><%= link_to raw('<i class="fa fa-building"></i> Head Office (HO)'), head_offices_path %></li>
+            <% end %>
+            <% if current_user.can_view_branch? %>
+              <li class='<%= 'active' if params[:controller] == 'branches' %>'><%= link_to raw("<i class='fa fa-sitemap'></i> #{t(:branch)}"), branches_path %></li>
+            <% end %>
+            <% if current_user.can_view_supplier? %>
+              <li class='<%= 'active' if params[:controller] == 'suppliers' %>'><%= link_to raw('<i class="fa fa-truck"></i> Supplier'), suppliers_path %></li>
+            <% end %>
+            <% if current_user.can_view_brand? %>
+              <li class='<%= 'active' if params[:controller] == 'brands' %>'><%= link_to raw("<i class='fa fa-tags'></i> #{t(:brand)}"), brands_path %></li>
+            <% end %>
+            <% if current_user.can_view_product? %>
+              <li class='<%= 'active' if params[:controller] == 'products' && params[:action] != 'stock' %>'>
+                <%= link_to raw("<i class='fa fa-list'></i> #{t(:product)}"), products_url %>
+              </li>
+              <li class='<%= 'active' if params[:controller] == 'selling_prices' %>'>
+                <%= link_to raw("<i class='fa fa-tags'></i> #{t(:selling_price)}"), selling_prices_url %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_member? %>
+              <li class='<%= 'active' if params[:controller] == 'members' %>'><%= link_to raw('<i class="fa fa-group"></i> Member'), members_path %></li>
+              <li class='<%= 'active' if params[:controller] == 'member_levels' %>'><%= link_to raw('<i class="fa fa-group"></i> Member Level'), member_levels_path %></li>
+              <li class='<%= 'active' if params[:controller] == 'member_types' %>'><%= link_to raw('<i class="fa fa-group"></i> Member Type'), member_types_path %></li>
+            <% end %>
+            <li class='<%= 'active' if params[:controller] == 'to_do_lists' %>'><%= link_to raw('<i class="fa fa-group"></i> To Do List'), to_do_lists_path %></li>
+            <% if current_user.can_view_bank? %>
+              <li class='<%= 'active' if params[:controller] == 'edc_machines' %>'><%= link_to raw('<i class="fa fa-money"></i> Bank'), edc_machines_path %></li>
+              <li class='<%= 'active' if params[:controller] == 'edc_bank_accounts' %>'><%= link_to raw('<i class="fa fa-money"></i> Mesin EDC'), edc_bank_accounts_path %></li>
+            <% end %>
+            <% if current_user.can_view_voucher? %>
+              <li class='<%= 'active' if params[:controller] == 'vouchers' %>'><%= link_to raw('<i class="fa fa-ticket"></i> Voucher'), vouchers_path %></li>
+            <% end %>
+            <% if current_user.can_view_promo? %>
+              <li class='<%= 'active' if params[:controller] == 'promotions' %>'><%= link_to raw('<i class="fa fa-barcode"></i> Promo'), promotions_path %></li>
+              <li class='<%= 'active' if params[:controller] == 'cashbacks' %>'><%= link_to raw('<i class="fa fa-barcode"></i> Cashback'), cashbacks_path %></li>
+            <% end %>
+            <% if current_user.can_view_ar_voucher? %>
+              <li class='<%= 'active' if params[:controller] == 'ar_vouchers' %>'><%= link_to raw('<i class="fa fa-barcode"></i> AR Voucher'), ar_vouchers_path %></li>
+            <% end %>
+            <% if current_user.can_view_petty_cash? %>
+              <li class='<%= 'active' if params[:controller] == 'petty_cash_types' %>'><%= link_to raw('<i class="fa fa-barcode"></i> Petty Cash Type'), petty_cash_types_path %></li>
+            <% end %>
+            <% if current_user.can_view_product? %>
+              <li class='<%= 'active' if params[:controller] == 'catalogs' %>'><%= link_to raw('<i class="fa fa-barcode"></i> Catalog'), catalogs_path %></li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+      <% if current_user.can_view_inventory? %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-cubes"></i> <span class="menu-item-parent">Inventory</span></a>
+          <ul>
+            <%# if current_user.can_view_empty_stock? %>
+              <li class='<%= 'active' if params[:controller] == 'change_barcodes' %>'><%= link_to raw('<i class="fa fa-square-o"></i> Ganti Barcode'), change_barcodes_url %></li>
+            <%# end %>
+            <% if current_user.can_view_empty_stock? %>
+              <li class='<%= 'active' if params[:controller] == 'out_stocks' %>'><%= link_to raw('<i class="fa fa-square-o"></i> Daftar Barang Kosong'), out_stocks_url %></li>
+            <% end %>
+            <% if current_user.can_view_min_stock? %>
+              <li class='<%= 'active' if params[:controller] == 'min_stocks' %>'><%= link_to raw('<i class="fa  fa-th-large"></i> Min Stock'), min_stocks_url %></li>
+            <% end %>
+            <% if current_user.can_view_stock_all_branches? %>
+              <li class='<%= 'active' if params[:action] == 'stock' %>'><%= link_to raw("<i class='fa  fa-th'></i>#{t(:stock_all_branches)}"), stock_products_url %></li>
+            <% end %>
+            <% if current_user.can_view_stock_opname? %>
+              <li class='<%= 'active' if params[:controller] == 'stock_opnames' %>'><%= link_to raw("<i class='fa fa-columns'></i>#{t(:stock_opname)}"), stock_opnames_url %></li>
+            <% end %>
+            <% if current_user.can_view_goods_transfer? %>
+              <li class='<%= 'active' if params[:controller] == 'good_transfers' %>'><%= link_to raw("<i class='fa fa-mail-reply'></i> Mutasi Barang"), good_transfers_url %></li>
+            <% end %>
+            <% if current_user.can_view_stock_transfer? %>
+              <li class='<%= 'active' if params[:controller] == 'stock_transfers' %>'>
+                <%= link_to raw("<i class='fa fa-mail-reply-all'></i> Mutasi Status"), stock_transfers_url %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_transfer_receipt? %>
+              <li class='<%= 'active' if params[:controller] == 'product_receipts' %>'><a href="<%= product_receipts_url %>">
+                <i class="fa fa-sign-in"></i> <%= t(:product_mutation_receipt) %></a>
+              </li>
+            <% end %>
+            <% if false %>
+              <li class='<%= 'active' if params[:controller] == 'product_mutation_history' %>'><a href="<%= product_mutation_history_url %>">
+                <i class="fa fa-sign-in"></i> <%= t(:product_mutation_history) %></a>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+      <% if current_user.can_view_purchase? %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-sign-in"></i> <span class="menu-item-parent">Purchasing</span></a>
+          <ul>
+            <% if current_user.can_view_pr? %>
+              <li class='<%= 'active' if params[:controller] == 'purchase_requests' %>'>
+                <%= link_to raw('<i class="fa fa-file-text"></i> Purchase Request'), purchase_requests_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_po? %>
+              <li class='<%= 'active' if params[:controller] == 'purchase_orders' %>'><%= link_to raw('<i class="fa fa-envelope"></i> Purchase Order'), purchase_orders_path %></li>
+              <li class='<%= 'active' if params[:controller] == 'po_histories' %>'>
+                <%= link_to raw('<i class="fa fa-envelope"></i> History PO'), po_histories_path(start_date: Time.now.strftime('%Y-%m-01'), end_date: Time.now.end_of_month.strftime('%Y-%m-%d')) %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_receiving? %>
+              <li class='<%= 'active' if params[:controller] == 'receivings' %>'><%= link_to raw('<i class="fa fa-download"></i> Receiving'), receivings_path %></li>
+            <% end %>
+            <% if current_user.can_view_product_transfer? %>
+              <li class='<%= 'active' if params[:controller] == 'purchase_transfers' %>'>
+                <%= link_to raw("<i class='fa fa-truck'></i> #{t(:product_transfer)}"), purchase_transfers_path %>
+              </li>
+              <li class='<%= 'active' if params[:controller] == 'dibeliowners' %>'>
+                <%= link_to raw("<i class='fa fa-truck'></i> #{t(:purchased_by_owners)}"), new_dibeliowner_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_return_to_ho? %>
+              <li class='<%= 'active' if params[:controller] == 'returns_to_hos' %>'><%= link_to raw('<i class="fa fa-undo"></i> Return to HO'), returns_to_hos_path %></li>
+            <% end %>
+            <% if current_user.can_view_return_to_supplier? %>
+              <li class='<%= 'active' if params[:controller] == 'returns_to_suppliers' %>'>
+                <%= link_to raw('<i class="fa fa-undo"></i> Return to Supplier'), returns_to_suppliers_path %>
+              </li>
+            <% end %>
+            <li class='<%= 'active' if params[:controller] == 'product_transfer_receipts' %>'><a href="<%= product_transfer_receipts_url %>">
+              <i class="fa fa-sign-in"></i> <%= t(:product_transfer_receipt) %></a>
+            </li>
+            <li class='<%= 'active' if params[:controller] == 'return_to_ho_receipts' %>'><a href="<%= return_to_ho_receipts_url %>">
+              <i class="fa fa-sign-in"></i> <%= t(:return_to_ho_receipt) %></a>
+            </li>
+          </ul>
+        </li>
+      <% end %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-usd"></i> <span class="menu-item-parent">Sales</span></a>
+          <ul>
+            <% if true %>
+              <li class='<%= 'active' if params[:controller] == 'transaction_histories' %>'>
+                <%= link_to "<i class='fa fa-credit-card'></i> Transaction History".html_safe, transaction_histories_path(web_view: 1) %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <!--  Finance -->
+      <% if current_user.can_view_account_payable? || current_user.can_view_account_receivable? || current_user.can_view_budget? || current_user.can_view_forecast? || current_user.can_view_petty_cash? || current_user.can_view_sod_eod? %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-usd"></i> <span class="menu-item-parent">Finance</span></a>
+          <ul>
+            <% if current_user.can_view_account_payable? %>
+              <li class='<%= 'active' if params[:controller] == 'finances/account_payables' %>'>
+                <%= link_to "<i class='fa fa-credit-card'></i> Account Payable".html_safe, finances_account_payables_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_account_receivable? %>
+              <li class='<%= 'active' if params[:controller] == 'finances/account_receivables' %>'>
+                <%= link_to "<i class='fa fa-credit-card'></i> Account Receivable".html_safe,  finances_account_receivables_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_budget? %>
+              <li class='<%= 'active' if params[:controller] == 'finances/budgetings' %>'>
+                <%= link_to "<i class='fa fa-dollar'></i> Budgeting".html_safe, finances_budgetings_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_forecast? %>
+              <li class='<%= 'active' if params[:controller] == 'finances/forecasts' || params[:controller] == 'finances/monthly_forecasts' %>'>
+                <%= link_to "<i class='fa fa-bar-chart'></i> Forecast".html_safe, finances_forecasts_path %>
+              </li>
+            <% end %>
+            <% if current_user.can_view_petty_cash? %>
+              <li  class='<%= 'active' if params[:controller] == 'finances/petty_cashes' || params[:controller] == 'finances/cash_outs' %>'>
+                <%= link_to "<i class='fa fa-money'></i> Petty Cash".html_safe, finances_petty_cashes_path %>
+              </li>
+            <% end %>
+
+            <% if current_user.can_view_sod_eod? %>
+              <li  class='<%= 'active' if params[:controller] == 'finances/sod_eods' %>'>
+                <%= link_to "<i class='fa fa-money'></i> SOD - EOD".html_safe, finances_sod_eods_path(year: Time.now.year, month: Time.now.month) %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+      <li>
+        <a href="#"><i class="fa fa-lg fa-fw fa-copy"></i> <span class="menu-item-parent">Laporan</span></a>
+        <ul>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/sales_per_m_classes' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Sales Per MClass".html_safe, store_admin_reports_sales_per_m_classes_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/sales_realizations' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Sales Realization".html_safe, store_admin_reports_sales_realizations_path(year: Time.now.year, month: Time.now.month, start_date: Time.now.beginning_of_month.day, end_date: Time.now.end_of_month.day) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/revenues' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Revenue".html_safe, store_admin_reports_revenues_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/discounts' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Kerugian Diskon".html_safe, store_admin_reports_discounts_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/omsets' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Omset Per Supplier".html_safe, store_admin_reports_omsets_path(year: Time.now.year, month: Time.now.month, id: 2) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'store_admin_reports/eod_per_department' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> EOD Per Department".html_safe, store_admin_reports_eods_path(year: Time.now.year, month: Time.now.month, date: Time.now.day) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'warehouse_admin_reports/surat_jalans' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Surat Jalan".html_safe, warehouse_admin_reports_surat_jalans_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'warehouse_admin_reports/global_pencocokan_returs' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Pencocokan Retur".html_safe, warehouse_admin_reports_global_pencocokan_returs_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'finances/monthly_payments' %>'>
+            <%= link_to "<i class='fa fa-credit-card'></i> Monthly Payment".html_safe, finances_monthly_payments_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <% if current_user.can_view_cashier_report? %>
+            <li class='<%= 'active' if params[:action] == 'cashier' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Cashier'), "/reports/cashier" %>
+            </li>
+          <% end %>
+          <% if current_user.can_view_sales_report? %>
+            <li class='<%= 'active' if params[:action] == 'sale' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Sales'), "/reports/sale" %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_bank_out_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/bank_outs' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Bank Out'), finance_reports_bank_outs_path %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_cash_out_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/cash_outs' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Cash Out'), finance_reports_cash_outs_path %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_global_finance_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/global_finances' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Global Finance'), finance_reports_global_finances_path(year: Time.now.year, month: Time.now.month) %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_journal_memo_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/journal_memos' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Journal Memo'), finance_reports_journal_memos_path(year: Time.now.year, month: Time.now.month) %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_store_cash_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/store_cashs' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Store Cash'), finance_reports_store_cashs_path %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_receivable_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/receivables' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Receivable'), finance_reports_receivables_path %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_repayment_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/repayments' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Repayment'), finance_reports_repayments_path %>
+            </li>
+          <% end %>
+          <% if current_user.can_manage_denomination_report? %>
+            <li class='<%= 'active' if params[:controller] == 'finance_reports/denominations' %>'>
+              <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Denomination'), finance_reports_denominations_path %>
+            </li>
+          <% end %>
+          <li class='<%= 'active' if params[:action] == 'eod' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Hasil Bedahan EOD'), reports_eod_url %><!-- Hasil Bedahan EOD versi Program.xlsx -->
+          </li>
+          <li class='<%= 'active' if params[:action] == 'store_stock_movement' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Pergerakan Stock Toko'), reports_store_stock_movement_path %><!--Laporan Pergerakan Barang Detail.xlsx-->
+          </li>
+          <li class='<%= 'active' if params[:action] == 'return_all_branch' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Retur All Branch'), reports_return_all_branch_path %><!--Rekap Returan ALL toko.xlsx-->
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'finance_reports/sisa_hutang_dagang' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Sisa Hutang Dagang'), finance_reports_sisa_hutang_dagang_index_path %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'finance_reports/report_azzurra' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Azzurra Report'), finance_reports_report_azzurra_index_path %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'kedatangan_barang' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Kedatangan Barang'), kedatangan_barang_index_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:controller] == 'report_transferan' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Report Transfer Barang'), report_transferan_index_path(year: Time.now.year, month: Time.now.month) %>
+          </li>
+          <li class='<%= 'active' if params[:action] == 'forecast' %>'>
+            <%= link_to raw('<i class="fa fa-bar-chart-o"></i> Forecast'), reports_forecast_path(year: Time.now.year) %>
+          </li>
+        </ul>
+      </li>
+      <% if current_user.can_view_setting? %>
+        <li>
+          <a href="#"><i class="fa fa-lg fa-fw fa-wrench"></i> <span class="menu-item-parent">Setting</span></a>
+          <ul>
+            <% if current_user.can_view_user? %>
+              <li class='<%= 'active' if params[:controller] == 'users' %>'><%= link_to raw('<i class="fa fa-user"></i> User Setting'), users_path %></li>
+            <% end %>
+            <% if current_user.can_view_role? %>
+              <li class='<%= 'active' if params[:controller] == 'roles' %>'><%= link_to raw('<i class="fa fa-group"></i> Role Management'), roles_path %></li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+  <span class="minifyme" data-action="minifyMenu">
+    <i class="fa fa-arrow-circle-left hit"></i>
+  </span>
+</aside><!-- END NAVIGATION -->

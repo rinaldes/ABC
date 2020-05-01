@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Reports</li><li>RETUR DARI TOKO KE HO</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <h2>RETUR DARI TOKO KE HO <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : ''] rescue '' %> <%= params[:year] %></h2>
+        </header>
+        <%#= link_to "Eksport ke Excel", reports_receiving_path(:id => params[:id], format: "xls") %>
+        <div id="tabs">
+          <ul>
+            <li><a href="#tabs-a">DETAIL</a></li>
+            <li><a href="#tabs-c">GLOBAL</a></li>
+          </ul>
+          <div id="tabs-a">
+            <div class="widget-body"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'><%= render 'return_all_branch' %></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+          <div id="tabs-c">
+            <div class="widget-body no-padding"><!-- TABEL -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id='stock'><%= render 'global_return_all_branch' %></table>
+              </div>
+            </div><!-- END TABEL -->
+          </div>
+        </div>
+      </div>
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  function filter_stock(){
+    $.ajax(
+    {
+      url: "/products/stock",
+      dataType: "script",
+      data: $("form").serialize(),
+      success: function (data){
+        response(data)
+      },
+    });
+  }
+
+  $(document).ready(function() {
+    $('#tabs').tabs();
+    $("#search_brand").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/brands/autocomplete_brand_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#supplier_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+  })
+</SCRIPT>

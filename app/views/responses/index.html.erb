@@ -1,0 +1,45 @@
+<div class="col-sm-12">
+  <section class="panel">
+    <header class="panel-heading">
+      List Responses
+    </header>
+    <div class="panel-body">
+      <div class="adv-table editable-table ">
+      	<div class="clearfix">
+      		<%= form_for(@survey, url: responses_path, html: {class: "form-horizontal form-response", role: "form", method: :post}, remote: true) do |f| %>
+      			<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+	      			
+      			<div class="form-group">
+      				<%= f.label :name, "Survey Name", class: "col-lg-2 control-label" %>
+      				<div class="col-lg-3">
+      					<%= f.text_field :name, class: "form-control" %>
+      				</div>
+
+      				<%= f.label :period_start, "Periode", class: "col-lg-2 col-lg-offset-1 control-label" %>
+              <div class="col-lg-4">
+                <div class="input-group input-large" data-date="13/07/2013" data-date-format="mm/dd/yyyy">
+                  <%= f.text_field :period_start, class: "form-control dpd1" %>
+                  <span class="input-group-addon">To</span>
+                  <%= f.text_field :period_end, class: "form-control dpd2" %>
+                </div>
+              </div>
+      			</div>
+
+      			<div class="form-group">
+      				<%= f.label :status, class: "col-lg-2 control-label" %>
+      				<div class="col-lg-3">
+      					<%= f.select :status, options_for_select([['All', 'all'], ['Open', 'open'], ['Closed', 'closed']], f.object.status), {}, placeholder: "Status", class: "form-control" %>
+      				</div>
+      				<div class="col-lg-6 col-lg-offset-1">
+      					<%= f.button "Search", class: "btn btn-primary" %>
+      				</div>
+      			</div>
+      		<% end %>
+      	</div>
+
+				<%= render 'index' %>
+
+      </div>
+    </div>
+  </section>
+</div>

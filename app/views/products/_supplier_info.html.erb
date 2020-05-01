@@ -1,0 +1,9 @@
+<section>
+  <label class="col-md-4 label">SUPPLIER</label>
+  <label class="col-md-3 input custom-input-box">
+    <%= text_field_tag :supplier_code, (@supplier.code rescue ''), class: "input-sm", placeholder: 'CODE' %>
+  </label>
+  <label class="col-md-5 input custom-input-box">
+    <%= text_field_tag :supplier, (@supplier.name rescue ''), class: 'input-sm autocomplete-field', placeholder: 'NAME' %>
+  </label>
+</section>

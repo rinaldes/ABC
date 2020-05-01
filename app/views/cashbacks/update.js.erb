@@ -1,0 +1,5 @@
+$("#notification").html("<%= j(render 'dashboard/notification') %>");
+<% if @supplier.errors.blank? %>
+	$("#cashback-list").html("<%= j(render 'cashback_list') %>");
+<% end %>
+$("#form-cashback").html("<%= j(render 'form') %>");

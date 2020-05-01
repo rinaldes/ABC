@@ -1,0 +1,38 @@
+<% if @purchase_orders.count > 0 %>
+  <% @purchase_orders.each_with_index do |po, i| %>
+    <tr>
+      <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+      <td class='nowrap'><%= link_to po.number, purchase_order_url(po), class: 'blue' %></td>
+      <td><%= po.date %></td>
+      <td><%= po.supplier_name rescue '' %></td>
+      <td><%= po.total_qty %></td>
+      <td><%= format_currency po.grand_total %></td>
+      <td><%= po.note %></td>
+      <td class='nowrap'><%= po.status %></td>
+      <% if current_user.can_manage_po? %>
+      <td class='nowrap'>
+        <% if po.is_waiting_approval? %>
+          <%= link_to raw('<i class="fa fa-pencil" rel="tooltip" data-placement="left"></i>'), edit_purchase_order_path(po.id), class: "btn btn-primary btn-xs custom-edit-btn" %>
+          <%= link_to raw('<i class="fa fa-trash-o" rel="tooltip" data-placement="left"></i>'), 'javascript:void(0)', onclick: "delete_one(#{po.id}, 'purchase_orders')",
+            class: "btn btn-danger btn-xs edit-btn-dlt" %>
+        <% end %>
+      </td>
+      <% end %>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan=9>
+      <% if @purchase_orders.present? %>
+        <div class="dataTables_paginate paging_simple_numbers" id="dt_basic_paginate">
+          <%= pagination_links(@purchase_orders, options = {}) %>
+        </div>
+      <% else %>
+        <%= raw '<center>No Data Available</center>' %>
+      <% end %>
+    </td>
+  </tr>
+<% else %>
+  <tr>
+    <td colspan='9' align='center'>No Data Entries</td>
+  </tr>
+<% end %>

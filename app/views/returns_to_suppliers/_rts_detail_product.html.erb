@@ -1,0 +1,7 @@
+<td><span class="product_barcode"><%= product.barcode rescue '' %></span></td>
+<td><%= product.brand.name rescue '' %></td>
+<td><%= product.department.name rescue '' %></td>
+<td><%= product.article rescue '' %></td>
+<td><%= product.colour.name rescue '' %></td>
+<td><%= format_currency product.cost_of_products rescue '' %></td>
+<td><%= link_to 'View', 'javascript:void(0)', onclick: "$('#myModal#{product.id}').modal()" %></td>

@@ -1,0 +1,284 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Purchasing</li><li>Purchase Transfer</li><li><%= t(:new) %></li>
+  </ol>
+</div>
+<div id="content">
+  <div id='notification'><%= render 'layouts/errors' %></div>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>Purchase Transfer <%= t(:new) %></h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @dibeliowner, html: {class: "smart-form", id: "form_transfer"} do |f| %>
+              <%= hidden_field_tag :ref_transaction %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Receive No </label>
+                      <label class="col-md-6 input custom-input-box">
+                        <%= hidden_field_tag :good_list %>
+                        <%= text_field_tag :pr_name, (@pr.number rescue ''), class: 'input-sm autocomplete' %>
+                      </label>
+                      <label class="col-md-3 input custom-input-box">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="searchRcv()" style="margin-left: 10px;">Browse</button>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-3 label">Received Date</label>
+                      <label class="col-md-9 input custom-input-box"><%= text_field_tag :pr_date, '', class: "input-sm", disabled: true %></label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <%= render "product_search" %>
+              <fieldset>
+                <div class="row">
+                  <table class="table table-striped table-btransfered table-hover" width="100%" id="transfer">
+                    <thead>
+                      <tr>
+                        <th>BARCODE</th>
+                        <th>MERK</th>
+                        <th>JENIS</th>
+                        <th>ARTICLE</th>
+                        <th>WARNA</th>
+                        <th>HARGA POKOK</th>
+                        <th>UKURAN</th>
+                        <th class="col-md-1">ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody id='list_detail'>
+                      <%= render partial: 'list_detail', locals: {details: @dibeliowner.product_mutation_details} if params[:action] == 'edit' %>
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-primary" onclick="return(beforeSave())">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+              <div id='product_detail_tobe_submitted' style='display: none'></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<div id='product_detail'></div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<div class="modal fade" id="prModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<script type="text/javascript">
+  function searchRcv(){
+    $.ajax({
+      dataType: "script",
+      url: '/receivings/autocomplete_receiving_number?supplier_id='+($('.supplier_id').length == 1 ? $('.supplier_id').val() : ''),
+      type: 'get'
+    })
+  }
+
+  function add_pr_to_pt(number){
+    var date = new Date();
+    $.ajax({
+      url: '/dibeliowners/add_product_pr',
+      data: {
+        key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), number: number,
+          origin_warehouse_id: $('.ho_id').val(), destination_warehouse_id: $('.destination_warehouse_id').val()
+      }
+    });
+    nomor_ganti();
+  }
+
+  $(document).ready(function() {
+    autocomplete_barcode()
+    $("#pr_name").autocomplete({
+      search: function () {},
+      source: function (transfer, response)
+      {
+        $.ajax(
+        {
+          url: "/purchase_requests/autocomplete_purchase_request",
+          dataType: "json",
+          data: {term: transfer.term, status: "'APPROVED', 'TRANSFER ON PROGRESS'", present_pr: $('#ref_transaction').val(), supplier_id: $('.supplier_id').val()},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+
+    $(".branch_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/branches/autocomplete_branch_office_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        $('#dibeliowner_destination_warehouse_id').val(ui.item.id)
+        nomor_ganti()
+      },
+      minLength: 1
+    });
+
+    reset_form();
+
+    <% if params[:action] == 'edit' %>
+      $("#dibeliowner_supplier_id").val("<%= @supplier.id rescue '' %>");
+      $("#supplier_name").val("<%= @supplier.name rescue '' %>")
+      $("#alamat").val("<%= @supplier.address rescue '' %>");
+      $("#supplier_code").val("<%= @supplier.code rescue '' %>");
+    <% end %>
+  });
+
+  function getProduct(){
+    $.ajax({
+      url: '<%= get_product_dibeliowners_path %>',
+      type: 'get',
+      data: {
+        barcode: $("#number").val(), ho_id: $('#dibeliowner_origin_warehouse_id').val()
+      }
+    })
+  }
+
+  function getPr(){
+    $.ajax({
+      url: '<%= get_pr_dibeliowners_path %>',
+      type: 'get',
+      data: {
+        name: $("#pr_name").val()
+      }
+    })
+  }
+
+  function beforeSave(){
+    var good_id = [];
+    var tot = $('#transfer tbody tr').length;
+    if(tot != 0){
+      for(var y=0; y < tot; y+=1){
+        good_id.push($("#transfer tbody tr:eq("+ y +") td:eq(0) span").text())
+      }
+      $("#good_list").val(good_id.toString());
+      clone_inputs()
+      setTimeout(function(){
+        $.ajax(
+        {
+          url: "/dibeliowners",
+          dataType: "script",
+          method: 'POST',
+          data: $("form").serialize(),
+          success: function (data){
+            response(data)
+          },
+        });
+      }, 1000);
+    }else{
+      alert('Insert Data First!')
+      return false;
+    }
+  }
+
+  function reset_form(){
+    document.getElementById("form_transfer").reset();
+    $("#transfer tboby").html("");
+  }
+
+  // function searchManual(){
+  //   $.ajax({
+  //     url: '/purchase_requests/search_product_manual',
+  //     type: 'get'
+  //   })
+  // }
+
+  function get_size(product_id, quantity){
+    $.ajax({
+        url: '/dibeliowners/get_size',
+        type: 'get',
+        data: {
+          product_id: product_id,
+          quantity : quantity
+        }
+    })
+  }
+
+  function nomor_ganti(){
+    $.ajax({
+        url: '/dibeliowners/get_last_number',
+        type: 'get',
+        dataType: 'json',
+        data: {
+          supplier_id: $('.supplier_id').val()
+        },
+        success: function(data){
+          //TRF/Nama HO asal - Nama Cabang Penerima/No Supplier/Tahun-Bulan-Hari/No urut per supplier (terus berlanjut hingga 1 tahun)
+          $("#dibeliowner_code").val("DBO/"+$('#dibeliowner_origin_warehouse_id').get(0).options[$('#dibeliowner_origin_warehouse_id').get(0).selectedIndex].innerHTML+"/"+$("#supplier_code").val()+"/"+$('#dibeliowner_mutation_date').val()+"/"+data.number);
+        }
+    })
+    $("#code").val($("#dibeliowner_number").val());
+  }
+
+  function getProduct(){
+    $.ajax({
+      url: '/<%= params[:controller] %>/get_product',
+      type: 'get',
+      data: {
+        barcode: $("#number").val(), ho_id: $('.ho_id').val()
+      }
+    })
+  }
+
+  function searchProductReceive(){
+    product_barcode = []
+    for (i=0; i<$('.product_barcode').length; i++){
+      product_barcode.push("'"+$('.product_barcode')[i].innerHTML+"'")
+    }
+    $.ajax({
+      url: '/receivings/search_product?receiving_id='+$('#pr_name').val()+"&present_product="+product_barcode.join(', '),
+      type: 'get'
+    })
+  }
+
+  function add_product_purchased_by_owner(module_name){
+    var date = new Date();
+    var inputValues = [];
+    var inputValues2 = [];
+
+    $(".quantity").each(function() {
+      inputValues.push($(this).val())
+    })
+    if(module_name == "receivings"){
+      $(".s_quantity").each(function() {
+        inputValues2.push($(this).val())
+      })  
+    }
+    
+    $.ajax({
+      url: '/'+module_name+'/add_product',
+      data: {
+        key: date.getDay() + ""+date.getMonth() + "" + date.getFullYear() + "" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds(), id: $('#product_id').val(), s_quantities: inputValues2,
+        quantities: inputValues, receiving_id: $('#pr_name').val()
+      }
+    })
+  }
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

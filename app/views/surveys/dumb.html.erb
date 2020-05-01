@@ -1,0 +1,131 @@
+<div class='panel box'>
+	<header class='panel-heading'>
+		<span class='tools'>
+			<a onclick='editPriview();' class='fa fa-pencil'></a>
+			<a onclick='copyPreview()' class='fa fa-copy'></a>
+			<a onclick='deletePreview();' class='fa fa-trash-o'></a>
+		</span>
+	</header>
+	<div class='panel-body'>
+		<div class='form-group'>   
+			<div class='col-lg-12 checkbox'>
+				<input type='checkbox' checked='' >
+				<label>Data Validation</label>
+			</div>
+		</div>
+		<div class='form-group'>   
+			<div class='col-lg-2'>
+				<select class='form-control' id='question' name='question'>
+					<option value='Select At Least'>Select At Least</option>
+					<option value='Select At Most'>Select At Most</option>
+					<option value='Select Exactly'>Select Exactly</option>
+				</select>
+			</div>
+			<div class='col-lg-2'>
+				<input type='text' class='form-control' placeholder=''>
+			</div>
+			<div class='col-lg-8'>
+				<input type='text' class='form-control' placeholder=''>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='panel box'><header class='panel-heading'><span class='tools'><a onclick='editPriview();' class='fa fa-pencil'></a><a onclick='copyPreview()' class='fa fa-copy'></a><a onclick='deletePreview();' class='fa fa-trash-o'></a></span></header><div class='panel-body'></div>
+
+
+
+
+
+
+
+<table class='table table-striped table-hover table-bordered' id='editable-sample'><thead><tr><th></th><% params[:question][:nilai][:column].each do |x| %><th><%= x %></th><% end %></tr></thead><tbody><% params[:question][:nilai][:row].each do |x| %><tr><td><%= x %></td><% [:question][:nilai][:column].each do |y| %><td><input type='checkbox'></td><% end %></tr><% end %></tbody></table>
+
+
+## ranking
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Option</label>
+    <div class='col-lg-6'>
+        <textarea class='form-control'></textarea>
+    </div>
+    <label class='col-lg-2 control-label'>Use 'Enter' for seperate item</label> 
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Answer field</label>
+    <div class='col-lg-6'>
+        <input class='form-control'></input>
+    </div>
+    <label class='col-lg-2 control-label'>if blank, first option will be default</label> 
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Ranking</label>
+    <div class='col-lg-8'>
+        <input class='form-control' type='number'>to<input class='form-control' type='number'></input>
+    </div>
+</div>
+
+
+
+## percentage
+<div class='form-group'>
+    <div class='col-lg-2'></div>
+    <div class='col-lg-3'>
+        <input class='form-control' placeholder='Text Before'></input>
+    </div>
+    <div class='col-lg-3'>
+        <input class='form-control' placeholder='Text After'></input>
+    </div>
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Answer field</label>
+    <div class='col-lg-3'>
+        <input class='form-control'></input>
+    </div>
+    <label class='col-lg-2 control-label'>0-100</label> 
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Increment</label>
+    <div class='col-lg-3'>
+        <input class='form-control'></input>
+    </div>
+    <label class='col-lg-2 control-label'>Only allow even number, max 100</label> 
+</div>
+
+
+## radio scale
+<div class='form-group'>
+    <div class='col-lg-2'></div>
+    <div class='col-lg-3'>
+        <input class='form-control' placeholder='Text Before'></input>
+    </div>
+    <div class='col-lg-3'>
+        <input class='form-control' placeholder='Text After'></input>
+    </div>
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Answer field</label>
+    <div class='col-lg-3'>
+        <input class='form-control'></input>
+    </div>
+    <label class='col-lg-2 control-label'>0-100</label> 
+</div>
+
+<div class='form-group'>
+    <label class='col-lg-2 control-label'>Increment</label>
+    <div class='col-lg-3'>
+        <input class='form-control'></input>
+    </div>
+    <label class='col-lg-2 control-label'>Only allow even number, max 100</label> 
+</div>
+
+
+<div id='row_origin'><div class='form-group'><div class='col-lg-4'><input class='form-control' placeholder='Text Before'></input></div><div class='col-lg-4'> <input type='text' placeholder='Text After' class='form-control'> <span class='input-group-btn add-on'> <button class='btn btn-primary' type='button' onclick='tambahRowScale(0);'><i class='fa fa-plus'></i></button> </span></div> </div> </div> <div id='tambah_row'></div>
+
+<div class='form-group'><label class='col-lg-2 control-label'>Increment</label><div class='col-lg-4'><input type='text' id='help' class='form-control' placeholder=''></div><label class='col-lg-2 control-label'>Max 100</label></div>
+
+

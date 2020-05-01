@@ -1,0 +1,68 @@
+<%= javascript_tag render(:template => 'surveys/new.js', :formats => [:js]) %>
+<div class="col-sm-12">
+  <section class="panel">
+    <header class="panel-heading">
+      New Survey
+    </header>
+    <div class="panel-body">
+    	<%= form_for @survey, html: {class: 'form-horizontal', :multipart => true, method: :post} do |f| %>
+    		<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+    		<% if @survey.errors.any? %>
+		      <div id="error_explanation">
+		        <h2><%= pluralize(@survey.errors.count, "error") %> prohibited this survey from being saved:</h2>
+		        <ul>
+		        <% @survey.errors.full_messages.each do |message| %>
+		          <li><%= message %></li>
+		        <% end %>
+		        </ul>
+		      </div>
+		    <% end %>
+
+		    <div class="form-group ">
+		    	<%= f.label :name, class: "col-sm-2 control-label" %>
+		      <div class="col-sm-6">
+		        <%= f.text_field :name, class: 'form-control', :required => true, placeholder: "Survey name" %>
+		      </div>
+		    </div>
+
+		    <div class="form-group ">
+		    	<%= f.label :description, class: "col-sm-2 control-label" %>
+		      <div class="col-sm-8">
+		        <%= f.text_area :description, class: 'form-control', :required => true, placeholder: "Description" %>
+		      </div>
+		    </div>
+
+		    <div class="form-group">
+		    	<%= label_tag :period, "Period", class: "col-sm-2 control-label" %>
+		      <div class="col-sm-4">
+		        <div class="input-group input-large" >
+		          <%= f.text_field :period_start, class: 'datepicker form-control dpd1', 'data-date-format' => "mm/dd/yyyy", placeholder: 'From', :required => true %>
+		          <span class="input-group-addon">To</span>
+		          <%= f.text_field :period_end, class: 'datepicker form-control dpd2', 'data-date-format' => "mm/dd/yyyy", placeholder: 'To', :required => true %>
+		        </div>
+		      	<span class="help-block">Select date range</span>
+		      </div>
+		    </div>
+
+		    <div class="form-group">
+		      <div class="col-sm-8 col-sm-offset-2">
+		    		<%= f.submit "Save", class: "btn btn-primary" %>
+		    	</div>
+		    </div>
+    	<% end %>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-body">
+    	<div id="wizard">
+        <% [['set-question-div', 'Set Question', 'questions'], ['set-page-div', 'Set Page', 'pages'], ['set-logical-div', 'Set Logical Workflow', 'logicals'], ['set-background-div', 'Set Background Page', 'backgrounds'], ['final-step-div', 'Final Step', 'finals']].each do |id, title, render_view| %>
+          <h2><%= title %></h2>
+          <section>
+            <div id="<%= id %>"><%= render "/wizards/#{render_view}" %></div>
+          </section>
+        <% end %>
+	    </div>
+    </div>
+  </section>
+</div>

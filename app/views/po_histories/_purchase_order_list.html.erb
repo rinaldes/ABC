@@ -1,0 +1,22 @@
+<% if @product_details.present? %>
+  <% @product_details.each{|product_detail| %>
+    <tr>
+      <td><%= product_detail.article %></td>
+      <td><%= product_detail.name %></td>
+      <td><%= product_detail.supplier_name %></td>
+      <td>
+        <%= PurchaseOrderDetail.where("product_size_id=#{product_detail.product_size_id} AND purchase_order_id IN (SELECT purchase_order_id FROM purchase_requests WHERE branch_id=#{product_detail.warehouse_id})")
+          .joins(:purchase_order).select("SUM(quantity) AS sum_quantity")[0].sum_quantity %>
+      </td>
+      <td>
+        <%= SalesDetail.where("product_size_id=#{product_detail.product_size_id} AND transaction_date #{@between} AND store_id=#{product_detail.warehouse_id}").joins(sale: :store)
+          .select("SUM(quantity) AS quantity")[0].quantity %>
+      </td>
+      <td><%= product_detail.warehouse.office_name %></td>
+    </tr>
+  <% } %>
+<% else %>
+  <tr>
+    <td colspan='9' align='center'>No Data Entries</td>
+  </tr>
+<% end %>

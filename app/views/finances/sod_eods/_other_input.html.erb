@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<section class="col col-6">
+  <div class="form-group">
+    <label class="col-md-3 control-label">Other Input</label>
+    <div class="col-md-9">
+      <%= link_to 'Add', 'javascript:void(0)', :class => "btn btn-primary btn-sm add_input" %>
+    </div>
+  </div>
+  <div id='other_input_field'>
+  </div>
+</section>
+<SCRIPT>
+  $('.add_input').click(function(){
+    $.ajax({
+      data: {i: $('#other_input_field div').length},
+      url: "/finances/sod_eods/add_input",
+      dataType: "script"
+    });
+  })
+</SCRIPT>

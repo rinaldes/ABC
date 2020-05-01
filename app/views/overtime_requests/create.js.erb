@@ -1,0 +1,6 @@
+<% if @overtime_request.save %>
+	$('#overtime_request tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#overtime_request tbody').prepend("<%= j(render 'data', :overtime_request => @overtime_request) %>");
+<% else %>
+<% end %>

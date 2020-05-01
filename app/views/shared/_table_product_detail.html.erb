@@ -1,0 +1,16 @@
+<table class="table table-striped table-brequested table-hover" width="100%" id='request'>
+  <thead>
+    <tr>
+      <%= render 'shared/th' %>
+    </tr>
+  </thead>
+  <tbody>
+    <% details.each do |prd| %>
+      <% detail = prd[1][0].product_size %>
+      <% product = detail.product %>
+      <tr>
+        <%= render 'returns_to_suppliers/rts_detail_product', product: product %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

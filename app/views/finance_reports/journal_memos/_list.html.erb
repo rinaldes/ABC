@@ -1,0 +1,40 @@
+<% received_qty = 0 %>
+<% sum_total_amount = 0 %>
+<% sum_total_paid = 0 %>
+<% @journal_memos.each_with_index do |journal_memo, index| %>
+  <% account_payables = journal_memo.account_payables %>
+  <% account_payables_total_amount = account_payables.map(&:total_amount).sum %>
+  <% account_payables_total_paid = account_payables.map(&:total_paid).sum %>
+  <% product = journal_memo.receiving_details.first.product_size.product %>
+  <tr>
+    <td><%= index+1 %></td>
+    <td><%= journal_memo.supplier.try(:name) %></td>
+    <td><%= journal_memo.date.try(:strftime, "%d-%m-%Y") %></td>
+    <td><%= journal_memo.consigment_number %></td>
+    <td class="journal_memo_report"><%= journal_memo.received_qty %></td>
+    <td class="journal_memo_report"><%= number_to_currency journal_memo.total_before_discount, unit: "Rp."  %></td>
+    <td class="journal_memo_report"><%= journal_memo.discount_percent1 %></td>
+    <td class="journal_memo_report"><%= journal_memo.discount_percent2 %></td>
+    <td class="journal_memo_report"><%= journal_memo.discount_percent3 %></td>
+    <td class="journal_memo_report"><%= journal_memo.discount_percent4 %></td>
+    <td class="journal_memo_report"><%= number_to_currency journal_memo.total_after_discount, unit: "Rp." %></td>
+    <td style='text-align: center'><%= product.status3.titleize rescue nil %></td>
+    <td class="journal_memo_report"><%= journal_memo.supplier.long_term %></td>
+    <td class="journal_memo_report"><%= account_payables.last.due_date.strftime('%d-%m-%Y') %></td>
+  </tr>
+  <% received_qty += journal_memo.received_qty %>
+  <% sum_total_amount += account_payables_total_amount %>
+  <% sum_total_paid += journal_memo.total_after_discount %>
+<% end %>
+<% if @journal_memos.present? %>
+  <tr>
+    <td style="font-weight: bold;" colspan="4">Total</td>
+    <td class="journal_memo_report"><%= received_qty %></td>
+    <td class="journal_memo_report"><%= number_to_currency sum_total_amount, unit: "Rp." %></td>
+    <td class="journal_memo_report"></td>
+    <td class="journal_memo_report"></td>
+    <td class="journal_memo_report"></td>
+    <td class="journal_memo_report"></td>
+    <td class="journal_memo_report"><%= number_to_currency sum_total_paid, unit: "Rp." %></td>
+  </tr>
+<% end %>

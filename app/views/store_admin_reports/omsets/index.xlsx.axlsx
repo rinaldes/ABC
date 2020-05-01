@@ -1,0 +1,68 @@
+wb = xlsx_package.workbook
+styles = wb.styles
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+bold = styles.add_style(:b => true)
+subjudul = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER, :b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true})
+subjudul_biru_tengah = styles.add_style(:fg_color => "ffffff", :b => true, :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true}, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+subjudul_biru = styles.add_style(:b => true, :bg_color => "307cf4", :border => Axlsx::STYLE_THIN_BORDER)
+judul = styles.add_style(:b => true, :sz => 14, :alignment => { :horizontal => :center, :wrap_text => true})
+alp = {}
+branchnya = []
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+@branches.each do |branch|
+  wb.add_worksheet(name: "#{branch.office_name}-#{branch.description}") do |sheet|
+    tanggal, tanggal_judul, tanggal_judul2, total_akhir = "#{@year}-#{@month}-01".to_date, [], [], []
+    grand_total_omset, grand_total_capital, grand_total = 0, 0, {}
+    (0..1).each do |i|
+      sheet.merge_cells "#{alp[i]}4:#{alp[i]}5"
+    end
+    (1..2).each do |i|
+      sheet.merge_cells "A#{i}:#{alp[3+(tanggal.end_of_month.day)*3]}#{i}"
+    end
+    sheet.merge_cells "#{alp[2+(tanggal.end_of_month.day)*3]}4:#{alp[2+(tanggal.end_of_month.day)*3]}5"
+    sheet.merge_cells "#{alp[3+(tanggal.end_of_month.day)*3]}4:#{alp[3+(tanggal.end_of_month.day)*3]}5"
+    sheet.merge_cells "A#{6+@suppliers.count}:B#{6+@suppliers.count}"
+    (1..tanggal.end_of_month.day).each do |tgl|
+      tanggal_judul << "Qty"
+      tanggal_judul << "Modal"
+      tanggal_judul << "Omset"
+      tanggal_judul2 << tgl
+      tanggal_judul2 << ""
+      tanggal_judul2 << ""
+      sheet.merge_cells "#{alp[tgl*3-1]}4:#{alp[tgl*3+1]}4"
+    end
+    
+    sheet.add_row ["Omset per Supplier Bulan #{tanggal.strftime("%B %Y")}"], widths: [:ignore], style: judul
+    sheet.add_row [branch.description], widths: [:ignore], style: judul
+    sheet.add_row [""]
+    sheet.add_row ["Supl", "Description"] + tanggal_judul2 + ["Total Harga Modal", "Total Omset"], :style => subjudul_biru_tengah, widths: [:auto,:auto,:auto,:ignore]
+    sheet.add_row ["", ""] + tanggal_judul, :style => subjudul_biru_tengah
+    @suppliers.each_with_index do |supplier, i|
+      tanggal3, total_omset, total_modal = [], 0, 0
+      (1..tanggal.end_of_month.day).each do |tgl|
+        sales = SalesDetail.where("supplier_id=#{supplier.id} AND store_id=#{branch.id}  AND quantity > 0 AND transaction_date BETWEEN '#{params[:year]}-#{sprintf('%02d', params[:month].to_i)}-#{sprintf('%02d', tgl)} 00:00:00' AND '#{params[:year]}-#{sprintf('%02d', params[:month].to_i)}-#{sprintf('%02d', tgl)} 23:59:59'").joins(:sale, product_size: [product: [brand: :supplier]])
+                .select("SUM(quantity) AS quantity, SUM(quantity*capital_price) AS capital_price, SUM(quantity*capital_price) AS capital_price, SUM(sales_details.total_price) AS total_price")[0]
+        tanggal3 << sales.quantity
+        tanggal3 << sales.capital_price
+        tanggal3 << sales.total_price
+        total_modal += sales.capital_price.to_i
+        total_omset += sales.total_price.to_i
+        grand_total["qty_" + tgl.to_s] = grand_total["qty_" + tgl.to_s].to_i + sales.quantity.to_i
+        grand_total["capital_" + tgl.to_s] = grand_total["capital_" + tgl.to_s].to_i + sales.capital_price.to_i
+        grand_total["omset_" + tgl.to_s] = grand_total["omset_" + tgl.to_s].to_i + sales.total_price.to_i
+        grand_total_capital += total_modal.to_i
+        grand_total_omset += total_omset.to_i
+      end
+      sheet.add_row [supplier.code, supplier.name] + tanggal3 + [total_modal, total_omset], style: default
+    end
+    (1..tanggal.end_of_month.day).each do |tgl|
+      total_akhir << grand_total["qty_" + tgl.to_s].to_i
+      total_akhir << grand_total["capital_" + tgl.to_s].to_i
+      total_akhir << grand_total["omset_" + tgl.to_s].to_i
+    end
+    sheet.add_row ["Total", ""] + total_akhir + [grand_total_capital, grand_total_omset], style: subjudul
+  end
+end

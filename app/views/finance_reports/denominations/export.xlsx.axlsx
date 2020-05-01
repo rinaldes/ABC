@@ -1,0 +1,66 @@
+wb = xlsx_package.workbook
+wb.use_autowidth = false
+styles = wb.styles
+title = styles.add_style(:sz => 16, :b => true, :alignment => { :horizontal => :center })
+header = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center })
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+
+wb.add_worksheet(name: "Denomination") do |sheet|
+  sheet.column_widths 4, 33, 17, 2, 24, 15, 2, 12, 8, 18
+  sheet.merge_cells 'A1:J1'
+  sheet.merge_cells 'A3:A4'
+  sheet.merge_cells 'B3:C3'
+  sheet.merge_cells 'E3:F3'
+  sheet.merge_cells 'H3:J3'
+  sheet.merge_cells 'B15:B16'
+  sheet.merge_cells 'C15:C16'
+  sheet.merge_cells 'E17:E18'
+  sheet.merge_cells 'F17:F18'
+  sheet.merge_cells 'H17:I18'
+  sheet.merge_cells 'J17:J18'
+  sheet.merge_cells 'H20:I21'
+  sheet.merge_cells 'J20:J21'
+  sheet.merge_cells 'F24:G25'
+  sheet.merge_cells 'H24:I25'
+  sheet.merge_cells 'J24:J25'
+  sheet.merge_cells 'B26:B27'
+  sheet.merge_cells 'C26:C27'
+
+  sheet.add_row ["LAPORAN KEUANGAN #{@branch.try(:office_name)} TANGGAL : #{@date.try(:strftime, "%d-%m-%Y")}", "", "", "", "", "", "", "", "", ""], :style => title
+  sheet.add_row [], :height => 5
+  sheet.add_row ["No", "Pendapatan", "", "", "Biaya dan Pengeluaran", "", "", "Setoran Kasir", "", ""], :style => header
+  sheet.add_row ["", "Uraian", "Jumlah", "", "Uraian", "Jumlah", "", "Nominal", "Qty", "Total"], :style => header
+  sheet.add_row [], :height => 5
+  sheet.add_row ["1", "Pembayaran Tunai", @list_income["payment_cash"], "", @cash_outs[0].try("description"), @cash_outs[0].try("amount"), "", "Rp.100.000", @list_deposit["end_100k"], @list_deposit["sum_end_100k"]]
+  sheet.add_row ["2", "BTP Masuk (Tunai)", @list_income["btp_income_cash"], "", @cash_outs[1].try("description"), @cash_outs[1].try("amount"), "", "Rp.50.000", @list_deposit["end_50k"], @list_deposit["sum_end_50k"]]
+  sheet.add_row ["3", "Dp. Pembelian (Masuk)", @list_income["dp_buying_in"], "", @cash_outs[2].try("description"), @cash_outs[2].try("amount"), "", "Rp.20.000", @list_deposit["end_20k"], @list_deposit["sum_end_20k"]]
+  sheet.add_row ["4", "Charge Merchant (Tunai)", @list_income["charge_merchant"], "", @cash_outs[3].try("description"), @cash_outs[3].try("amount"), "", "Rp.10.000", @list_deposit["end_10k"], @list_deposit["sum_end_10k"]]
+  sheet.add_row ["5", "Service", @list_income["service"], "", @cash_outs[4].try("description"), @cash_outs[4].try("amount"), "", "Rp.5.000", @list_deposit["end_5k"], @list_deposit["sum_end_5k"]]
+  sheet.add_row ["6", "Buku Katalog/Kertas Kado", @list_income["catalogue_book"], "", @cash_outs[5].try("description"), @cash_outs[5].try("amount"), "", "Rp.2.000", @list_deposit["end_2k"], @list_deposit["sum_end_2k"]]
+  sheet.add_row ["", "", @list_income["total"], "", @cash_outs[6].try("description"), @cash_outs[6].try("amount"), "", "Rp.1.000", @list_deposit["end_1k"], @list_deposit["sum_end_1k"]]
+  sheet.add_row ["", "", "", "", @cash_outs[7].try("description"), @cash_outs[7].try("amount"), "", "Rp.500", @list_deposit["end_500"], @list_deposit["sum_end_500"]]
+  if @cash_outs.count > 8 
+    @cash_outs.each_with_index do |cash_out, index|
+      if index >= 8
+        sheet.add_row ["", "", "", "", cash_out.try("description"), cash_out.try("amount"), "", "", "", ""]
+      end
+    end
+  end
+  sheet.add_row ["7", "DP. Pembelian (Keluar)", @list_income["dp_buying_out"], "", "Mandiri", @list_outcome["mandiri"], "", "Rp.200", @list_deposit["end_200"], @list_deposit["sum_end_200"]]
+  sheet.add_row ["", "Pendapatan Tunai", @list_income["income_cash"], "", "BNI", @list_outcome["bni"], "", "Rp.100", @list_deposit["end_100"], @list_deposit["sum_end_100"]]
+  sheet.add_row ["", "", "", "", "BCA", @list_outcome["bca"], "", "Rp.50", @list_deposit["end_50"], @list_deposit["sum_end_50"]]
+  sheet.add_row ["", "", "", "", "Pengeluaran Tunai", @list_outcome["outcome_cash"], "", "Total Setoran", "", @list_deposit["total_deposit"]]
+  sheet.add_row []
+  sheet.add_row []
+  sheet.add_row ["8", "Omzet - Koperasi", @list_income["omzet_koperasi"], "", "", "", "", "Saldo Tunai", "", @saldo_cash]  
+  sheet.add_row ["9", "Credit Card", @list_income["credit_card"], "", "", "", "", "", "", ""]
+  sheet.add_row ["10", "Debit Card", @list_income["debit_card"], "", "BTP Masuk (Saldo)", @list_outcome["saldo_btp_income"], "", "Selisih", "", @selisih]
+  sheet.add_row ["11", "Tukar Point", @list_income["voucher_amt"], "", "", "", "", "", "", ""]
+  sheet.add_row ["", "Pendapatan Non Tunai", @list_income["income_non_cash"], "", "", "Kepala Toko", "", "Administrasi", "", "Kasir"]
+  sheet.add_row []
+  sheet.add_row ["", "Total Pendapatan", @list_net_sales["total_income"]]
+  sheet.add_row ["", "Bon Keluar", @list_net_sales["btp_out"]]
+  sheet.add_row ["", "Bon Titip", @list_net_sales["bon"]]
+  sheet.add_row ["", "Pendapatan Lainnya", @list_net_sales["another_income"]]
+  sheet.add_row ["", "Net.Sales", @list_net_sales["net_sales"]]
+end

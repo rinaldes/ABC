@@ -1,0 +1,27 @@
+<div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                          <br>
+                          <h4 id="myModalLabel" class="semi-bold">Interview Result</h4>
+                          <p class="no-margin">Add Interview Result for Applicant</p>
+                          <br/>
+                        </div>
+                        <div class="modal-body">
+                        <div class="text-center">
+                        	<%= form_for(@interview_result, html: {class: "gen-form", role: "form"}, remote: true) do |f| %>
+                            	<div class="form-group">
+                                    <label class="form-label col-sm-2">Interview Result</label>
+                                    <div class="col-md-6">           
+                                      <%= f.text_field :interview_result, :placeholder => "Interview Result" %>                       
+                                    </div>
+                                 </div>
+                                 <div class="modal-footer">
+                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                 <%= f.submit "Yes" , class: "btn btn-primary" %>
+                                 </div>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                    <% end %>

@@ -1,0 +1,226 @@
+<!-- <div class="container-fluid">
+    	<ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="#" class="active">Knowledge Management</a></li>
+        </ul>
+        
+        <div class="page-title">	
+        	<i class="fa fa-book"></i>
+        	<h3>Knowledge - <span class="semi-bold">Management</span></h3>	
+        </div>  
+            <div class="grid simple">
+           	  <div class="grid-title no-border"></div>
+            	<div class="grid-body no-border">
+					<div class="row toolbar-block">
+                    	<div class="col-md-4">
+                        	<div class="dataTables_filter" id="example3_filter">
+                            	<div class="controls">
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" placeholder="Search Record">
+                                      <span class="input-group-addon ">
+                                       	<i class="fa fa-search"></i>
+                                      </span>
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                        	<div class="toolbar pull-right" id="toolbar_main">
+                            	<div class="table-tools-actions">
+                                  <%= link_to new_knowledge_path, id: "_new", class: "btn btn-success" do %>
+                                         Add New <i class="fa fa-plus"></i>
+                                <% end %>
+                                    <div class="btn-group">
+                                    	<button class="btn dropdown-toggle" data-toggle="dropdown"><span class="fa fa-gear"></span> <span class="caret"></span></button>
+                                        <ul class="dropdown-menu right-edge">
+                                          <li><a href="#">Action</a></li>
+                                          <li><a href="#">Another action</a></li>
+                                          <li><a href="#">Something else here</a></li>
+                                          <li class="divider"></li>
+                                          <li><a href="#">Separated link</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                
+                        	<div class="toolbar pull-right hide" id="toolbar_upload">
+                            	<div class="table-tools-actions">
+                                	<button class="btn"><span class="fa fa-cloud-upload"></span> Upload</button>
+                                    <div class="separator">&nbsp;</div>
+                                </div>
+                            </div>
+                        	<div class="toolbar pull-right hide" id="toolbar_def">
+                            	<div class="table-tools-actions">
+                                	<button class="btn"><span class="fa fa-edit"></span> Edit</button> 
+                                    <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                    <div class="separator">&nbsp;</div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                	<table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Article Name</th>
+                                <th>Category</th>
+                                <th>Statue</th>
+                                <th class="text-center">Has been read</th>
+                                <th class="text-center">Not read yet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <% @knowledges.each do |knowledge| %>
+                              <tr>
+                                <td><%= knowledge.article_name %></td>
+                               <td></td>
+                                <td><%= knowledge.status %></td>
+                                </tr>
+                             <% end %>
+                                <td><a href="knowledge_management_detail.html">Perubahan &amp; Peraturan</a></td> -->
+
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><a href="#" class="active">Knowledge Management</a></li>
+  </ul>
+  <div class="page-title">
+    <i class="fa fa-book"></i>
+    <h3>Knowledge - <span class="semi-bold">Management</span></h3>
+  </div>
+  <div class="grid simple">
+    <div class="grid-title no-border"></div>
+    <div class="grid-body no-border">
+      <div class="row toolbar-block">
+        <div class="col-md-4">
+          <div class="dataTables_filter" id="example3_filter">
+            <div class="controls">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search Record">
+                <span class="input-group-addon ">
+                  <i class="fa fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="toolbar pull-right" id="toolbar_main">
+            <div class="table-tools-actions">
+              <%= link_to new_knowledge_path, id: "_new", class: "btn btn-success" do %>
+                Add New <i class="fa fa-plus"></i>
+              <% end %>
+              <div class="btn-group">
+                <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="fa fa-gear"></span> <span class="caret"></span></button>
+                  <ul class="dropdown-menu right-edge">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="toolbar pull-right hide" id="toolbar_upload">
+              <div class="table-tools-actions">
+                <button class="btn"><span class="fa fa-cloud-upload"></span> Upload</button>
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+              <div class="toolbar pull-right hide" id="toolbar_def">
+                <div class="table-tools-actions">
+                  <button class="btn"><span class="fa fa-edit"></span> Edit</button>
+                  <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                  <div class="separator">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table no-more-tables table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Article Name</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th class="text-center">Has been read</th>
+                <th class="text-center">Not read yet</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @knowledges.each do |knowledge| %>
+                <tr>
+       
+                  <td><%= link_to knowledge.article_name, knowledge_path(knowledge.id) %></td>
+                  <td><%= knowledge.categories.map(&:name).join(', ') %></td>
+                  <td><%= knowledge.status ? 'Publish' : 'Unpublish' %></td>
+                  <td class="text-center"><%= knowledge.knowledge_details.count %></td>
+                  <td class="text-center"><%= @user_count - knowledge.knowledge_details.count %></td>
+                  <td> <%= link_to 'Edit', edit_knowledge_path(knowledge.id) %></td>
+                  
+                </tr>
+             <% end %>
+                <!-- <td><a href="knowledge_management_detail.html">Perubahan &amp; Peraturan</a></td>
+
+                                <td>Peraturan</td>
+                                <td>Publish</td>
+                                <td class="text-center">100</td>
+                                <td class="text-center">40</td>
+                            </tr>
+                           <tr>
+                                <td><a href="knowledge_management_detail.html">Standard Keselamatan Kerja</a></td>
+                                <td>Peraturan</td>
+                                <td>Publish</td>
+                                <td class="text-center">100</td>
+                                <td class="text-center">40</td>
+                            </tr>
+                            <tr>
+                                <td><a href="knowledge_management_detail.html">Document ISO</a></td>
+                                <td>Document</td>
+                                <td>Publish</td>
+                                <td class="text-center">100</td>
+                                <td class="text-center">40</td>
+                            </tr>
+                            <tr>
+                                <td><a href="knowledge_management_detail.html">Manajemen Waktu</a></td>
+                                <td>Manajemen</td>
+                                <td>Publish</td>
+                                <td class="text-center">100</td>
+                                <td class="text-center">40</td>
+                             -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="row dataTables_wrapper">
+                    	<div class="col-md-12">
+                        	<div class="dataTables_paginate paging_bootstrap pagination">
+                            	<ul>
+                                    <li class="prev disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                    <li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li>
+                                    <li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                                </ul>
+                            </div>
+                        	<div class="dataTables_info">Showing <b>1 to 10</b> of 57 entries</div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+    </div>
+  
+</div>
+
+    <script type="text/javascript">
+        $('#text-editor').wysihtml5();
+        $('#select_send').change(function(){
+            var value = $(this).val();
+            if(value == 'emp'){
+                $('#emp_text').show('fast');
+            }else{
+                $('#emp_text').hide('fast')
+            }
+        });
+    </script>

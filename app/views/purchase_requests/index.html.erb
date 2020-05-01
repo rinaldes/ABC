@@ -1,0 +1,69 @@
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Purchasing</li><li>Purchase Request</li><li>List</li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <section id="widget-grid" class=""><!-- widget grid -->
+    <div class="row"><!-- row -->
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><!-- NEW WIDGET START -->
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false"><!-- Widget ID (each widget will need unique ID)-->
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul" style="margin-right: 5px;"></i><%= t(:purchase_request_list) %></h2> <!-- header content -->
+          <div>
+            <div class="widget-body no-padding"><!-- widget content -->
+              <%= link_to raw("'<span class='btn-label'><i class='glyphicon glyphicon-plus'></i></span>#{t(:add_purchase_request)}"), new_purchase_request_path,
+                class: "btn btn-labeled btn-primary edit-btn-primary" if current_user.can_manage_pr? %>
+              <table class="table table-striped table-brequested table-hover" width="100%">
+                <thead>
+                  <tr>
+                    <th>Nomor</th>
+                    <th>
+                      Tanggal
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'code-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'code-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                    <th>
+                      Supplier
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'name-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'name-asc', class: 'sorting' %>
+                      </span>
+                    </th>
+                    <th>
+                      Status
+                      <span style="float: right;">
+                        <%= link_to raw('<i class="fa fa-sort-desc"></i>'), 'javascript:void(0)', id: 'supplier_code-desc', class: 'sorting hide' %>
+                        <%= link_to raw('<i class="fa fa-sort-asc"></i>'), 'javascript:void(0)', id: 'supplier_code-asc', class: 'sorting' %>
+                      </span>
+                    </th><% if current_user.can_manage_pr? %>
+                    <th>Aksi</th><% end %>
+                  </tr>
+                  <tr>
+                    <th class="hasinput">
+                      <%= text_field_tag :number, params[:number], class: 'form-control search' %>
+                    </th>
+                    <th class="hasinput">
+                      <%= text_field_tag :date, params[:date], class: 'form-control search', name: "to_char(date, 'DD-MM-YYYY')" %>
+                    </th>
+                    <th class="hasinput">
+                      <%= text_field_tag :supplier_name, params[:supplier_name], class: 'form-control search', name: 'suppliers.name' %>
+                    </th>
+                    <th class="hasinput">
+                      <%= text_field_tag :status, params[:status], class: 'form-control search' %>
+                    </th>
+                    <% if current_user.can_manage_pr? %>
+                    <th class="hasinput"></th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody id='purchase_request-list'><%= render 'purchase_request_list' %></tbody>
+              </table>
+            </div><!-- end widget content -->
+          </div>
+        </div><!-- end widget -->
+      </article><!-- WIDGET END -->
+    </div>	<!-- end row -->
+  </section><!-- end widget grid -->
+</div>	<!-- end row -->

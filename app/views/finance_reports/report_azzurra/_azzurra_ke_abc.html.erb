@@ -1,0 +1,93 @@
+<h3>Pengiriman Azzurra ke ABC</h3><hr>
+<table class="table table-bordered table-striped" id='stock'>
+  <thead>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Tanggal Bon</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">No Form</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">QTY</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Nominal</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Barang Yang Diterima</th>
+      <th style="text-align: center; vertical-align: middle;">Total</th>
+    </tr>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">QTY</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Nominal Selisih</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Nominal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% total_quantity, total_sup_quantity, total_value, total_value2 = 0, 0, 0 ,0 %>
+    <% if @azzurra_ke_abc.present? %>
+      <% @azzurra_ke_abc.each do |retur| %>
+        <% nom_slsh = (retur.supplier_qty.to_i * retur.value.to_f) %>
+        <tr>
+          <td><%= retur.receiving.date %></td>
+          <td><%= retur.receiving.number %></td>
+          <td><%= retur.quantity %></td>
+          <td><%= retur.total_price %></td>
+          <td><%= retur.supplier_qty %></td>
+          <td><%= nom_slsh - retur.total_price.to_f %></td>
+          <td><%= nom_slsh %></td>
+        </tr>
+        <% total_value += retur.value.to_i %>
+        <% total_value2 += nom_slsh %>
+        <% total_quantity += retur.quantity.to_i %>
+        <% total_sup_quantity += retur.supplier_qty.to_i %>
+      <% end %>
+    <% else %>
+      <tr>
+      <td colspan="7"><%= raw '<center>No Data Available</center>' %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="3" style="text-align: center; vertical-align: middle;">Total Barang <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : Time.now.month] %> <%= params[:year].present? ? params[:year] : Time.now.year %></th>
+      <th rowspan="2" style="text-align: center; vertical-align: middle;"><%= total_value %></th>
+      <th colspan="2" style="text-align: center; vertical-align: middle;">Total Barang <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : Time.now.month] %> <%= params[:year].present? ? params[:year] : Time.now.year %></th>
+      <th rowspan="2" style="text-align: center; vertical-align: middle;"><%= total_value2 %></th>
+    </tr>
+    <tr>
+      <th colspan="3" style="text-align: center; vertical-align: middle;"><%= @azzurra_bon.count %> Bon <%= total_quantity %> Pcs</th>
+      <th colspan="2" style="text-align: center; vertical-align: middle;"><%= @azzurra_bon.count %> Bon <%= total_sup_quantity %> Pcs</th>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h3>Retur Azzurra ke ABC</h3><hr>
+<table class="table table-bordered table-striped" id='stock'>
+  <thead>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Tanggal Terima</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Tanggal Bon</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">No Form</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Kode</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">QTY</th>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Nominal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% total_quantity, total_value = 0, 0 %>
+    <% if @r_azzurra_ke_abc.present? %>
+      <% @r_azzurra_ke_abc.each do |retur| %>
+        <tr>
+          <td><%= retur.product_mutation.received_date %></td>
+          <td><%= retur.product_mutation.mutation_date %></td>
+          <td><%= retur.product_mutation.code %></td>
+          <td><%= retur.product_size.product.article %> <%= retur.product_size.product.colour.name %> <%= retur.product_size.size_detail.size_number %></td>
+          <td><%= retur.quantity %></td>
+          <td><%= retur.value %></td>
+        </tr>
+        <% total_value += retur.value.to_i %>
+        <% total_quantity += retur.quantity.to_i %>
+      <% end %>
+    <% else %>
+      <tr>
+      <td colspan="7"><%= raw '<center>No Data Available</center>' %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="4" style="text-align: center; vertical-align: middle;">Total Return Barang Bulan <%= Date::MONTHNAMES[params[:month].present? ? params[:month].to_i : Time.now.month] %> <%= params[:year].present? ? params[:year] : Time.now.year %></th>
+      <th style="text-align: center; vertical-align: middle;"><%= total_quantity %></th>
+      <th style="text-align: center; vertical-align: middle;"><%= total_value %></th>
+    </tr>
+  </tbody>
+</table>

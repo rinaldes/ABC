@@ -1,0 +1,76 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Data Master</li><li>Edc Bank Account</li><li><%= label %></li>
+  </ol>
+</div>
+<div id="content">
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-edc_bank_account">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Edc Bank Account</h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @edc_bank_account, html: {class: "smart-form", id: "form-update-verify", :autocomplete => "off"} do |f| %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-2 label">Nama Bank</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_field :bank_name, :class => "input-sm" %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">Nomor Akun</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_field :account_number, :class => "input-sm" %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">Nomor Kartu</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_field :card_number, :class => "input-sm" %>
+                      </label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-2 label">Toko <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.select :branch_id, options_for_select(Branch.all.map{|office|[office.office_name, office.id]}), {}, class: "input-sm form-control" %>
+                      </label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">Nama Akun</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_field :account_name, :class => "input-sm" %>
+                      </label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="submit" class="btn btn-primary">
+                  Submit
+                </button>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<script type="text/javascript">
+  $( document ).ready(function() {
+    $('#edc_bank_account_branch_id').select2();
+  });
+</script>

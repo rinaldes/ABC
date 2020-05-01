@@ -1,0 +1,129 @@
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li> 
+    <li><%= link_to "Master Company", admin_companies_path, class: "active" %></li>
+    <li><a onclick="return false;" class="active">Detail</a></li>
+  </ul>
+  
+  <div class="page-title">
+    <% if flash.any? %>
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+      <%- end -%> 
+    <% end %>
+  </div>
+
+  <div class="page-title">  
+    <i class="fa fa-building-o"></i>
+    <h3>Master Company <span class="semi-bold">Detail</span></h3>
+  </div>
+
+  <div class="grid simple">
+    <div class="grid-title no-border"></div>
+    <div class="grid-body no-border">
+    	<div class="gen-form full-form">
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Company Code</label>
+          <div class="controls col-sm-4">            
+            <input type="text" class="full-width" value="<%= @company.code.present? ? @company.code : '-' %>" disabled>
+          </div>
+        </div>
+
+      	<div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Company Name</label>
+          <div class="controls col-sm-4">						 
+            <input type="text" class="full-width" value="<%= @company.name.present? ? @company.name : '-' %>" disabled>
+          </div>
+        </div>
+                      
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Phone Number</label>
+          <div class="controls col-sm-4">						 
+            <input type="text" class="full-width" value="<%= @company.phone.present? ? @company.phone : '-' %>" disabled>
+          </div>
+        </div>
+
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Address</label>
+          <div class="controls col-sm-4">						 
+            <input type="text" class="full-width" value="<%= @company.address.present? ? @company.address : '-' %>" disabled/ >
+            <br /><br />
+            <div class="row">
+              <div class="col-xs-6">
+                <input type="text" class="full-width" value="<%= @company.province.name rescue '-' %>" disabled/ >
+              </div>
+              <div class="col-xs-6">
+						    <input type="text" class="full-width" value="<%= @company.city.name rescue '-' %>" disabled/ >
+							</div>
+						</div>
+          </div>
+        </div>
+                      
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Owner</label>
+          <div class="controls col-sm-4">						 
+            <input type="text" class="full-width" value="<%= @company.owner_name.present? ? @company.owner_name : '-' %>" disabled>
+          </div>
+        </div>
+
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Email</label>
+          <div class="controls col-sm-4">						 
+            <input type="text" class="full-width" value="<%= @company.com_email.present? ? @company.com_email : '-' %>" disabled>
+          </div>
+        </div>
+
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Joining Date</label>
+          <div class="controls col-sm-4">            
+            <input type="text" class="full-width" value="<%= @company.joined_at.present? ? @company.joined_at.strftime("%d/%m/%Y") : '-' %>" disabled>
+          </div>
+        </div>
+
+        <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Status</label>
+          <div class="controls col-sm-4">            
+            <input type="text" class="full-width" value="<%= @company.is_active ? 'Active' : 'Inactive' %>" disabled>
+          </div>
+        </div>
+
+	      <div class="form-group row edit-field">
+          <label class="form-label col-sm-2">Logo</label>
+          <div class="controls col-sm-4">						 
+           	<div class="def-img row">
+              <%= image_tag @company.com_logo_url(:thumb), onerror: "this.src='/assets/profiles/user_def.png'", class: "col-xs-6", alt: "logo" %>
+           	</div>
+          </div>
+	      </div>
+
+	      <hr />
+				<h5 class="bold col-md-12 m-b-40"><i class="fa fa-user"></i> Username Detail</h5>
+				<div class="gen-form alert alert-info" action="">
+					<div class="clearfix m-b-20"></div>
+					<div class="form-group row edit-field">
+						<label class="form-label col-sm-2">Username</label>
+						<div class="controls col-sm-4">						 
+							<input type="text" class="full-width" value="<%= @company.users.first.username rescue "-" %>" disabled>
+						</div>
+					</div>
+					<div class="form-group row edit-field">
+						<label class="form-label col-sm-2">Email</label>
+						<div class="controls col-sm-4">						 
+							<input type="text" class="full-width" value="<%= @company.users.first.email rescue "-" %>" disabled>
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+		<div class="form-actions">
+			<div class="pull-right">
+				<%= link_to admin_company_path(@company), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-cons" do %>
+					<i class="fa fa-trash-o"></i> Delete
+				<% end %>
+				<%= link_to edit_admin_company_path(@company), class: "btn btn-primary btn-cons" do %>
+					Edit <i class="fa fa-pencil"></i>
+				<% end %>
+			</div>
+		</div>
+  </div>
+</div>

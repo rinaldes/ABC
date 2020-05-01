@@ -1,0 +1,198 @@
+<%= wicked_pdf_stylesheet_link_tag "pdf.css" -%>
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <div> <!-- widget div-->
+          <div class="widget-body no-padding"> <!-- widget content -->
+<b><h2>Return to Supplier
+<%= image_tag "#{Rails.root}/public/img/logo_nuansabaru.png", alt: "logo", style: "float:right" %></h2></b>
+
+<b><%= @entity.name %></b><br />
+<p style='font-size: 11px'><b>NPWP:</b> 02.649.040.9-415.000</p>
+<p style='font-size: 11px'><b>ADDRESS:</b><%= @entity.address %></p>
+
+<hr />
+
+<table id="table-info">
+  <tr>
+    <td width="55%"><label>Return No</label>:<span><%= @returns_to_supplier.number rescue ''%></span></td>
+    <td width="5"></td>
+    <td width="40%"><label>Return Date</label>:<span><%= @returns_to_supplier.date rescue ''%></span></td>
+  </tr>
+  <tr>
+    <td width="55%"><label>Receive No</label>:<span><%= @receiving.number rescue ''%></span></td>
+    <td width="5"></td>
+    <td width="40%"><label>Receive Date</label>:<span><%= @receiving.date rescue ''%></span></td>
+  </tr>
+  <tr>
+    <td width="55%"><label>Status</label>:<span><%= @returns_to_supplier.status rescue ''%></span></td>
+    <td width="5"></td>
+    <td width="40%"></td>
+  </tr>
+  <tr></tr>
+  <tr>
+    <td><b>SUPPLIER</b><hr /></td>
+  </tr>
+  <tr>
+    <td><label>Name</label>:<span><%= @supplier.name %></span></td>
+  </tr>
+  <tr>
+    <td><label>Address</label>:<span><%= @supplier.address %></span></td>
+  </tr>
+  <tr></tr>
+  <tr>
+    <td><label>City</label>:<span><%= @supplier.city  %></span></td>
+  </tr>
+  <tr>
+    <td><label>Phone</label>:<span><%= @supplier.phone  %></span></td>
+  </tr>
+  <tr>
+    <td><label>Fax</label>:<span><%= @supplier.fax  %></span></td>
+  </tr>
+  <tr>
+    <td><label>Email</label>:<span><%= @supplier.email  %></span></td>
+  </tr>
+  <tr>
+    <td><label>CP</label>:<span><%= @supplier.contact_people.first.name rescue '' %></span></td>
+  </tr>
+</table>
+
+<br />
+
+
+
+
+
+
+
+
+
+
+
+
+            <br/>
+            <section class="col col-md-12">
+              <div class="row">
+                <table class="table" border="1" width="100%" id="orders">
+                  <thead>
+                    <tr>
+                      <td><b><center>BRAND</center></b></td>
+                      <td><b><center>ARTICLE</center></b></td>
+                      <td><b><center>COLOR</center></b></td>
+                      <td><b><center>SIZE</center></b></td>
+                      <td><b><center>TOTAL QTY</center></b></td>
+                      <td><b><center>TOTAL PRICE</center></b></td>
+                    </tr>
+                  </thead>
+                  <tbody id='list_detail'>
+                    <% total = 0 %>
+                    <% @returns_to_supplier.returns_to_supplier_details.group_by{|prd|prd.product_size.product_id}.each do |prd| %>
+                      <% detail = prd[1][0].product_size %>
+                      <% product = detail.product %>
+                      <tr>
+                        <td><%= product.brand.name rescue '' %></td>
+                        <td><%= product.article rescue '' %></td>
+                        <td><%= product.colour.name rescue '' %></td>
+                        <td>
+                          <table>
+                            <tr>
+                              <% prd[1].group_by{|x|x.product_size.size_detail.size_number}.map{|a|[a[0], a[1].map(&:quantity).compact.sum]}.each do |prod| %>
+                                <td><%= prod[0] %></td>
+                              <% end %>
+                            </tr>
+                            <tr>
+                              <% prd[1].group_by{|x|x.product_size.size_detail.size_number}.map{|a|[a[0], a[1].map(&:quantity).compact.sum]}.each do |prod| %>
+                                <td><%= prod[1] %></td>
+                              <% end %>
+                            </tr>
+                          </table>
+                        </td>
+                        <td style='text-align: center'><%= format_currency prd[1].map(&:quantity).compact.sum rescue '' %></td>
+                        <td style='text-align: right'><%= format_currency product.cost_of_products.to_f*prd[1].map(&:quantity).compact.sum rescue '' %></td>
+                      </tr>
+                      <% total += (product.cost_of_products.to_f*prd[1].map(&:quantity).compact.sum) %>
+                    <% end %>
+                    <tr>
+                      <td colspan='4'></td>
+                      <td class='total' style='text-align: center'><%= format_currency @returns_to_supplier.returns_to_supplier_details.map{|a|a.quantity}.compact.sum %></td>
+                      <td class='total' style='text-align: right'><%= format_currency total %></td>
+                    </tr>
+                  </tbody>
+                </table>
+  <table id="table-info">
+    <% if @returns_to_supplier.present? %>
+      <tr>
+        <td>Note: <%= @returns_to_supplier.note %></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>CREATED BY</td>
+      <td></td>
+      <td></td>
+      <td>APPROVED BY</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><label></label></td>
+      <td></td>
+      <td></td>
+      <td><label>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</label></td>
+      <td></td>
+      <td></td>
+      <td><label>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</label></td>
+    </tr>
+  </table>
+  <table id="table-info">
+    <tr>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><label>Print By</label>:<span><%= current_user.fullname %></span></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><label>Date</label>:<span><%= Time.now.strftime('%Y-%m-%d %H:%M:%d') %></span></td>
+    </tr>
+  </table>
+              </div>
+            </section>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->

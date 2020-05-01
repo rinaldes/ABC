@@ -1,0 +1,58 @@
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li>
+    <li><a onclick="return false;" class="active">Dashboard</a></li>
+  </ul>
+
+	<div class="page-title">
+		<% if flash.any? %>
+			<%- flash.each do |name, msg| -%>
+				<%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+			<%- end -%> 
+		<% end %>
+	</div>
+		
+	<div class="page-title">
+    <i class="icon-custom-home"></i>
+    <h3>Company <span class="semi-bold">Summary</span></h3>  
+		<!-- <h3 class="text-info">Company <strong>Summary</strong></h3> -->
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="grid simple">
+				<div class="grid-body no-border">
+					<h4><span class="semi-bold">Employee </span> of Company</h4>
+					<!-- <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet.</p> -->
+					<br>
+					<div id="company_chart1" style="height:250px"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	<% if @companies.count > 0 %>
+		// Moris Charts - Line Charts
+		Morris.Bar({
+		  element: 'company_chart1',
+		  data: [
+		  <% ymax = 4 %>
+		  <% @companies.each do |company| %>
+				{ x: "<%= company.name %>", y: <%= company.employees.count %> },
+		  	<% ymax = company.employees.count if company.employees.count > ymax %>
+		  <% end %>
+		  ],
+		  xkey: 'x',
+		  ykeys: ['y'],
+		  labels: ['Employees'],
+		  // barColors:['#32D2C9','#fdd01c', '#ED5D5D', '#0090d9']
+		  barColors: ['#32D2C9'],
+		  xLabelMargin: 10,
+		  <% modvalue = ymax%4 %>
+		  ymax: <%= modvalue==0 ? ymax : ymax+(4-modvalue) %>,
+		  // xLabelAngle: 30
+		});
+	<% end %>
+</script>

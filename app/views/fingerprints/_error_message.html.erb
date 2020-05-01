@@ -1,0 +1,6 @@
+<h2><%= pluralize(fingerprint.errors.count, "error") %> prohibited this fingerprint from being saved:</h2>
+<ul>
+<% fingerprint.errors.full_messages.each do |message| %>
+  <li><%= message %></li>
+<% end %>
+</ul>

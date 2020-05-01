@@ -1,0 +1,12 @@
+<div id="question-preview" class="clearfix">
+  <% if session["#{current_user.id.to_s}"]["question"].present? %>
+  	<% session["#{current_user.id.to_s}"]["question"].each do |id, question| %>
+  		<%= render "/questions/index", question: question, id: id, disabled: true %>
+    <% end %>
+	<% end %>
+</div>
+<div id="set-question-form"></div>
+<%= link_to "Add Question", add_question_surveys_path, remote: true, class: "btn btn-primary" %>
+<div id="close-question-link" class="hide close-link">
+  <%= link_to "Cancel", add_question_surveys_path(cancel: true), remote: true, class: "btn btn-primary" %>
+</div>

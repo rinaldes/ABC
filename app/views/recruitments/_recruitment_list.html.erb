@@ -1,0 +1,42 @@
+<table class="table no-more-tables table-striped table-hover">
+    <thead>
+        <tr>
+            <th>No Recruitment</th>
+            <th>Requester</th>
+            <th>Organization</th>
+            <th>Man Power</th>
+            <th>Due Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    	<% if recruitments.count > 0 %>
+				<% recruitments.each do |recruitment| %>
+                <tr class="new-rec">
+                    <td><%= link_to recruitment.no_recruitment , edit_recruitment_path(recruitment) %></td>
+                    <td><%= recruitment.requester%></td>
+                    <td><%= recruitment.organization%></td>
+                    <td><%= recruitment.recruitment_details.count %></td>
+                    <td><%= recruitment.due_date%></td>
+                    <td><%= recruitment.status%></td>
+                </tr>
+            <% end %>
+        <% else %>	
+        	<tr>
+		        <td colspan="6" align="center">No recruitment data found!</td>
+		    </tr>
+        <% end %>
+    </tbody>
+</table>
+
+<div class="row dataTables_wrapper">
+	<div class="col-md-12">
+    	<div class="dataTables_paginate paging_bootstrap pagination">
+        	<%= pagination_links(recruitments, :params => {:controller => controller_name, :action => action_name, :recruitment => {:name => (params[:recruitment][:name] if params[:user].present?), :period_start => (params[:recruitment][:period_start] if params[:user].present?), :period_end => (params[:recruitment][:period_end] if params[:user].present?), :status => (params[:recruitment][:status] if params[:user].present?)}}) %>
+        </div>
+        <% base = (params[:page].present? ? params[:page].to_i-1 : 0)*recruitments.per_page %>
+    	<% if recruitments_count > 0 %>
+	        <div class="dataTables_info">Showing <b><%= base+1 %> to <%= base+recruitments.per_page %></b> of <%= @recruitments_count %> entries</div>
+	    <% end %>
+    </div>
+</div>

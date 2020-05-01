@@ -1,0 +1,243 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Purchasing</li><li>Purchase Request</li><li><%= @purchase_request.number %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header>
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= @purchase_request.number %></h2>
+        </header>
+        <div> <!-- widget div-->
+          <div class="widget-body no-padding"> <!-- widget content -->
+            <%= form_for @purchase_request, html: {class: "smart-form", id: "form_request"} do |f| %>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-2 label">TGL.PR</label>
+                      <label class="col-md-10 input custom-input-box"><%= @purchase_request.date %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">No.PR </label>
+                      <label class="col-md-10 input custom-input-box"><%= @purchase_request.number %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">PR Note</label>
+                      <label class="col-md-10 textarea custom-input-box"><%= @purchase_request.note || '-' %></label>
+                    </section>
+                  </section>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-2 label">SUP.CODE</label>
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.code %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">SUPPLIER </label>
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.name %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-2 label">ALAMAT </label>
+                      <label class="col-md-10 input custom-input-box"><%= @supplier.address %></label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <fieldset>
+                <div class="row">
+                  <%= render 'shared/table_products', object_details: @purchase_request.purchase_request_details %>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+                <%= link_to 'Print To PDF', print_to_pdf_purchase_request_url(@purchase_request), class: 'btn btn-primary' %>
+              </footer>
+              <div id='product_detail_tobe_submitted' style='display: none'></div><!-- end widget div -->
+            <% end %>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+<div id='product_detail'>
+  <% @purchase_request.purchase_request_details.group_by{|prd|prd.product_size.product_id}.each_with_index { |prd, i| %>
+    <% product = prd[1][0].product_size.product %>
+    <% quantities = prd[1].sort_by{|l|l.product_size.size_detail.size_number}.map(&:quantity) %>
+    <% product_sizes = product.product_sizes.sort_by{|product_size|product_size.size_detail.size_number} %>
+    <% list_product = @list_product[product.id].sort_by{|l|l.product_size.size_detail.size_number} %>
+    <% key = "#{Time.now}#{i}" %>
+    <div class="modal fade" id="myModal<%= product.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <style type="text/css">
+        .label{
+          color: #151313;
+        }
+      </style>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Size Detail</h4>
+          </div>
+          <div class="modal-body" style="color:#5E5E5E">
+            <div class="row">
+              <%= render partial: 'shared/product_info', locals: {product: product} %>
+              <section class="col col-md-12">
+                <label class="col-md-12 input custom-input-box">
+                  <table class="table table-striped table-bordered" id="table_size">
+                    <thead>
+                      <tr>
+                        <th>Size</th>
+                        <% list_product.each_with_index do |detail, i| %>
+                          <td><%= detail.product_size.size_detail.size_number.to_s rescue '' %></td>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>Min Stock</th>
+                        <% list_product.each_with_index do |detail, i| %>
+                          <td><%= detail.min_stock.to_i %></td>
+                        <% end %>
+                      </tr>
+                      <tr>
+                        <th>Available Quantity</th>
+                        <% list_product.each_with_index do |detail, i| %>
+                          <td><%= detail.available_qty.to_i %></td>
+                        <% end %>
+                      </tr>
+                      <tr>
+                        <th>Requested Quantity</th>
+                        <% product_sizes.each_with_index do |product_size, i| %>
+                          <td><%= quantities[i] %></td>
+                        <% end %>
+                      </tr>
+                      <tr>
+                        <th>Approved Quantity</th>
+                        <% product_sizes.each_with_index do |product_size, i| %>
+                          <td><%= PurchaseRequestDetail.find_by_product_size_id_and_purchase_request_id(product_size.id, @purchase_request.id).approved_qty %></td>
+                        <% end %>
+                      </tr>
+                    </tbody>
+                  </table>
+                </label>
+              </section>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+  <% } %>
+</div><!-- end widget div -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    clone_details()
+    autocomplete_barcode()
+    $("#supplier_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      select: function( event, ui ) {
+        $('#supplier_code').val(ui.item.code)
+        $('#purchase_request_supplier_id').val(ui.item.id)
+        $('#alamat').val(ui.item.address)
+      },
+      minLength: 1
+    });
+    reset_form();
+
+    <% if params[:action] == 'edit' %>
+      $("#purchase_request_supplier_id").val("<%= @supplier.id rescue '' %>");
+      $("#supplier_name").val("<%= @supplier.name rescue '' %>")
+      $("#alamat").val("<%= @supplier.address rescue '' %>");
+      $("#supplier_code").val("<%= @supplier.code rescue '' %>");
+    <% end %>
+  });
+
+  function getProduct(){
+    $.ajax({
+      url: '<%= get_product_purchase_requests_path %>',
+      type: 'get',
+      data: {
+        barcode: $("#number").val()
+      }
+    })
+  }
+
+  function getSupplier(){
+    $.ajax({
+      url: '<%= get_supplier_purchase_requests_path %>',
+      type: 'get',
+      data: {
+        name: $("#supplier_name").val()
+      }
+    })
+  }
+
+  function beforeSave(){
+    var good_id = [];
+    var tot = $('#request tbody tr').length;
+    if(tot != 0){
+      for(var y=0; y < tot; y+=1){
+        good_id.push($("#request tbody tr:eq("+ y +") td:eq(0) span").text())
+      }
+      $("#good_list").val(good_id.toString());
+      clone_inputs()
+      setTimeout(function(){$('form').submit()}, 1000);
+    }else{
+      alert('Insert Data First!')
+      return false;
+    }
+  }
+
+  function removeList(event){
+    $(event.target).parent().parent().remove();
+  }
+
+
+  function reset_form(){
+    document.getElementById("form_request").reset();
+    $("#request tboby").html("");
+  }
+
+  function get_size(product_id, quantity){
+    $.ajax({
+        url: '/purchase_requests/get_size',
+        type: 'get',
+        data: {
+          product_id: product_id,
+          quantity : quantity
+        }
+    })
+  }
+
+  function changeBarcode(barcode){
+    $("#number").val(barcode);
+    getProduct()
+    $("#myModal").modal('hide');
+  }
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

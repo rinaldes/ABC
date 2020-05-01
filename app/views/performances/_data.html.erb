@@ -1,0 +1,30 @@
+<% if params[:action] != "update" %>
+    <tr id="data_<%= performance.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= performance.id %>" type="checkbox" value="<%= performance.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= performance.id %>"></label>
+        </div>
+    </td>
+    <td><%= performance.date_of_performance %></td>
+    <td>
+        <% (performance.rating.to_i).times do |x| %>
+            <%= radio_button :rating, "#{x}#{performance.id}", "", :class => "star rating2", :disabled => true %>
+        <% end %>
+        <% (5-performance.rating.to_i).times do |x| %>
+            <%= radio_button :rating2, "#{x}#{performance.id}", "", :class => "star rating2", :checked => false, :disabled => true %>
+        <% end %>
+    </td>
+    <td><%= performance.area_of_strength %></td>
+    <td><%= performance.area_of_development %></td>
+    <td><%= performance.rater %></td>
+    <td colspan='2'><%= performance.position_rater %></td>
+<% if params[:action] != "update" %>
+    </tr>
+<% end %>
+<script type="text/javascript">
+        $(function(){
+          $('input[type=radio].star').rating();
+        })
+</script> 

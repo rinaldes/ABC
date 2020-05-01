@@ -1,0 +1,18 @@
+<% if params[:action] != "update_family" %>
+    <tr id="data_<%= family.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= family.id %>" type="checkbox" value="<%= family.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= family.id %>"></label>
+        </div>
+    </td>
+    <td><%= family.status %></td>
+    <td><%= family.name %></td>
+    <td><%= family.address %></td>
+    <td><%= family.education %></td>
+    <td><%= family.work %></td>
+    <td colspan='2'><%= family.birthday %></td>
+<% if params[:action] != "update_family" %>
+    </tr>
+<% end %>

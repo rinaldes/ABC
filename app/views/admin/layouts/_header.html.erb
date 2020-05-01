@@ -1,0 +1,83 @@
+<div class="header navbar navbar-inverse "> 
+  <div class="navbar-inner">
+    <div class="header-seperation" style="display:none">
+      <ul class="nav pull-left notifcation-center" id="main-menu-toggle-wrapper" style="display:none">
+        <li class="dropdown">
+          <a id="main-menu-toggle" href="#main-menu"  class="" >
+            <div class="iconset top-menu-toggle-white"></div>
+          </a>
+        </li>
+      </ul>
+    
+      <%= link_to admin_dashboard_path do %>
+        <img src="/assets/logo.png" class="logo" alt="" />
+      <% end %>
+    </div>
+   
+    <div class="header-quick-nav" > 
+      <div class="pull-left">
+        <ul class="nav quick-section">
+          <li class="quicklinks">
+            <a href="javascript:void(0)" class="" id="layout-condensed-toggle" >
+              <i class="fa fa-bars"></i>
+            </a>
+          </li>
+        </ul>
+        <%= form_tag search_admin_companies_path, class: "nav quick-section" do %>
+          <ul class="nav">
+            <li class="m-r-10 input-prepend inside search-form no-boarder">
+              <span class="add-on">
+                <span class="iconset top-search"></span>
+              </span>
+              <input name="q" type="text"  class="no-boarder " value="<%= params[:q] %>" placeholder="Search Company">
+            </li>
+          </ul>
+        <% end %>
+      </div>
+    
+      <div class="pull-right">
+        <!-- <ul class="nav quick-section">
+          <li class="quicklinks">
+            <a data-toggle="dropdown" data-placement="bottom" class="dropdown-toggle  pull-right " href="#" id="my-task-list">
+              <div class="iconset icon-custom-message">
+                <span class="badge badge-important animated bounceIn">1</span>
+              </div>
+            </a>
+            <div id="notification-list" class="hide">
+              <div class="notification-messages danger">
+                <div class="iconholder">
+                  <i class="icon-warning-sign"></i>
+                </div>
+                <div class="message-wrapper">
+                  <div class="heading"> Server load limited </div>
+                  <div class="description"> Database server has reached its daily capicity </div>
+                  <div class="date pull-left"> 2 mins ago </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </li>
+          <li class="quicklinks"><span class="h-seperate"></span></li>
+        </ul> -->
+        <div class="chat-toggler"> 
+          <a href="#" class="dropdown-toggle" data-placement="bottom"  data-content='' data-toggle="dropdown" data-original-title="Notifications">
+            <div class="user-details">
+              <div class="username">
+                <%= current_admin.first_name %> <span class="bold"><%= current_admin.last_name %></span>
+              </div>
+            </div>
+            <div class="profile-pic">
+              <img alt="" src="<%= current_admin.image_url(:mini) if current_admin.image? %>" onerror="this.src='/assets/profiles/user_def.png'" width="35" height="35">
+            </div>
+            <div class="iconset top-down-arrow"></div>
+          </a>
+          <ul class="dropdown-menu  pull-right" role="menu" aria-labelledby="user-options">
+            <li>
+              <%= link_to("<i class='fa fa-power-off'></i>&nbsp;&nbsp;Log Out".html_safe, admin_logout_path) %> 
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

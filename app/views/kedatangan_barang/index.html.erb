@@ -1,0 +1,122 @@
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+          <h2 style="color:#BF1E2D; margin-top:-5px;"><i class="fa fa-list-ul"></i> Report Kedatangan Barang</h2>
+          <div style='overflow-y: hidden'>
+            <div class="widget-body no-padding">
+              <%= link_to export_finance_reports_sisa_hutang_dagang_index_path(format: "xlsx"), :class => "btn btn-labeled btn-primary edit-btn-primary", disabled: true do %>
+                <span class="btn-label"><i class="glyphicon glyphicon-download"></i></span>Export XLSX
+              <% end %>
+            </div>
+            <table class="table table-bordered" width="100%">
+              <thead>
+                 <tr>
+                  <th rowspan=2 style="text-align: center; vertical-align: middle;">No Supplier</th>
+                  <th rowspan=2 style="text-align: center; vertical-align: middle;">Nama Supplier</th>
+                  <th rowspan=2 style="text-align: center; vertical-align: middle;">Merk</th>
+                  <th rowspan=2 style="text-align: center; vertical-align: middle;">Kategori Grup</th>
+                  <th rowspan=2 style="text-align: center; vertical-align: middle;">Sistem</th>
+                  <th colspan=3 style="text-align: center; vertical-align: middle;">PO Request</th>
+                  <th colspan=3 style="text-align: center; vertical-align: middle;">PO Sales</th>
+                  <th colspan=3 style="text-align: center; vertical-align: middle;">Non PO</th>
+                  <th colspan=2 style="text-align: center; vertical-align: middle;">Global PO</th>
+                  <th colspan=4 style="text-align: center; vertical-align: middle;">Total Receive</th>
+                  <th colspan=2 style="text-align: center; vertical-align: middle;">Sisa PO</th>
+                </tr>
+                <tr>
+                  <% 3.times do %>
+                    <th style="text-align: center; vertical-align: middle;">Tanggal</th>
+                    <th style="text-align: center; vertical-align: middle;">QTY</th>
+                    <th style="text-align: center; vertical-align: middle;">Cost</th>
+                  <% end %>
+                  <th style="text-align: center; vertical-align: middle;">QTY</th>
+                  <th style="text-align: center; vertical-align: middle;">Cost</th>
+                  <th style="text-align: center; vertical-align: middle;">Tanggal</th>
+                  <th style="text-align: center; vertical-align: middle;">QTY</th>
+                  <th style="text-align: center; vertical-align: middle;">Cost</th>
+                  <th style="text-align: center; vertical-align: middle;">Value</th>
+                  <th style="text-align: center; vertical-align: middle;">QTY</th>
+                  <th style="text-align: center; vertical-align: middle;">Cost</th>
+                </tr>
+              </thead>
+              <tbody id='account_payable_list'>
+                <% total_qty = 0 %>
+                <% non_po_qty = 0 %>
+                <% pr_qty = 0 %>
+                <% pr_amt = 0 %>
+                <% non_po_amt = 0 %>
+                <% total_po_amt = 0 %>
+                <% @receivings.each { |receiving| %>
+                  <% purchase_order = receiving.purchase_order %>
+                  <% supplier = receiving.supplier %>
+                  <% if purchase_order.present? %>
+                    <% pr = PurchaseRequest.find_by_purchase_order_id(purchase_order.id) %>
+                  <% end %>
+                  <% product = receiving.receiving_details.first.product_size.product %>
+                  <tr>
+                    <td><%= supplier.code %></td>
+                    <td><%= supplier.name %></td>
+                    <td><%= product.brand.name %></td>
+                    <td><%= product.department.name %></td>
+                    <td><%= product.status3 %></td>
+                    <td><%= pr.date rescue nil %></td>
+                    <td><%= pr.purchase_request_details.map(&:quantity).compact.sum rescue '' %></td>
+                    <% pr_qty += (pr.purchase_request_details.map(&:quantity).compact.sum rescue 0) %>
+                    <td><%= format_currency purchase_order.grand_total if pr.present? %></td>
+                    <% pr_amt += purchase_order.grand_total if pr.present? %>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <% if receiving.purchase_order_id.present? %>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td><%= purchase_order.total_qty %></td>
+                      <% total_qty +=purchase_order.total_qty %>
+                      <td><%= format_currency purchase_order.grand_total %></td>
+                      <% total_po_amt += purchase_order.grand_total %>
+                    <% else %>
+                      <td><%= receiving.date %></td>
+                      <td><%= format_currency receiving.received_qty %></td>
+                      <% total_qty += receiving.received_qty %>
+                      <% non_po_qty += receiving.received_qty %>
+                      <td><%= format_currency receiving.total %></td>
+                      <% non_po_amt += receiving.total %>
+                      <td><%= format_currency receiving.received_qty %></td>
+                      <td><%= format_currency receiving.total %></td>
+                      <% total_po_amt += receiving.total %>
+                    <% end %>
+                    <td><%= receiving.date %></td>
+                    <td><%= format_currency receiving.received_qty %></td>
+                    <td><%= format_currency receiving.total %></td>
+                    <td><%= format_currency receiving.total_value %></td>
+                    <td><%= format_currency purchase_order.total_qty-receiving.received_qty rescue '' %></td>
+                    <td><%= format_currency purchase_order.grand_total-receiving.total rescue '' %></td>
+                  </tr>
+                <% } %>
+                <tr>
+                  <th colspan=5 style="text-align: center; vertical-align: middle;">Total</th>
+                    <th></th>
+                    <th><%= pr_qty %></th>
+                    <th><%= format_currency pr_amt %></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th><%= non_po_qty %></th>
+                    <th><%= format_currency non_po_amt %></th>
+                    <th><%= total_qty %></th>
+                    <th><%= format_currency total_po_amt %></th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,93 @@
+<div class="container-fluid">
+  <ul class="breadcrumb">
+    <li><p>YOU ARE HERE</p></li>
+    <% if action_name == "search" %>
+      <li><%= link_to "Master Company", admin_companies_path, class: "active" %></li>
+      <li><a onclick="return false;" class="active">Search</a></li>
+    <% else %>
+      <li><a onclick="return false;" class="active">Master Company</a></li>
+    <% end %>
+  </ul>
+  
+  <div class="page-title">
+    <% if flash.any? %>
+      <%- flash.each do |name, msg| -%>
+        <%= content_tag :h3, msg, class: "flash_content text-info" if msg.is_a?(String) %>
+      <%- end -%> 
+    <% end %>
+  </div>
+
+  <div class="page-title">  
+    <i class="fa fa-building-o"></i>
+    <h3>Master <span class="semi-bold">Company</span></h3>  
+  </div>
+
+  <div class="grid simple">
+    <div class="grid-title no-border"></div>
+    <div class="grid-body no-border">
+      <div class="row toolbar-block">
+        <div class="col-md-8 col-md-offset-4">
+          <div class="toolbar pull-right" id="toolbar_main">
+            <div class="table-tools-actions">
+              <%= link_to new_admin_company_path, class: "btn btn-success" do %>
+                <span class="fa fa-plus"></span> Add New
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="table no-more-tables table-striped table-hover">
+        <thead>
+          <tr>
+            <th width="10%">Company Code</th>
+            <th width="10%">Joining Date</th>
+            <th width="10%">Company Name</th>
+            <th width="14%">Address</th>
+            <th width="9%">Owner</th>
+            <th width="13%">Phone Number</th>
+            <th width="10%">Email</th>
+            <th width="12%">Username Master</th>
+            <th width="5%">Status</th>
+            <th width="5%">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @companies.count != 0 %>
+            <% @companies.each do |company| %>
+              <tr>
+                <td><%= link_to company.code.present? ? company.code : "-", admin_company_path(company) %></td>
+                <td><%= company.joined_at.present? ? company.joined_at.strftime("%d/%m/%Y") : "-" %></td>
+                <td><%= company.name.present? ? company.name : "-" %></td>
+                <td><%= company.address.present? ? company.address : "-" %></td>
+                <td><%= company.owner_name.present? ? company.owner_name : "-" %></td>
+                <td><%= company.phone.present? ? company.phone : "-" %></td>
+                <td><%= company.com_email.present? ? company.com_email : "-" %></td>
+                <td><%= company.users.first.username rescue "no user" %></td>
+                <td><%= ("<span class='badge badge-" + (company.is_active ? "success" : "danger") + "'>#{company.is_active ? 'Active' : 'Inactive'}</span>").html_safe rescue "-" %></td>
+                <td><%= company.email_confirmed ? "-" : (link_to "<span class=\"badge badge-primary\" title=\"Resend confirmation email\">Confirm</span>".html_safe, resend_admin_company_path(company)) %></td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan='9'>No Company data found!</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="row dataTables_wrapper">
+        <div class="col-md-12">
+          <% if @companies.total_pages > 1 %>
+            <div class="dataTables_paginate paging_bootstrap pagination">
+              <%= pagination_links(@companies, :params => {:controller => controller_name, :action => action_name, :name => params[:name]}) %>
+            </div>
+          <% end %>
+          <% current_page = params[:page].present? ? params[:page].to_i*@companies.per_page : 1*@companies.per_page %>
+          <div class="dataTables_info">Showing <b><%= @companies.total_entries > 0 ? @companies.offset*@companies.per_page+1 : 0 %> to <%= current_page > @companies.total_entries ? @companies.total_entries : current_page %></b> of <%= @companies.total_entries %> entries</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

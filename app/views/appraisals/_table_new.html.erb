@@ -1,0 +1,16 @@
+<table class="table no-more-tables table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Component</th>
+            <th>Bobot</th>
+            <th>Indicator</th>
+            <th>Archifment</th>
+            <th>Indicator</th>
+        </tr>
+    </thead>
+    <tbody id='appraisal_components'>
+      	<%= f.fields_for :appraisal_components do |appraisal_component| %>
+        	<%= render 'appraisal_component_fields', :f => appraisal_component %>
+        <% end %>
+    </tbody>
+</table>

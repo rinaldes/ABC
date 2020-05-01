@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Violation Type</Data></Cell>
+        <Cell><Data ss:Type="String">Violation Description</Data></Cell>
+        <Cell><Data ss:Type="String">Start</Data></Cell>
+        <Cell><Data ss:Type="String">Due Date</Data></Cell>
+        <Cell><Data ss:Type="String">Punishment</Data></Cell>
+      </Row>
+    <% @violation_details.each do |violation_detail| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= violation_detail.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= violation_detail.violation_type %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= violation_detail.violation_description %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= violation_detail.start %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= violation_detail.due_date %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= violation_detail.punishment %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

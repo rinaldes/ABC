@@ -1,0 +1,89 @@
+<% id ||= 0 %>
+<% is_background = params[:is_background].present? ? params[:is_background].to_s : 'false' %>
+<% current_value = session[current_user.id.to_s]['pages'][id] %>
+
+<%= form_tag id == 0 ? set_page_surveys_path : manage_page_post_surveys_path(:update, id: id, is_background: is_background), class: "form-horizontal", :multipart => true, id: "new_set_page", remote: true do %>
+	<%= tag(:input, :type => "hidden", :name => request_forgery_protection_token.to_s, :value => form_authenticity_token) %>
+	<div class="form-group <%= 'hide' if is_background=='true' %>">
+    <%= label_tag "pages[title]", "Page title", class: "col-sm-2 control-label" %>
+    <div class="col-sm-8">
+      <%= text_field_tag "pages[title]", current_value.present? ? current_value['title'] : "", class: 'form-control', :required => true, placeholder: "Page title" %>
+    </div>
+  </div>
+
+  <div class="form-group <%= 'hide' if is_background=='true' %>">
+    <%= label_tag "pages[description]", "Page description", class: "col-sm-2 control-label" %>
+    <div class="col-sm-8">
+      <%= text_area_tag "pages[description]", current_value.present? ? current_value['description'] : "", class: 'form-control', :required => true, placeholder: "Page description" %>
+    </div>
+  </div>
+
+  <div class="form-group <%= 'hide' unless is_background=='true' %>">
+    <%= label_tag "pages[background]", "Background", class: "col-sm-2 control-label" %>
+    <div class="col-sm-8">
+      <%= file_field_tag "pages[background]", { value: (current_value.present? ? current_value['background'] : ""), class: 'form-control', placeholder: "Background"} %>
+      <span class="help-block">Leave it blank if you want background using color</span>
+    </div>
+  </div>
+
+  <div class="form-group <%= 'hide' unless is_background=='true' %>">
+    <%= label_tag "pages[color]", "Color", class: "col-sm-2 control-label" %>
+    <div class="col-sm-8">
+      <%= text_field_tag "pages[color]", current_value.present? ? current_value['color'] : "", class: 'colorpicker-default form-control', placeholder: "Color" %>
+      <span class="help-block">Leave it blank if you want background using image</span>
+    </div>
+  </div>
+
+  <% unless is_background=='true' %>
+    <hr/>
+
+    <div id="page_content">
+      <div class="advance panel box">
+        <div class="advance-heading">
+          <span class="tools">
+            <a href="javascript:;" class="fa fa-plus-square"></a>
+          </span>
+          List Questions
+        </div>
+
+        <div id="add_question_page" class="advance-body" style="display: none;">
+          <div class="clearfix has-button">
+            <div class="col-sm-6">
+              <% if current_value.present? %>
+                <% temp_questions = current_value['questions'] %>
+                <% if temp_questions.count > 1 %>
+                  <%= select_tag "pages[questions][]", options_for_select(@options ,temp_questions.first), :prompt => "Select question...", :class => "form-control" %>
+                <% else %>
+                  <%= select_tag "pages[questions][]", options_for_select(@options ,'-'), :prompt => "Select question...", :class => "form-control" %>
+                <% end %>
+              <% else %>
+                <%= select_tag "pages[questions][]", options_for_select(@options ,'-'), :prompt => "Select question...", :class => "form-control" %>
+              <% end %>
+            </div>
+            <div class="col-sm-6">
+              <%= link_to "Add New +", "#", id: "add_new_question_button", class: "btn btn-primary pull-right", onclick: "get_question_lists()" %>
+            </div>
+          </div>
+          <% if current_value.present? %>
+            <% temp_questions.each do |question| %>
+              <% unless question == temp_questions.first %>
+                <div class="clearfix has-button">
+                  <div class="col-sm-6">
+                    <%= select_tag "pages[questions][]", options_for_select(@options ,question), :prompt => "Select question...", :class => "form-control" %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <div class="col-sm-4">
+      <%= button_tag "Done", type: "submit", class: "btn btn-primary" %>
+      <%= link_to "Cancel", edit_page_surveys_path(id: id, cancel: true, is_background: is_background), remote: true, class: "btn btn-primary" if id.to_i > 0 %>
+    </div>
+  </div>
+<% end %>

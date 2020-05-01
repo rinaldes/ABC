@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Styles>
+    <Style ss:ID="s21" ss:Name="Normal">
+      <Alignment ss:Vertical="Bottom" />
+      <Borders />
+      <Font ss:Color="RED"/>
+      <Interior />
+      <NumberFormat />
+      <Protection />
+    </Style>
+  </Styles>
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+    <Column ss:Span="2"/>
+      <Row>
+      	<Cell colspan="3"></Cell>
+	      <Cell></Cell>
+	      <Cell></Cell>
+	      <Cell></Cell>
+	      <Cell></Cell>
+	    
+	    <% @branches.each{|branch| %>
+	      <Cell ss:StyleID="s21"><Data ss:Type="String"><%= branch.description %></Data></Cell>
+	      <Cell></Cell>
+	    <% } %>
+	    <Cell><Data ss:Type="String">STOCK HO</Data></Cell>
+      	<Cell></Cell>
+	    <Cell><Data ss:Type="String">RETUR INV</Data></Cell>
+      	<Cell></Cell>
+      	<Cell></Cell>
+      	<Cell></Cell>
+      	<Cell></Cell>
+      	<Cell></Cell>
+	    
+	  </Row>
+      
+      <Row>
+      	<Cell><Data ss:Type="String">Supplier</Data></Cell>
+	    <Cell><Data ss:Type="String">Tgl Masuk</Data></Cell>
+	    <Cell><Data ss:Type="String">No.Faktur</Data></Cell>
+	    <Cell><Data ss:Type="String">Nominal</Data></Cell>
+	    <Cell><Data ss:Type="String">QTY</Data></Cell>
+
+	      <% 0.upto(@branches.size+1) do |branch| %>
+	      	<Cell><Data ss:Type="String">QTY</Data></Cell>
+	      	<Cell><Data ss:Type="String">COST</Data></Cell>
+	    <% end %>
+
+	    <Cell><Data ss:Type="String">QTY INV</Data></Cell>
+	    <Cell><Data ss:Type="String">TOTAL PEMBAYARAN INV</Data></Cell>
+	    <Cell><Data ss:Type="String">KET</Data></Cell>
+	    <Cell><Data ss:Type="String">Selisih</Data></Cell>
+      </Row>
+
+
+    <% @receivings.each{|receiving| %>
+    <% sum_qty = receiving.receiving_details.map(&:quantity).compact.sum %>
+    <% stock_ho = sum_qty %>
+    <% price_ho = receiving.total %>
+    <% retur = ReturnsToSupplier.where("receiving_id=#{receiving.id}") %>
+    <% total_paid = receiving.account_payables.map(&:total_paid).sum %>
+    <Row>
+      <Cell><Data ss:Type="String"><%= receiving.supplier.name %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= receiving.date.strftime('%d-%m-%Y') %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= receiving.consigment_number %></Data></Cell>
+      <Cell><Data ss:Type="Number"><%= format_currency receiving.total %></Data></Cell>
+      <Cell><Data ss:Type="Number"><%= sum_qty %></Data></Cell>
+      <% @branches.each{|branch| %>
+        <% total = receiving.purchase_transfers.where("destination_warehouse_id=#{branch.id}") %>
+        <% total_qty = total.map(&:total_quantity).compact.sum %>
+        <% total_price = total.map(&:total_price).compact.sum %>
+        <Cell><Data ss:Type="Number"><%= total_qty %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= format_currency total_price %></Data></Cell>
+        <% stock_ho = stock_ho - total_qty %>
+        <% price_ho = price_ho - total_price %>
+      <% } %>
+      <Cell><Data ss:Type="Number"><%= format_currency stock_ho %></Data></Cell>
+      <Cell><Data ss:Type="Number"><%= format_currency price_ho %></Data></Cell>
+      <Cell><Data ss:Type="Number"><%= format_currency retur.map{|rts|rts["quantity"].to_i}.sum %></Data></Cell>
+      <Cell><Data ss:Type="Number"><%= format_currency retur.map(&:total).sum %></Data></Cell>
+      <Cell></Cell>
+      <Cell><Data ss:Type="Number"><%= format_currency total_paid %></Data></Cell>
+      <Cell><%#= total_paid/ %></Cell>
+      <Cell></Cell>
+    </Row>
+  <% } %>
+
+    </Table>
+  </Worksheet>
+</Workbook>

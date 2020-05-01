@@ -1,0 +1,41 @@
+<table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Applicant Name</th>
+                                <th>Attachment</th>
+                                <th>Apply Position</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <% @recruitment.test_results.each do |test| %>
+                                <tr>
+                                    <td>
+                                        <%= test.applicant_name %>
+                                    </td>
+                                    <td>
+                                        <%= test.attachment %>
+                                    </td>
+                                    <td>
+                                        <%= test.position %>
+                                    </td>
+                                    <td>
+                                        <% if test.score == nil %>
+                                            <%= link_to 'Set Score', edit_test_result_path(test), remote: true %>
+                                        <% else %>
+                                        	<%= test.score %>    
+                                        <% end %>
+                                    </td>
+                                    <td>
+                                        <% if test.status.downcase == "pending" %>
+                                        <%= link_to test.status , edit_test_result_path(test, :for_pending => test.recruitment_id) , remote: true %>
+                                        <% else %>
+                                        <%= test.status %>
+                                        <% end %>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>

@@ -1,0 +1,7 @@
+<div id="final-preview" class="clearfix">
+  <% if session["#{current_user.id.to_s}"]["pages"].present? %>
+		<% session["#{current_user.id.to_s}"]["pages"].each do |id, pages| %>
+			<%= render "/questions/page", page: pages, id: id, is_background: false, exclude_action: true, is_final: true %>
+		<% end %>
+	<% end %>
+</div>

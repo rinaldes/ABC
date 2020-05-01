@@ -1,0 +1,30 @@
+<table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Applicant Name</th>
+                                <th>Attachment</th>
+                                <th>Apply Position</th>
+                                <th>Interview Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% @recruitment.interview_results.each do |ir| %>
+                        <tr>
+                            <td><%= ir.test_result.applicant_name %></td>
+                            <td><%= ir.test_result.attachment %></td>
+                            <td><%= ir.test_result.position %></td>
+                            <% if ir.interview_result == nil %>
+                               <td><%= link_to "Add Result" , edit_interview_result_path(ir) , remote: true %></td>
+                            <% else %>
+                            <td><%= ir.interview_result.truncate(30) %></td>
+                            <% end %>
+                            <% if ir.status.downcase == "pending" %>
+                            <td><%= link_to ir.status , edit_interview_result_path(ir , for_pending: 1) , remote: true %></td>
+                            <% else %>
+                            <td><%= ir.status %></td>
+                            <% end %>
+                        </tr>
+                        <% end %>
+                        </tbody>
+                    </table>

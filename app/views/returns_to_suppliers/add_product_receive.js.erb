@@ -1,0 +1,4 @@
+$('#list_detail').append("<%= j(render 'list_detail', key: params[:key], details: @receiving.receiving_details) %>")
+$('#product_detail').append("<%= j(render 'product_detail', key: params[:key]) %>")
+clone_details()
+nomor_ganti()

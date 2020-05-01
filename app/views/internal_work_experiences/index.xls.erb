@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Name Of Company</Data></Cell>
+        <Cell><Data ss:Type="String">Job Desc</Data></Cell>
+        <Cell><Data ss:Type="String">Position</Data></Cell>
+        <Cell><Data ss:Type="String">Organization</Data></Cell>
+        <Cell><Data ss:Type="String">Start</Data></Cell>
+        <Cell><Data ss:Type="String">End</Data></Cell>
+        <Cell><Data ss:Type="String">Achievement</Data></Cell>
+      </Row>
+    <% @internal_work_experiences.each do |internal_work_experience| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.name_of_company %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.job_desc %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.position %></Data></Cell>
+        ell><Data ss:Type="String"><%= internal_work_experience.organization %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.start %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= internal_work_experience.achievemnet %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

@@ -1,0 +1,126 @@
+<!--sidebar start-->
+<aside>
+  <div id="sidebar" class="nav-collapse">
+    <!-- sidebar menu start-->
+    <div class="leftside-navigation">
+      <ul class="sidebar-menu" id="nav-accordion">
+        <li>
+        	<%= link_to root_path, class: (controller_name == "dashboard" ? "active" : "") do %>
+            <i class="fa fa-dashboard"></i>
+            <span><%= t(:dashboard) %></span>
+          <% end %>
+        </li>
+        <%# if current_user.role == "admin" %>
+          <li>
+          	<%= link_to users_path, class: (controller_name == "users" && action_name != "profile" ? "active" : "") do %>
+              <i class="fa fa-users"></i>
+              <span><%= t(:user_management)%>  </span>
+            <%# end %>
+          </li>
+        <% end %>
+        <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-check-square-o"></i>
+            <span><%= t (:role_management)%></span>
+          <% end %>
+        </li>
+        <%# if current_user.role == "admin" %>
+          <li>
+          <%= link_to approval_levels_path, class: (controller_name == "approval_levels" ? "active" : "") do %> 
+              <i class="fa fa-thumbs-up"></i>
+              <span> <%= t(:approval_level)%> </span>
+            <% end %>
+          </li>
+        <% end %>
+           <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-book"></i>
+                        <span><%= t(:data_master) %> </span>
+                    </a>
+                    <ul class="sub">
+                       <% if current_user.role == "admin" %>
+                        <li>
+                         <%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+                           <span>Survey</span>
+                          <% end %>
+                         </li>
+                        <% end %>
+                        <li><%= link_to visis_path, class: (controller_name == "visis" ? "active" : "") do %> 
+                        <span> <%= t(:vision)%> </span> <% end %> </li>
+                        <li><%= link_to misis_path, class: (controller_name == "misis" ? "active" : "") do %> 
+                        <span> <%= t(:mision)%> </span> <% end %></li>
+                        <li><%= link_to cultures_path, class: (controller_name == "cultures" ? "active" : "") do %> 
+                        <span> <%= t(:culture)%> </span> <% end %></li>
+                        <li><%= link_to code_of_conducts_path, class: (controller_name == "code_of_conducts" ? "active" : "") do %> 
+                        <span> <%= t(:code_of_conduct)%> </span> <% end %></li>
+                        <li><a href="tree_view.html"> <%= t (:value_of_company)%></a></li>
+                        <li><a href="nestable.html"> <%= t (:attendance_setting)%></a></li>
+                        <li><a href="grids.html"> <%= t (:holidays)%></a></li>
+                        <li><a href="calendar.html"> <%= t (:holiday_type)%></a></li>
+                        <li><a href="draggable_portlet.html"> <%= t (:shift)%></a></li>
+                        <li><a href="grids.html"> <%= t (:organization)%></a></li>
+                        <li><a href="calendar.html"> <%= t (:fingerprint)%></a></li>
+                        <li><a href="draggable_portlet.html"> <%= t (:schedule)%></a></li>
+                        <li><a href="draggable_portlet.html"> <%= t (:component_indicator)%></a></li>
+                    </ul>
+                </li>
+         <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-male"></i>
+            <span><%= t (:recuitment) %></span>
+          <% end %>
+        </li>
+         <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-user-md"></i>
+            <span><%= t (:employee) %></span>
+          <% end %>
+          </li>
+          <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-calendar-o"></i>
+            <span><%= t(:absence)%></span>
+          <% end %>
+        </li>
+         <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-clock-o"></i>
+            <span><%= t (:overtime_request)%></span>
+          <% end %>
+        </li>
+         <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-minus-square"></i>
+            <span><%= t (:leave_request)%></span>
+          <% end %>
+        </li>
+        <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-pencil-square-o"></i>
+            <span><%= t (:appraisal) %> </span>
+          <% end %>
+        </li>
+        <li>
+        	<%= link_to surveys_path, class: (controller_name == "surveys" ? "active" : "") do %>
+            <i class="fa fa-bullhorn"></i>
+            <span><%= t (:asset_assignment)%> </span>
+          <% end %>
+        </li>
+        <li>
+        	<%= link_to knowledges_path, class: (controller_name == "knowledges" ? "active" : "") do %>
+            <i class="fa fa-archive"></i>
+            <span><%= t (:knowledge_management)%> </span>
+          <% end %>
+        </li>
+        <li>
+        	<%= link_to companies_path, class: (controller_name == "companies" ? "active" : "") do %>
+             <i class="fa fa-building-o"></i>
+            <span><%= t (:master_company)%> </span>
+          <% end %>
+        </li>
+      </ul>
+    </div>        
+    <!-- sidebar menu end-->
+  </div>
+</aside>
+<!--sidebar end-->

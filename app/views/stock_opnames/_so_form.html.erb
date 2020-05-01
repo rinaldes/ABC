@@ -1,0 +1,118 @@
+<%= form_for @stock_opname, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+  <fieldset> <!-- tambah stock_opname -->
+    <div class="row">
+      <section class="col col-md-12">
+        <section class="col col-md-6">
+          <label class="col-md-4 label">No Stock Opname</label>
+          <label class="col-md-8 input custom-input-box">
+            <%= f.text_field :opname_number, class: "input-block-level", readonly: true %>
+          </label>
+          <label class="col-md-4 label"><%= t(:branch) %></label>
+          <label class="col-md-8 input custom-input-box">
+            <% if current_user.branch_id.present? %>
+              <%= current_user.branch.office_name %>
+              <%= f.hidden_field :office_id, value: current_user.branch_id %>
+            <% elsif current_user.head_office_id.present? %>
+              <%= current_user.head_office.office_name %>
+              <%= f.hidden_field :office_id, value: current_user.head_office_id %>
+            <% else %>
+              <%= f.select :office_id, options_for_select(Office.all.map{|office|[office.office_name, office.id]}, selected: @stock_opname.office_id), prompt: 'Please choose' %>
+            <% end %>
+          </label>
+          <label class="col-md-4 label">Tanggal</label>
+          <label class="col-md-8 input custom-input-box">
+            <%= f.text_field :start_date, class: "input-block-level", value: Time.now.strftime('%d-%m-%Y %H:%M:%S'), readonly: true %>
+          </label>
+          <label class="col-md-4 label">System Stock</label>
+          <label class="col-md-8 input custom-input-box">
+            <%= f.text_field :system_stock, class: "input-block-level", readonly: true %>
+          </label>
+          <%= link_to 'Start Now', 'javascript:void(0)', class: 'btn btn-primary btn-sm', disabled: StockOpname.find_by_office_id_and_status(@office_id, 'ONPROCESS').present?, onclick: 'start_so()' %>
+        </section>
+        <section class="col col-md-6">
+          <label class="col-md-4 label">Sold</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :sold, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Received From <%= @office_class == 'Branch' ? 'Transfer' : 'Retur' %></label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :received_from_transfer, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Mutation In</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :mutation_in, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Mutation Out</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :mutation_out, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Retur</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :retur, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Last Stock</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :last_stock, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Date Finished</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :end_date, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Actual Stock</label>
+          <label class="col-md-8 input custom-input-box"><%= f.text_field :actual_stock, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Differences</label>
+          <label class="col-md-8 input custom-input-box"><%= text_field_tag :diff, @stock_opname.diff, class: "input-block-level", readonly: true %></label>
+          <label class="col-md-4 label">Notes</label>
+          <label class="col-md-12 textarea custom-input-box"><%= f.text_area :note, height: 7 %></label>
+          <%= link_to 'End Now', 'javascript:void(0)', class: 'btn btn-primary btn-sm', disabled: StockOpname.find_by_office_id_and_status(@office_id, 'ONPROCESS').blank?, onclick: 'end_so()' %>
+        </section> <!-- col-md-6 -->
+      </section> <!-- col-md-6 -->
+      <% if params[:action] == 'edit' %>
+        <header>Opname Details</header>
+        <fieldset class="col col-md-12"> <!-- brand person -->
+          <div class="row">
+            <section class="col col-md-12">
+              <%= link_to "Download Form", stock_opname_details_path(format: "csv", :a => "a"), :class => "btn btn-success" %>
+              <a data-toggle="modal" data-target="#myModal" href="javascript:void(0);" class="btn btn-primary btn-sm" id="import">Import</a>
+              <table class="table table-condensed table-striped table-bordered table-hover no-margin">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Barcode</th>
+                    <th>Barcode Size</th>
+                    <th>Size</th>
+                    <th>Stock</th>
+                    <th>Sold</th>
+                    <th>Receive Transfer</th>
+                    <th>Retur</th>
+                    <th>Mutation In</th>
+                    <th>Mutation Out</th>
+                    <th>Last Stock</th>
+                    <th>Actual Stock</th>
+                    <th>Diff</th>
+                  </tr>
+                </thead>
+                <tbody id='brand'>
+                  <% @stock_opname_details.each_with_index{|stock_opname_detail, i| %>
+                    <% product_size = stock_opname_detail.product_size %>
+                    <% product = product_size.product %>
+                    <% product_detail = ProductDetail.find_by_product_size_id_and_warehouse_id(product_size.id, @stock_opname.office_id) %>
+                    <tr>
+                      <td><%= i+1 %></td>
+                      <td>
+                        <label class="col-md-10 label"><%= product_size.product.barcode %></label>
+                      </td>
+                      <td>
+                        <label class="col-md-10 label"><%= product_size.barcode_size %></label>
+                      </td>
+                      <td><label class="col-md-10 label"><%= product_size.size_detail.size_number rescue '' %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.system_stock %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.sold %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.received_from_transfer %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.retur %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.mutation_in %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.mutation_out %></label></td>
+                      <td><label class="col-md-10 label"><%= stock_opname_detail.qty_virtual %></label></td>
+                      <td><%= stock_opname_detail.qty_actual %></td>
+                      <td><%= stock_opname_detail.diff %></td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </section>
+          </div> <!-- row -->
+        </fieldset>
+      <% end %>
+    </div> <!-- row -->
+  </fieldset> <!-- tambah stock_opname -->
+  <footer>
+    <%= submit_tag 'Submit', class: 'btn btn-primary' %>
+    <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+  </footer>
+<% end %>

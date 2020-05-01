@@ -1,0 +1,15 @@
+<% @productmutationhistories.each_with_index do |productmutationhistory, i| %>
+  <tr>
+    
+    <td class="hidden-phone"><%= productmutationhistory.product_detail_id %></td>
+    <td class="hidden-phone"><%= productmutationhistory.new_quantity %></td>
+    <td class="hidden-phone"><%= productmutationhistory.moved_quantity %></td>
+    <td class="hidden-phone"><%= productmutationhistory.old_quantity %></td>
+    <td class="hidden-phone"><%= productmutationhistory.quantity_type %></td>
+    <td class="hidden-phone"><%= productmutationhistory.mutation_type %></td>
+    
+
+  </tr>
+<% end %>
+
+</tr>

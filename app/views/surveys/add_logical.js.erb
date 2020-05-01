@@ -1,0 +1,12 @@
+<% params[:cancel] ||= false %>
+<% unless params[:cancel] %>
+	$("#set-logical-form").html("<%= j(render '/wizards/set_logical') %>")
+	$("#close-logical-link").removeClass("hide")
+	set_hide_button()
+	$('html, body').animate({
+    scrollTop: $("#set-logical-form").offset().top
+	}, 2000);
+<% else %>
+	$("#set-logical-form").html("")
+	$("#close-logical-link").addClass("hide")
+<% end %>

@@ -1,0 +1,6 @@
+<% if @schedule.errors.blank? %>
+	$("#dataTable").append("<%= j(render 'schedule', :schedule => @schedule) %>")
+	$("#addModal").modal('hide')
+<% else %>
+	$("#addModal").html("<%= j(render 'new') %>")
+<% end %>

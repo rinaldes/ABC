@@ -1,0 +1,13 @@
+<div id="page-preview" class="clearfix draggable-wrapper">
+  <% if session["#{current_user.id.to_s}"]["pages"].present? %>
+		<% session["#{current_user.id.to_s}"]["pages"].each do |id, pages| %>
+			<%= render "/questions/page", page: pages, id: id, is_background: false %>
+		<% end %>
+	<% end %>
+</div>
+<div id="set-page-form"></div>
+
+<%= link_to "Add Page", add_page_surveys_path, remote: true, class: "btn btn-primary" %>
+<div id="close-page-link" class="hide close-link">
+  <%= link_to "Cancel", add_page_surveys_path(cancel: true), remote: true, class: "btn btn-primary" %>
+</div>

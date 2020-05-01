@@ -1,0 +1,21 @@
+<% details.group_by{|prd|prd.product_size.product_id}.each do |prd| %>
+  <% detail = prd[1][0].product_size %>
+  <% product = detail.product %>
+  <tr>
+    <td>
+      <span class='hidden'><%= detail.product_id rescue '' %></span>
+      <span class='barcode'><%= product.barcode rescue '' %></span>
+    </td>
+    <td><%= product.brand.name rescue '' %></td>
+    <td><%= product.article rescue '' %></td>
+    <td><%= product.colour.name rescue '' %></td>
+    <td><%= product.brand.department.name rescue '' %></td>
+    <td><%= format_currency product.cost_of_products rescue '' %></td>
+    <td><%= link_to 'View', 'javascript:void(0)', onclick: "$('#myModal#{product.id}').modal()" %></td>
+    <td>
+      <a href="javascript:void(0)" class="btn btn-warning btn-xs custom-edit-btn" onclick="removeList(this)">
+        <i class="fa fa-trash-o" rel="tooltip" data-placement="left" data-original-title="Delete"></i>
+      </a>
+    </td>
+  </tr>
+<% end %>

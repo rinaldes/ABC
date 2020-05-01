@@ -1,0 +1,21 @@
+  <div class="grid simple">
+      <div class="grid-title no-border"></div>
+        <div class="grid-body no-border multi-lang">
+          <ul class="nav nav-tabs" id="tab-01">
+            <li><a href="#indonesia">Indonesia</a></li>
+            <li class="active"><a href="#english">English</a></li>
+          </ul>
+          <div class="tab-content">
+          <% @cultures.each{|culture| %>
+            <div class="tab-pane active" id='english'>
+            <%= culture.content_eng.gsub('system/images/files/', '/system/images/files/').html_safe %><br/>
+            <hr/>
+            </div>
+            <div class="tab-pane" id='indonesia'>
+            <%= culture.content_ind.gsub('system/images/files/', '/system/images/files/').html_safe %><br/>
+            <hr/>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>

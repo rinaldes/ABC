@@ -1,0 +1,18 @@
+<tr class='nested-fields'>
+	<td><%= f.text_field :asset_type, :placeholder => 'Type' %></td>
+	<td><%= f.text_field :name, :placeholder => 'Name' %></td>
+	<td><%= f.text_field :serial_number, :placeholder => 'Serial Number' %></td>
+	<td><%= f.text_field :date, :placeholder => 'Date', :class => 'datepicker_form' %></td>
+	<td>
+		<%= link_to_remove_association "Delete <i class='fa fa-del'></i>".html_safe, f %>
+	</td>
+</tr>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker_form').datepicker();
+        
+    });
+
+
+</script>

@@ -1,0 +1,9 @@
+class ProductMutationHistoryController < ApplicationController
+    def index
+        if params.blank?
+            @productmutationhistories = ProductMutationHistory.all
+        else
+            @productmutationhistories = ProductMutationHistory.where("product_detail_id = ?", params[:product_detail_id])
+        end
+    end
+end

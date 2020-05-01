@@ -1,0 +1,204 @@
+<%= wicked_pdf_stylesheet_link_tag "pdf.css" -%>
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <div> <!-- widget div-->
+          <div class="widget-body no-padding"> <!-- widget content -->
+<h1><b>
+  Purchase Order
+  <%= image_tag "#{Rails.root}/public/img/logo_nuansabaru.png", alt: "logo", style: "float:right" %>
+</h1></b>
+<h2><b>PT. Nuansa Baru Indonesia</h2></b><br/>
+
+<p style='font-size: 11px'><b>NPWP:</b> 02.649.040.9-415.000</p>
+<p style='font-size: 11px'><b>ADDRESS:</b><%= @entity.address %></p>
+
+<hr />
+
+<table id="table-info">
+  <tr>
+    <td width="55%"><label>Receiving No</label>:<span><%= @purchase_order.number rescue ''%></span></td>
+    <td width="5"></td>
+    <td width="45%"></td>
+  </tr>
+  <tr></tr>
+  <tr>
+    <td><b>SUPPLIER</b>:<span><%= @supplier.name rescue ''%></span><hr /></td>
+  </tr>
+  <tr>
+    <td><label>Address</label>:<span><%= @supplier.address rescue ''%></span></td>
+  </tr>
+  <tr></tr>
+  <tr>
+    <td><label>City</label>:<span><%= @supplier.city_name rescue '' %></span></td>
+  </tr>
+  <tr>
+    <td><label>Phone</label>:<span><%= @supplier.phone rescue '' %></span></td>
+  </tr>
+  <tr>
+    <td><label>Fax</label>:<span><%= @supplier.fax rescue '' %></span></td>
+  </tr>
+  <tr>
+    <td><label>Email</label>:<span><%= @supplier.email rescue '' %></span></td>
+  </tr>
+  <tr>
+    <td><label>CP</label>:<span><%= @supplier.contact_people.first.name rescue '' %></span></td>
+  </tr>
+</table>
+
+<br />
+
+
+
+
+
+
+
+
+
+
+
+
+            <br/>
+            <section class="col col-md-12">
+              <div class="row">
+                <table class="table" border="1" width="100%" id="orders">
+                  <thead>
+                    <tr>
+                      <th><b><center>BARCODE</center></b></th>
+                      <th><b><center>BRAND</center></b></th>
+                      <th><b><center>ARTICL</center></b></th>
+                      <th><b><center>COLOR</center></b></th>
+                      <th><b><center>SIZE</center></b></th>
+                      <th><b><center>QUANTITY</center></b></th>
+                      <th><b><center>COST PRICE</center></b></th>
+                      <th><b><center>PRICE</center></b></th>
+                      <th><b><center>TOTAL COST</center></b></th>
+                      <th><b><center>TOTAL PRICE</center></b></th>
+                    </tr>
+                  </thead>
+                  <tbody id='list_detail'>
+                    <% total_c = 0 %>
+                    <% total_p = 0 %>
+                    <% total_cost = 0 %>
+                    <% total_price = 0 %>
+                    <% @purchase_order.purchase_order_details.group_by{|prd|prd.product_size.product_id}.each do |prd| %>
+                      <% detail = prd[1][0].product_size %>
+                      <% product = detail.product %>
+                      <tr>
+                        <td><%= product.barcode %></td>
+                        <td><%= product.brand.name rescue '' %></td>
+                        <td><%= product.article %></td>
+                        <td><%= product.colour.name rescue '' %></td>
+                        <td>
+                          <table>
+                            <tr>
+                              <% prd[1].group_by{|x|x.product_size.size_detail.size_number}.map{|a|[a[0], a[1].map(&:quantity).sum]}.each do |prod| %>
+                                <td><%= prod[0] %></td>
+                              <% end %>
+                            </tr>
+                            <tr>
+                              <% prd[1].group_by{|x|x.product_size.size_detail.size_number}.map{|a|[a[0], a[1].map(&:quantity).sum]}.each do |prod| %>
+                                <td><%= prod[1] %></td>
+                              <% end %>
+                            </tr>
+                          </table>
+                        </td>
+                        <td style='text-align: center'><%= format_currency prd[1].map(&:quantity).compact.sum rescue '' %></td>
+                        <td style='text-align: right'><%= format_currency product.cost_of_products.to_f rescue '' %></td>
+                        <td style='text-align: right'><%= format_currency product.selling_price.to_f rescue '' %></td>
+                        <td style='text-align: right'><%= format_currency product.cost_of_products.to_f*prd[1].map(&:quantity).compact.sum rescue '' %></td>
+                        <td style='text-align: right'><%= format_currency product.selling_price.to_f*prd[1].map(&:quantity).compact.sum rescue '' %></td>
+                      </tr>
+                      <% total_cost += (product.cost_of_products.to_f*prd[1].map(&:quantity).compact.sum) %>
+                      <% total_price += (product.selling_price.to_f*prd[1].map(&:quantity).compact.sum) %>
+                      <% total_c += (product.cost_of_products.to_f) %>
+                      <% total_p += (product.selling_price.to_f) %>
+                    <% end %>
+                    <tr>
+                      <td colspan='5'></td>
+                      <td class='total' style='text-align: center'><%= format_currency @purchase_order.purchase_order_details.map{|a|a.quantity}.compact.sum %></td>
+                      <td class='total' style='text-align: right'><%= format_currency total_c %></td>
+                      <td class='total' style='text-align: right'><%= format_currency total_p %></td>
+                      <td class='total' style='text-align: right'><%= format_currency total_cost %></td>
+                      <td class='total' style='text-align: right'><%= format_currency total_price %></td>
+                    </tr>
+                  </tbody>
+                </table>
+  <table id="table-info">
+    <% if @purchase_order.present? %>
+      <tr>
+        <td>Note: <%= @purchase_order.note %></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>CREATED BY</td>
+      <td></td>
+      <td></td>
+      <td>APPROVED BY</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><label></label></td>
+      <td></td>
+      <td></td>
+      <td><label>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</label></td>
+      <td></td>
+      <td></td>
+      <td><label>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</label></td>
+    </tr>
+  </table>
+  <table id="table-info">
+    <tr>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><label>Print By</label>:<span><%= current_user.fullname %></span></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><label>Date</label>:<span><%= Time.now.strftime('%Y-%m-%d %H:%M:%d') %></span></td>
+    </tr>
+  </table>
+              </div>
+            </section>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->

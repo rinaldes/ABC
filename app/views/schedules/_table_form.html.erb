@@ -1,0 +1,11 @@
+<% employees.each do |employee| %>
+	<tr>
+		<td><%= employee.full_name %></td>
+		<td>
+			<div class="checkbox check-default">
+	            <input id="checkbox<%= employee.id %>" type="checkbox" value="<%= employee.id %>">
+	            <label for="checkbox<%= employee.id %>"></label>
+	        </div>
+		</td>
+	</tr>
+<% end %>

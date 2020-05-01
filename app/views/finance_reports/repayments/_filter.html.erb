@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<%= form_tag finance_reports_repayments_path, class: "smart-form", :id => "repayments-filter-form", :remote => true  do %>
+  <fieldset>
+    <div class="row">
+      <section class="col col-6">
+        <section>
+          <%= render 'products/supplier_info' %>
+          <%= hidden_field_tag :supplier_id %>
+        </section>
+      </section>
+    </div>
+  </fieldset>
+<% end %>
+<SCRIPT>
+    $("#supplier").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        $('#supplier_id').val(ui.item.id)
+        submit_repayment_filter_form()
+      },
+      minLength: 1
+    });
+
+    $("#supplier_code").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_code",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+        $('#supplier_id').val(ui.item.id)
+        submit_repayment_filter_form()
+      },
+      minLength: 1
+    });
+</SCRIPT>

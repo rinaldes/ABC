@@ -1,0 +1,22 @@
+<%= form_tag finance_reports_store_cashs_path, class: "smart-form petty-cash", :id => "petty-cash-details-filter-form", :remote => true  do %>
+  <fieldset>
+    <div class="row">
+      <section class="col col-6">
+        <section>
+          <label class="col-md-4 label">Branch</label>
+          <label class="col-md-6 input custom-input-box">
+            <%= select_tag("office_id", options_for_select(@offices.map{|office|[office.office_name, office.id]}, selected: (object.id rescue '')), prompt: "Please Select", class: "form-control cash-details-office") %>
+          </label>
+          <label class="col-md-4 label">Year</label>
+          <label class="col-md-6 input custom-input-box">
+            <%= select_year(Date.today.year, {:start_year => Date.today.year, :end_year => 5.years.from_now.year},  :class => 'form-control cash-details-year') %>
+          </label>
+          <label class="col-md-4 label">Month </label>
+          <label class="col-md-6 input custom-input-box">
+            <%= select_month(Date.today.month, {}, :class => 'form-control cash-details-month' )%>
+          </label>
+        </section>
+      </section>
+    </div>
+  </fieldset>
+<% end %>

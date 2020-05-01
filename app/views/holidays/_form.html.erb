@@ -1,0 +1,57 @@
+<% if params[:action] == "new"%>
+  <tr>
+<% end %>
+  <%= form_for(holiday, html: { role: "form", multipart: true}, remote: true) do |f| %>
+    <td>
+      <div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+    </td>
+    <td>
+      <%= f.text_field :name, :class => "full-width", :placeholder => "Holidays Name" %>
+    </td>
+    <td>
+      <div class="input-append success date">
+        <% if params[:action] == "edit"%>
+          <%= f.text_field :start, :class => "form-control", value: holiday.start.strftime('%d-%m-%Y') %>
+          <% else %>
+          <%= f.text_field :start, :class => "form-control" %>
+        <% end %>
+        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+      </div>
+      <% if params[:action] == "new"%>
+        <%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+      <% else %>
+        <%= f.hidden_field :id, :value => params[:id] %>
+      <% end %>
+    </td>
+    <td>
+      <div class="input-append success date">
+         <% if params[:action] == "edit"%>
+          <%= f.text_field :end, :class => "form-control", value: holiday.end.strftime('%d-%m-%Y') %>
+          <% else %>
+          <%= f.text_field :end, :class => "form-control" %>
+        <% end %>
+        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+      </div>
+    </td>
+    <td>
+      <%= f.check_box :annual_leave, value: 1 %> 
+    </td>
+    <td>
+      <span class="badge badge-primary">Generate</span>
+    </td>
+    <td>
+      <div>
+        <% if params[:action] == "new" %>
+          <%= f.submit "Add", class: "btn btn-success", :onclick => "submit_holiday();"%>
+        <% else %>
+          <%= f.submit "Update", class: "btn btn-success", :onclick => "update_holiday();"%>
+          <% end %>
+        </div>
+    </td>
+  <% end %>
+<% if params[:action] == "new"%>
+  </tr>
+<% end %>

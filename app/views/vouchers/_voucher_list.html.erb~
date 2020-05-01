@@ -1,0 +1,29 @@
+<% @vouchers.each_with_index do |voucher, i| %>
+  <tr>
+    <td class="hidden-phone"><%= params[:page] ? (params[:page].to_i*10+i-9) : i+1 %></td>
+    <td class="hidden-phone"><%= link_to voucher.name, voucher_url(voucher), class: 'dialog_link' %></td>
+    <td class="hidden-phone"><%= voucher.valid_from %></td>
+    <td class="hidden-phone"><%= voucher.valid_until %></td>
+    <td class="hidden-phone"><%= voucher.min_amount %></td>
+    <% if voucher.discount.present? %>
+      <td class="hidden-phone"><%= voucher.discount %> % </td>
+    <% elsif voucher.discount_amount.present? %>
+      <td class="hidden-phone">Rp. <%= voucher.discount_amount %></td>
+    <% end %>
+    <% if voucher.max_voucher.present? %>
+      <td class="hidden-phone"><%= voucher.max_voucher %> pcs </td>
+    <% elsif voucher.max_voucher_amt.present? %>  
+      <td class="hidden-phone">Rp. <%= voucher.max_voucher_amt %></td>
+    <% end %>
+    <td class="hidden-phone"><%= voucher.office_name %></td>
+    <td class="hidden-phone">
+      <%= link_to raw("<i class='fa fa-pencil'> </i>"), edit_voucher_path(voucher), class: "btn btn-primary btn-xs" %>
+      <%= link_to raw("<i class='fa fa-trash-o'></i>"), 'javascript:void(0)', onclick: "delete_one(#{voucher.id}, 'vouchers')", class: "btn btn-danger btn-xs edit-btn-dlt" %>
+    </td>
+  </tr>
+<% end %>
+<tr>
+  <td colspan=9>
+    <%= will_paginate @vouchers %>
+  </td>
+</tr>

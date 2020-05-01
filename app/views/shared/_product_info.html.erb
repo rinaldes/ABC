@@ -1,0 +1,66 @@
+<style type="text/css">
+  .label{
+    color: #151313;
+  }
+</style>
+<section class="col col-md-4">
+  <section>
+    <label class="col-md-2 label">CODE</label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :barcode, product.barcode , :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">MERK </label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :merk, product.brand.name || "", :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">ARTICLE </label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :article, product.article, :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">COLOR </label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :warna, product.full_colour.join(' / '), :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">DEPT </label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :m_class, (product.m_class.department.code_and_name rescue ''), :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">M-CLASS </label>
+    <label class="col-md-10 input custom-input-box"><%= text_field_tag :departement, (product.m_class.code_and_name rescue ''), :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-2 label">DISC % </label>
+    <label class="col-md-2 input custom-input-box"><%= text_field_tag :disc1, product.margin_percent1, :class => "input-sm", disabled: true %></label>
+    <label class="col-md-2 input custom-input-box"><%= text_field_tag :disc2, product.margin_percent2, :class => "input-sm", disabled: true %></label>
+    <label class="col-md-2 input custom-input-box"><%= text_field_tag :disc3, product.margin_percent3, :class => "input-sm", disabled: true %></label>
+    <label class="col-md-2 input custom-input-box"><%= text_field_tag :disc4, product.margin_percent4, :class => "input-sm", disabled: true %></label>
+    <label class="col-md-2 input custom-input-box"><%= text_field_tag :disc5, (format_currency product.margin_rp) , :class => "input-sm", disabled: true %></label>
+  </section>
+</section>
+<section class="col col-md-4">
+  <section>
+    <label class="col-md-3 label">HARGA POKOK</label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :harga_pokok, (format_currency product.cost_of_products), class: "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-3 label">HARGA JUAL </label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :harga_jual, (format_currency product.purchase_price), :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-3 label">HARGA BELI </label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :harga_beli, (format_currency product.selling_price), :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-3 label">STATUS 2 </label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :status2, product.status2, :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-3 label">STATUS 3 </label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :status3, product.status3, :class => "input-sm", disabled: true %></label>
+  </section>
+  <section>
+    <label class="col-md-3 label">STATUS 4 </label>
+    <label class="col-md-9 input custom-input-box"><%= text_field_tag :status4, product.status4, :class => "input-sm", disabled: true %></label>
+  </section>
+</section>
+<section class="col col-md-4"><%= image_tag product.image, width: '250px', height: '250px' %></section>

@@ -1,0 +1,132 @@
+<%= javascript_tag render(:template => 'performances/jsManager.js', :formats => [:js]) %>
+<div class="container-fluid">
+	<ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="#" class="active">Employee</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-users"></i>
+    	<h3><span class="semi-bold">Employee</span></h3>	
+    </div>  
+        <div class="grid simple">
+        	<div class="grid-body no-border has-tab">
+                <%= render '/employees/tab_nav'%>
+                <div class="tab-content">
+                    <section class="tab-pane active" id="survey">
+                      <div class="row toolbar-block">
+                        <div class="col-md-8 col-md-offset-4">
+                                <div class="toolbar pull-right" id="toolbar_main">
+                                    <div class="table-tools-actions" id="button-new">
+                                        <%= button_to new_performance_path(:employee_id => params[:id]), :method => 'get', :class => 'btn btn-success', :remote => true do %>
+                                            <span class="fa fa-plus"></span> Add New
+                                        <% end %>
+                                    </div>
+                                </div>   
+                                				<div class="toolbar pull-right" id="toolbar_main">                             
+																				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Tools <i class="fa fa-angle-down"></i>
+                                          </button>
+                                            <ul class="dropdown-menu pull-right">
+                                            <li><%= link_to "Export to CSV", performances_path(:id => params[:id], format: "csv") %></li>
+                                            <li><%= link_to "Export to Excel", performances_path(:id => params[:id], format: "xls") %></li>
+                                            <li data-toggle="modal" data-target="#upload_modal"><a>Import from CSV</a></li>
+                                  </ul>
+                                </div>      
+                                <!--<div class="toolbar pull-right" id="toolbar_upload">
+                                    <div class="table-tools-actions">
+                                        <button class="btn" data-toggle="modal" data-target="#upload_modal"><span class="fa fa-cloud-upload"></span> Upload</button>
+                                        <div class="separator">&nbsp;</div>
+                                    </div>
+                                </div>-->
+                                <div class="toolbar pull-right" id="toolbar_def">
+                                    <div class="table-tools-actions">
+                                        <button class="btn" id="button_edit" onclick="edit_performance()"><span class="fa fa-edit"></span> Edit</button> 
+                                        <button class="btn" data-toggle="modal" data-target="#confirm_modal"><span class="fa fa-trash"></span> Remove</button> 
+                                        <div class="separator">&nbsp;</div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <table class="table no-more-tables table-striped table-hover" id='performance'>
+                            <thead>
+                                <tr>
+                                    <th style="width:1%" >
+                                        <div class="checkbox check-default">
+                                            <input id="checkbox" type="checkbox" value="1" class="checkall">
+                                            <label for="checkbox"></label>
+                                        </div>
+                                    </th>
+                                    <th>DATE OF PERFORMANCE</th>
+                                    <th width="13%"> RATING</th>
+                                    <th>AREAS OF STRENGHT</th>
+                                    <th>AREA OF DEVELOPMENT</th>
+                                    <th>RATER</th>
+                                    <th width="15%" colspan='2'>POSITION RATER</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if @performances.count != 0 %>
+                                    <% @performances.each do |performance|%>
+                                        <%= render 'data', :performance => performance%>
+                                    <% end %>
+                                <% else %>
+                                    <tr>
+                                        <td colspan='8' align='center'>No Data Found !</td>
+                                    </tr>
+                                <% end %>
+                            </tbody>
+                        </table>
+                    </section>
+				</div>
+            </div>
+            
+            <div class="form-actions">
+                <div class="pull-right">
+                  <!--<button class="btn btn-success btn-cons" type="submit">Next <i class="fa fa-arrow-circle-o-right"></i> </button>-->
+                </div>
+          </div>
+        </div>
+</div>
+
+<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <br>
+          <i class="fa fa-trash-o fa-7x"></i>
+          <h4 id="myModalLabel" class="semi-bold">Are you sure want to remove this item(s)</h4>
+          <!--<p class="no-margin">You'll be charged $29/Month and get immediate access to new plan </p>-->
+          <br>
+        </div>
+        
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" onclick="delete_performance();" data-dismiss="modal">Yes</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+<!-- /.modal-dialog -->
+</div>
+          <!-- Modal -->
+<div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Import Performances</h4>
+      </div>
+      <div class="modal-body">
+          <%= form_tag import_performances_path(:id => params[:id]), multipart: true do %>
+          <%= file_field_tag :file %>
+      </div>
+      <div class="modal-footer">
+  			<%= submit_tag "Import", :class => "btn btn-primary" %>
+        <%= link_to "Download Template", performances_path(format: "csv"), :class => "btn btn-success" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

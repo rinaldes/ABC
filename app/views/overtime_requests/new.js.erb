@@ -1,0 +1,7 @@
+$('#overtime_request tbody').prepend("<%= j(render 'form', :overtime_request => @overtime_request) %>");
+$('#button-new').hide();
+$('.input-append.date').datepicker({
+  autoclose: true,
+  todayHighlight: true
+});
+$('.clockpicker').clockpicker();

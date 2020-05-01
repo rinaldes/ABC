@@ -1,0 +1,58 @@
+<% 
+  end_date = ("#{params[:year]}-#{params[:month]}-01").to_date.end_of_month.day
+  store = Sale.where("store_id = #{branch_id}").group("store_id, client_id")
+  grand_total_price, grand_total_pcs, grand_total = 0, 0, {}
+%>
+<tr>
+  <th rowspan="2" style="width: 1px; white-space: nowrap; vertical-align: middle; text-align: center;">Tgl</th>
+  <th rowspan="2" style="width: 1px; white-space: nowrap; vertical-align: middle; text-align: center;">Hari</th>
+  <% 1.upto(store.count.count).each do |terminal| %>
+    <th colspan="2" style="width: 1px; white-space: nowrap; vertical-align: middle; text-align: center;">Terminal <%= terminal %></th>
+  <% end %>
+  <th colspan="2" style="width: 1px; white-space: nowrap; vertical-align: middle; text-align: center;">Total</th>
+</tr>
+<tr>
+  <% 1.upto(store.count.count).each do |terminal| %>
+    <th>Rp</th>
+    <th>Pcs</th>
+  <% end %>
+  <th>Rp</th>
+  <th>Pcs</th>
+</tr>
+<% 1.upto(end_date).each{|date| %>
+  <% total_price, total_pcs, price, pcs, tanggal = 0, 0, 0, 0, (params[:year].to_s + "/" + params[:month].to_s + "/" + date.to_s).to_date %>
+  <tr>
+    <td style="text-align: center;"><%= date %></td>
+    <td><%= tanggal.strftime("%A") %></td>
+    <% store.select("store_id, client_id").each do |sale| %>
+      <%
+        sales = Sale.where("store_id = #{branch_id} AND client_id = '#{sale.client_id}' AND transaction_date >= '#{tanggal.beginning_of_day}' AND transaction_date <= '#{tanggal.end_of_day}'").select("store_id, client_id, transaction_date, sum(total_discount) as rp, sum(total_quantity) as pcs").group("store_id, client_id, transaction_date")
+        sales.each do |s|
+          price += s.rp
+          pcs += s.pcs
+        end
+      %>
+      <td><%= format_currency price %></td>
+      <td><%= pcs %></td>
+      <%
+        grand_total["price_" + sale.client_id.to_s] = grand_total["price_" + sale.client_id.to_s].to_i + price
+        grand_total["pcs_" + sale.client_id.to_s] = grand_total["pcs_" + sale.client_id.to_s].to_i + pcs
+        total_price += price
+        total_pcs += pcs 
+      %>
+    <% end %>
+    <td><%= format_currency total_price %></td>
+    <td><%= total_pcs %></td>
+    <% grand_total_price += total_price %>
+    <% grand_total_pcs += total_pcs %>
+  </tr>
+<% } %>
+<tr>
+  <th colspan="2" style="text-align: center;">Total</th>
+  <% store.select("store_id, client_id").each do |sale| %>
+    <th><%= format_currency grand_total["price_" + sale.client_id.to_s] %></th>
+    <th><%= grand_total["pcs_" + sale.client_id.to_s] %></th>
+  <% end %>
+  <th><%= format_currency grand_total_price %></th>
+  <th><%= grand_total_pcs %></th>
+</tr>

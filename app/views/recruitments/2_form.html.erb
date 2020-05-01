@@ -1,0 +1,121 @@
+<div class="container-fluid">
+    	<ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="recruitment.html" class="">Recruitment</a></li>
+            <li><a href="#" class="active">New Recruitment</a></li>
+        </ul>
+        
+        <div class="page-title">	
+        	<i class="fa fa-puzzle-piece"></i>
+        	<h3>New <span class="semi-bold">Recruitment</span></h3>	
+        </div>
+        	<%= form_for recruitment do |f|%>
+	        	<div class="grid simple">
+	           	  <div class="grid-title no-border"></div>
+	            	<div class="grid-body no-border">
+	                        <div class="col-md-6">
+			                	<div class="form-group">
+				                    <label>No Recruitment:</label>
+				                    <div class="input-group">
+				                        <div class="input-group-addon">
+				                            <i class="fa fa-pencil"></i>
+				                        </div>
+				                        <%= f.text_field :no_recruitment, :placeholder => "no_recruitment", :class => "form-control" %>
+				                    </div>
+				                </div>
+
+				                <div class="form-group">
+				                    <label>Requester:</label>
+				                    <div class="input-group">
+				                        <div class="input-group-addon">
+				                            <i class="fa fa-user"></i>
+				                        </div>
+				                        <%= f.text_field :user_id, :placeholder => "requester", :class => "form-control" %>
+				                    </div>
+				                </div>
+				            </div>
+
+				            <div class="col-md-6">
+				                <div class="form-group">
+				                    <label>Organization:</label>
+				                    <div class="input-group">
+				                        <div class="input-group-addon">
+				                            <i class="fa fa-group"></i>
+				                        </div>
+				                        <%= f.text_field :organization, :placeholder => "organization", :class => "form-control" %>
+				                    </div>
+				                </div>
+
+				                <div class="form-group">
+				                    <label>Due Date:</label>
+				                    <div class="input-group">
+				                        <div class="input-group-addon">
+				                            <i class="fa fa-calendar"></i>
+				                        </div>
+				                        <%= f.text_field :due_date, :placeholder => "due_date", :class => "form-control datepicker_form" %>
+				                    </div>
+				                </div>
+						    </div>
+
+					</div>
+	       		  </div> 
+	            <div class="grid simple">
+	           	  <div class="grid-title no-border"><h4><strong>Man Power</strong></h4></div>
+	            	<div class="grid-body no-border">
+					  <div class="row toolbar-block">
+	                    <div class="col-md-12">
+	                        	<div class="toolbar pull-right" id="toolbar_main">
+	                            	<div class="table-tools-actions">
+	                                	<%= link_to_add_association f, :recruitment_details, :"data-association-insertion-node" => "tbody", :"data-association-insertion-method" => "append", :class => "btn btn-success" do %>
+	                                		<span class="fa fa-plus"></span> Add New
+	                                	<% end %>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                	<table class="table no-more-tables table-striped table-hover">
+	                        <thead>
+	                            <tr>
+	                                <th width="10%">Gender</th>
+	                                <th width="12%">Age</th>
+	                                <th width="11%">Experience (Years)</th>
+	                                <th width="11%">Fresh graduate</th>
+	                                <th width="27%">Skill</th>
+	                                <th width="12%">Organization</th>
+	                                <th width="12%">Position</th>
+	                                <th width="12%">Action</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            
+	                        </tbody>
+	                    </table>
+	                    
+	                    
+	                </div>
+	            </div>
+	            
+	            <div class="grid simple">
+	           	  <div class="grid-title no-border"><h4><strong>Note by Requester</strong></h4></div>
+	            	<div class="grid-body no-border">
+	                	<%= f.text_area :note, :class => 'col-xs-12', :rows => 5, :placeholder => 'Write Note Here'%>
+	                </div>
+	                <div class="form-actions">
+	                    <div class="pull-right">
+	                      <button class="btn btn-success btn-cons" type="submit"><i class="icon-ok"></i> Save</button>
+	                      
+	                    </div>
+	                  </div>
+	            </div>  
+	        <% end %>  
+    </div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker_form').datepicker();
+        
+    });
+
+
+</script>

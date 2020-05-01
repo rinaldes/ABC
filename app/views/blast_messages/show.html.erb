@@ -1,0 +1,61 @@
+<div class="container-fluid">
+    	<ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="index.html">Dashboard</a></li>
+             <li><a href="blast_message_list">Inbox</a></li>
+            <li><a href="#" class="active"><%=@blast_message.email %></a></li>
+        </ul>
+        
+        <div class="page-title">	
+        	<i class="fa fa-envelope"></i>
+        	<h3><span class="semi-bold"><%=@blast_message.email %></span></h3>	
+        </div>  
+        <div class="row">
+			<div class="col-md-12" id="preview-email-wrapper">
+				<div class="row">
+					<div class="col-md-12">
+						 <div class="grid simple">
+						 	<div class="grid-title no-border clearfix">
+								<h4></h4>
+                              
+							</div>
+							<div class="grid-body no-border" style="min-height: 850px;">
+								<div class="">
+									<div class="control">									
+										<div class="pull-left">
+										<div class="btn-group">
+										<div class="btn btn-mini dropdown-toggle">
+										<%=@blast_message.email %>
+										</div>										
+									</div>
+										
+										</div>
+										<div class="pull-right">
+											<span class="muted small-text">August 5 2013 11.30PM</span>
+										</div>
+										<div class="clearfix"></div>
+									</div>	
+									<br>
+									<div class="email-body">
+										<%=@blast_message.message.gsub('system','/system').html_safe %>
+									</div>						
+								</div>	
+                                
+                                <section id="repply" style="display:none">
+                                	<br><hr><br>
+                                	<h3><i class="fa fa-reply"></i> Repply</h3>
+                    				<ul class="wysihtml5-toolbar"><li class="dropdown"><a class="btn dropdown-toggle btn-white" data-toggle="dropdown" href="#"><i class="fa fa-font"></i>&nbsp;<span class="current-font">Normal text</span>&nbsp;<b class="caret"></b></a><ul class="dropdown-menu"><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="div" href="javascript:;" unselectable="on">Normal text</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" href="javascript:;" unselectable="on">Heading 1</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" href="javascript:;" unselectable="on">Heading 2</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" href="javascript:;" unselectable="on">Heading 3</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h4" href="javascript:;" unselectable="on">Heading 4</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h5" href="javascript:;" unselectable="on">Heading 5</a></li><li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h6" href="javascript:;" unselectable="on">Heading 6</a></li></ul></li><li class="dropdown"><a class="btn dropdown-toggle btn-white" data-toggle="dropdown" href="#"><span class="current-color">Black</span>&nbsp;<b class="caret"></b></a><ul class="dropdown-menu"><li><div class="wysihtml5-colors" data-wysihtml5-command-value="black"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="black" href="javascript:;" unselectable="on">Black</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="silver"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="silver" href="javascript:;" unselectable="on">Silver</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="gray"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="gray" href="javascript:;" unselectable="on">Grey</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="maroon"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="maroon" href="javascript:;" unselectable="on">Maroon</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="red"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red" href="javascript:;" unselectable="on">Red</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="purple"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="purple" href="javascript:;" unselectable="on">Purple</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="green"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green" href="javascript:;" unselectable="on">Green</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="olive"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="olive" href="javascript:;" unselectable="on">Olive</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="navy"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="navy" href="javascript:;" unselectable="on">Navy</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="blue"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue" href="javascript:;" unselectable="on">Blue</a></li><li><div class="wysihtml5-colors" data-wysihtml5-command-value="orange"></div><a class="wysihtml5-colors-title" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="orange" href="javascript:;" unselectable="on">Orange</a></li></ul></li><li><div class="btn-group "><a class="btn btn-white" data-wysihtml5-command="bold" title="CTRL+B" href="javascript:;" unselectable="on">Bold</a><a class="btn btn-white" data-wysihtml5-command="italic" title="CTRL+I" href="javascript:;" unselectable="on">Italic</a><a class="btn btn-white" data-wysihtml5-command="underline" title="CTRL+U" href="javascript:;" unselectable="on">Underline</a></div></li><li><div class="btn-group"><a class="btn btn-white" data-wysihtml5-command="insertUnorderedList" title="Unordered list" href="javascript:;" unselectable="on"><i class="fa fa-list"></i></a><a class="btn btn-white" data-wysihtml5-command="insertOrderedList" title="Ordered list" href="javascript:;" unselectable="on"><i class="fa fa-th-list"></i></a><a class="btn btn-white" data-wysihtml5-command="Outdent" title="Outdent" href="javascript:;" unselectable="on"><i class="fa fa-align-right"></i></a><a class="btn btn-white" data-wysihtml5-command="Indent" title="Indent" href="javascript:;" unselectable="on"><i class="fa fa-align-left"></i></a></div></li><li><div class="bootstrap-wysihtml5-insert-link-modal modal fade" id="linkmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><a class="close" data-dismiss="modal"></a><h3>Insert link</h3></div><div class="modal-body"><input value="http://" class="bootstrap-wysihtml5-insert-link-url m-wrap large" type="text"></div><div class="modal-footer"><a href="#" class="btn" data-dismiss="modal">Cancel</a><a href="#" class="btn green  btn-primary" data-dismiss="modal">Insert link</a></div></div></div></div><a class="btn btn-white" data-wysihtml5-command="createLink" title="Insert link" data-toggle="modal" data-target="#linkmodal" href="javascript:;" unselectable="on"><i class="fa fa-share"></i></a></li><li><div class="bootstrap-wysihtml5-insert-image-modal modal fade" id="imgmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><a class="close" data-dismiss="modal"></a><h3>Insert image</h3></div><div class="modal-body"><input value="http://" class="bootstrap-wysihtml5-insert-image-url m-wrap large" type="text"></div><div class="modal-footer"><a href="#" class="btn" data-dismiss="modal">Cancel</a><a href="#" class="btn  green btn-primary" data-dismiss="modal">Insert image</a></div></div></div></div><a class="btn btn-white" data-wysihtml5-command="insertImage" title="Insert image" data-toggle="modal" data-target="#imgmodal" href="javascript:;" unselectable="on"><i class="fa fa-picture-o"></i></a></li></ul><textarea id="text-editor" class="form-control" rows="10" placeholder="Enter text ..." style="display: none;"></textarea><input type="hidden" name="_wysihtml5_mode" value="1"><iframe class="wysihtml5-sandbox" security="restricted" allowtransparency="true" frameborder="0" width="0" height="0" marginwidth="0" marginheight="0" style="border-collapse: separate; border: 1px solid rgb(229, 233, 236); clear: none; display: block; float: none; margin: 0px; outline: rgb(85, 85, 85) none 0px; outline-offset: 0px; padding: 10px 12px 6px; position: static; top: auto; left: auto; right: auto; bottom: auto; z-index: auto; vertical-align: top; text-align: start; box-sizing: border-box; box-shadow: none; border-radius: 4px; width: 100%; height: auto; background-color: rgb(255, 255, 255);"></iframe>
+                                    <div class="m-t-20">  
+                                        <div class="pull-right">
+                                          <button type="button" class="btn btn-success btn-cons"> Send <i class="fa fa-send"></i></button>
+                                        </div>
+                                    </div>
+                                </section>
+                                						
+								</div>
+							</div>	
+						</div>
+				</div>
+			</div>		
+		</div>  
+    </div>

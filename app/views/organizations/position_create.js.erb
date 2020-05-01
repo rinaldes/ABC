@@ -1,0 +1,7 @@
+	<% if @position.save %>
+	$('#position tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#position tbody').prepend("<%= j(render 'position_data', :position => @position) %>"); 
+<% else %>
+	
+<% end %>

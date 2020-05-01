@@ -1,0 +1,14 @@
+<%= "<tr id=\"data_#{education_detail.id}\">".html_safe if params[:action] != "update_education_detail" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= education_detail.id %>" type="checkbox" value="<%= education_detail.id %>" class="child-education child-box" data-section="education" data-education="child">
+    <label for="checkbox<%= education_detail.id %>"></label>
+  </div>
+</td>
+    <td><%= education_detail.grade %></td>
+    <td><%= education_detail.institution %></td>
+    <td><%= education_detail.start %></td>
+    <td><%= education_detail.end %></td>
+    <td><%= education_detail.major %></td>
+    <td><%= education_detail.final_score %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_education_detail" %>

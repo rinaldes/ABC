@@ -1,0 +1,34 @@
+<tr>
+  <td><%= @bank_out.supplier.try(:name) %></td>
+  <td class="currency_bank_out"><%= format_currency(@bank_out.total_amount)  %></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Outstanding Amount</td>
+  <td></td>
+  <td class="currency_bank_out"><%= format_currency(@bank_out.outstanding_amount) %></td>
+</tr>
+<tr>
+  <td>Retur Amount</td>
+  <td></td>
+  <td class="currency_bank_out"><%= format_currency(@bank_out.retur_amount) %></td>
+</tr>
+<tr>
+  <td>Tunai</td>
+  <td></td>
+  <td class="currency_bank_out"><%= format_currency(@bank_out.total_paid) %></td>
+</tr>
+
+<% @bank_out.other_charges.each do |other_charge| %>
+  <tr>
+    <td><%= other_charge.name %></td>
+    <td></td>
+    <td class="currency_bank_out"><%= format_currency(other_charge.amount) %></td>
+  </tr>
+<% end %>
+
+<tr>
+  <td>Total</td>
+  <td class="currency_bank_out"><%= format_currency(@bank_out.total_amount) %></td>
+  <td class="currency_bank_out"><%= format_currency(@debit) %></td>
+</tr>

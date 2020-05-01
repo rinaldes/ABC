@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Start</Data></Cell>
+        <Cell><Data ss:Type="String">End</Data></Cell>
+        <Cell><Data ss:Type="String">Position</Data></Cell>
+        <Cell><Data ss:Type="String">Organization</Data></Cell>
+        <Cell><Data ss:Type="String">Reason_for_change</Data></Cell>
+      </Row>
+    <% @position_details.each do |position_detail| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= position_detail.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= position_detail.start %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= position_detail.end %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= position_detail.position %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= position_detail.organization %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= position_detail.reason_for_change %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

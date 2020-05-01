@@ -1,0 +1,9 @@
+<p>
+	Hi <%= @company.owner_name %>,<br/>
+	<br/>
+	Your company code is <b><%= @company.code %></b><br/>
+	<br/>
+	Thanks for registering! To confirm your registration click the URL below.<br/>
+	<br/>
+	<%= admin_confirmation_url(@company.confirm_token) %>
+</p>

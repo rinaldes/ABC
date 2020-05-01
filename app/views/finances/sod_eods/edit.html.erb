@@ -1,0 +1,162 @@
+<link rel="stylesheet" href="/css/jquery-ui.css">
+<script src="/js/jquery-1.10.2.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<%= render 'shared/breadcrumb' %>
+<div id="content">
+  <section id="widget-grid" class="">
+    <div id='notice_template'><%= render 'layouts/notice' %></div>
+    <div class="row">
+      <article class="col-sm-12 col-md-12 col-lg-12">
+        <div class="jarviswidget" id="wid-id-0" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+          <header>
+            <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+            <h2>Edit SOD - EOD (Start of the  Day - End of the Day)  </h2>
+          </header>
+          <div>
+            <div class="jarviswidget-editbox">
+            </div>
+            <div class="widget-body no-padding">
+              <%= form_for @sod_eod, url: finances_sod_eod_path, html: {class: "smart-form sod-eod-form", id: "form-update-verify", :multipart => true} do |f| %>
+                  <fieldset>
+                    <div class="row">
+                      <section class="col col-6">
+                        <div class="form-group">
+                          <label class="col-md-3 control-label">Branch</label>
+                          <div class="col-md-9"><%= @sod_eod.office.office_name %></div>
+                        </div>
+                        <div class="col-md-12">&nbsp;</div>
+                        <div class="form-group">
+                          <label class="col-md-3 control-label">Cashier</label>
+                          <div class="col-md-9"><%= @sod_eod.user.first_name rescue nil %> <%= @sod_eod.user.last_name rescue nil %></div>
+                        </div>
+                      </section>
+                      <section class="col col-6">
+                        <div class="form-group">
+                          <label class="col-md-3 control-label">Sod Eod Date</label>
+                          <div class="col-md-9"><%= @sod_eod.sod_eod_date %></div>
+                        </div>
+                        <div class="col-md-12">&nbsp;</div>
+                        <div class="form-group">
+                          <label class="col-md-3 control-label">Session</label>
+                          <div class="col-md-9">1</div>
+                        </div>
+                      </section>
+                    </div>
+                    <div class="row">
+                      <%#= render 'other_input' %>
+                    </div>
+                    <div class="row">
+                      <!-- Start Day -->
+                      <section class="col col-6 start-of-the-day">
+                        <div id="start-now-box">
+                          <header>Start of The Day</header>
+                          <section></section>
+                          <section>
+                            <label class="col-md-4 label">Start Time</label>
+                            <label class="col-md-8 input custom-input-box">
+                              <strong><span id="start-time"><%= format_time(@sod_eod.start_time) %></span></strong>
+                            </label>
+                            <label class="col-md-4 label">Start Amount</label>
+                            <label class="col-md-6 input custom-input-box">
+                              <input class="input-sm" type="text" value="<%= format_currency @sod_eod.start_amount %>" disabled="disabled">
+                            </label>
+                          </section>
+                        </div>
+                      </section>
+                      <!-- End Day -->
+                      <section class="col col-6 end-of-the-day">
+                        <div id="end-now-box">
+                          <header>End of The Day</header>
+                          <section></section>
+                          <section>
+                            <label class="col-md-4 label">End Time</label>
+                            <label class="col-md-8 input custom-input-box">
+                              <strong><span id="end-time"><%= format_time(@sod_eod.end_time) %></span></strong>
+                            </label>
+                            <label class="col-md-4 label">End Amount</label>
+                            <label class="col-md-6 input custom-input-box">
+                              <input class="input-sm" type="text" value="<%= format_currency @sod_eod.end_amount %>" disabled="disabled">
+                            </label>
+                          </section>
+                        </div>
+                      </section>
+                    </div>
+                    <br><hr><br><hr><br>
+                    <div class="row">
+                      <section class="col col-md-6">
+                        <div id="now-box">
+                          <section>
+                            <label class="col-md-4 label">Tombokan</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :tombokan, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                          <section>
+                            <label class="col-md-4 label">Cash</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :cash2, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                          <section>
+                            <label class="col-md-4 label">DP Masuk</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :dp_masuk, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                          <section>
+                            <label class="col-md-4 label">DP Keluar</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :dp_keluar, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                        </div>
+                      </section>
+                      <section class="col col-md-6">
+                        <div id="now-box">
+                          <section>
+                            <label class="col-md-4 label">Input Service</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :input_service, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                          <section>
+                            <label class="col-md-4 label">Lain Lain</label>
+                            <label class="col-md-7 input custom-input-box">
+                              <strong><%= f.number_field :lain_lain, class: "input-sm" %></strong>
+                            </label>
+                          </section>
+                        </div>
+                      </section>
+                    </div>
+                    <div class="row">
+                      <section class="col col-md-12">
+                        <header>Setoran ke Bank</header>
+                        <section></section>
+                        <% EdcBankAccount.all.each_with_index do |edc_m, i| %>
+                          <%= render "setor", edc_m: edc_m, i: i %>
+                        <% end %>
+                        <section></section>
+                      </section>
+                    </div>
+                  </fieldset>
+                  <footer>
+                    <%= f.submit "Submit", :class => "btn btn-primary", :id => "submit-petty-cash", data: { :disable_with => "Please wait..." }  %>
+                    <%= link_to "Back", finances_sod_eods_path, :class => "btn btn-default"  %>
+                  </footer>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+<script type="text/javascript">
+  $(function () {
+      $('.datepicker_form').datepicker({
+        dateFormat : 'dd/mm/yy',
+        prevText : '<i class="fa fa-chevron-left"></i>',
+        nextText : '<i class="fa fa-chevron-right"></i>'
+    });
+  });
+</script>

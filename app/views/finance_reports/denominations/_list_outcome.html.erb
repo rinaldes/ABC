@@ -1,0 +1,37 @@
+<% cash_outs.each do |cash_out| %>
+  <tr>
+    <td><%= cash_out.description %></td>
+    <td><%= format_currency(cash_out.amount) %></td>
+  </tr>
+<% end %>
+<tr>
+  <td>Mandiri</td>
+  <td><%= format_currency(list_outcome["mandiri"]) %></td>
+</tr>
+<tr>
+  <td>BNI</td>
+  <td><%= format_currency(list_outcome["bni"]) %></td>
+</tr>
+<tr>
+  <td>BCA</td>
+  <td><%= format_currency(list_outcome["bca"]) %></td>
+</tr>
+<tr>
+  <td>Pengeluaran Tunai</td>
+  <td><%= format_currency(list_outcome["outcome_cash"]) %></td>
+</tr>
+<tr>
+  <td rowspan="2">&nbsp</td>
+  <td rowspan="2">&nbsp</td>
+</tr>
+<tr></tr>
+<tr>
+  <td>BTP Masuk (Saldo)</td>
+  <td><%= format_currency(list_outcome["saldo_btp_income"]) %></td>
+</tr>
+<tr>
+  <td colspan="2">&nbsp</td>
+</tr>
+<tr>
+  <td colspan="2">&nbsp</td>
+</tr>

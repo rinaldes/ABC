@@ -1,0 +1,133 @@
+<h3>ABC ke Azzurra</h3><hr>
+<table class="table table-bordered table-striped" id='stock'>
+  <thead>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Bulan</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Kiriman Barang</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Return</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Total</th>
+      <th style="text-align: center; vertical-align: middle;">Ongkos Kirim</th>
+      <th style="text-align: center; vertical-align: middle;">Total + Ongkir</th>
+    </tr>
+    <tr>
+      <% 3.times do %>
+        <th style="text-align: center; vertical-align: middle;">QTY</th>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+      <% end %>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+      a, total = 0, [0,0,0,0,0,0,0,0]
+      until a > 11 do
+        month = (Time.now.beginning_of_year + a.month)
+        date = ((params[:year].present? ? params[:year] : Time.now.year.to_s) + '-' + (month.strftime("%m")) + '-01').to_time
+        conditions, conditions2 = [], []
+        conditions << "date BETWEEN '#{date}' AND  '#{date + 1.month}'"
+        conditions2 << "mutation_date BETWEEN '#{date}' AND  '#{date + 1.month}'"
+        bo_abc = PurchaseTransfer.where(conditions2.join(' AND ')).where("product_mutations.destination_warehouse_id = #{6}")
+        bo_r_abc = ReturnsToSupplier.joins(:supplier).where(conditions.join(' AND ')).where("lower(suppliers.name) like '%azzurra%'")
+        total_qty = bo_abc.map(&:total_quantity).first.to_i + bo_r_abc.map(&:quantity).first.to_i
+        total_nom = bo_abc.map(&:total_value).first.to_f + bo_r_abc.map(&:total).first.to_f
+        total_ongkir = bo_abc.map(&:ongkir).first.to_f + bo_r_abc.map(&:ongkir).first.to_f
+    %>
+      <tr>
+        <td><%= month.strftime("%b") %></td>
+        <td><%= bo_abc.map(&:total_quantity).first.to_i %></td>
+        <td><%= bo_abc.map(&:total_value).first.to_f %></td>
+        <td><%= bo_r_abc.map(&:quantity).first.to_i %></td>
+        <td><%= bo_r_abc.map(&:total).first.to_f %></td>
+        <td><%= total_qty %></td>
+        <td><%= total_nom %></td>
+        <td><%= total_ongkir %></td>
+        <td><%= total_ongkir + total_nom %></td>
+      </tr>
+      <% 
+        a += 1
+        total[0] += bo_abc.map(&:total_quantity).first.to_i
+        total[1] += bo_abc.map(&:total_value).first.to_f
+        total[2] += bo_r_abc.map(&:quantity).first.to_i
+        total[3] += bo_r_abc.map(&:total).first.to_f
+        total[4] += total_qty
+        total[5] += total_nom
+        total[6] += total_ongkir
+        total[7] += total_ongkir + total_nom
+      %>
+    <% end %>
+    <tr>
+      <th>Total</th>
+      <% (0..7).each do |ttl| %>
+        <th><%= total[ttl] %></th>
+      <% end %>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h3>Azzurra ke ABC</h3><hr>
+<table class="table table-bordered table-striped" id='stock'>
+  <thead>
+    <tr>
+      <th rowspan=2 style="text-align: center; vertical-align: middle;">Bulan</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Kiriman Barang</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Return</th>
+      <th colspan=2 style="text-align: center; vertical-align: middle;">Total</th>
+      <th style="text-align: center; vertical-align: middle;">Ongkos Kirim</th>
+      <th style="text-align: center; vertical-align: middle;">Total + Ongkir</th>
+    </tr>
+    <tr>
+      <% 3.times do %>
+        <th style="text-align: center; vertical-align: middle;">QTY</th>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+      <% end %>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+        <th style="text-align: center; vertical-align: middle;">Nominal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+      a, total = 0, [0,0,0,0,0,0,0,0]
+      until a > 11 do
+        month = (Time.now.beginning_of_year + a.month)
+        date = ((params[:year].present? ? params[:year] : Time.now.year.to_s) + '-' + (month.strftime("%m")) + '-01').to_time
+        conditions, conditions2 = [], []
+        conditions << "date BETWEEN '#{date}' AND  '#{date + 1.month}'"
+        conditions2 << "mutation_date BETWEEN '#{date}' AND  '#{date + 1.month}'"
+        bo_abc = ReturnsToHo.where(conditions2.join(' AND ')).where("origin_warehouse_id = #{6}")
+        bo_r_abc = Receiving.joins(:supplier).where(conditions.join(' AND ')).where("lower(suppliers.name) like '%azzurra%'")
+        total_qty = bo_abc.map(&:total_quantity).first.to_i + bo_r_abc.map(&:received_qty).first.to_i
+        total_nom = bo_abc.map(&:total_value).first.to_f + bo_r_abc.map(&:total_before_discount).first.to_f
+        total_ongkir = bo_abc.map(&:ongkir).first.to_f + (bo_r_abc.map(&:ongkir).first.to_f rescue 0)
+    %>
+      <tr>
+        <td><%= month.strftime("%b") %></td>
+        <td><%= bo_r_abc.map(&:received_qty).first.to_i %></td>
+        <td><%= bo_r_abc.map(&:total_before_discount).first.to_f %></td>
+        <td><%= bo_abc.map(&:total_quantity).first.to_i %></td>
+        <td><%= bo_abc.map(&:total_value).first.to_f %></td>
+        <td><%= total_qty %></td>
+        <td><%= total_nom %></td>
+        <td><%= total_ongkir %></td>
+        <td><%= total_ongkir + total_nom %></td>
+      </tr>
+      <% 
+        a += 1
+        total[0] += bo_r_abc.map(&:received_qty).first.to_i
+        total[1] += bo_r_abc.map(&:total_before_discount).first.to_f
+        total[2] += bo_abc.map(&:total_quantity).first.to_i
+        total[3] += bo_abc.map(&:total_value).first.to_f
+        total[4] += total_qty
+        total[5] += total_nom
+        total[6] += total_ongkir
+        total[7] += total_ongkir + total_nom
+      %>
+    <% end %>
+    <tr>
+      <th>Total</th>
+      <% (0..7).each do |ttl| %>
+        <th><%= total[ttl] %></th>
+      <% end %>
+    </tr>
+  </tbody>
+</table>

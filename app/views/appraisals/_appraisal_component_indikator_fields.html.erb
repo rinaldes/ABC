@@ -1,0 +1,16 @@
+<tr border=1 class="nested-fields">
+	<td>
+		<%= f.text_field :indikator, :label => false, :placeholder => 'Indikator', class: 'form-control'%>
+	</td>
+	<td>
+		<%= f.text_field :archivement, :label => false, :placeholder => 'Archivement', class: 'form-control'%>
+	</td>
+	<td>
+		<%= f.text_field :score, :label => false, :placeholder => 'Score', class: 'form-control'%>
+	</td>
+	<td>
+		<%= link_to_remove_association f, data: {:confirm => 'do you really want to do this?'}, class: 'btn btn-default btn-xs' do%>
+			<i class="fa fa-trash-o"></i>
+		<% end %>
+	</td>
+</tr>

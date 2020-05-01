@@ -1,0 +1,79 @@
+<%= javascript_tag render(:template => 'asset_assignments/jsManager.js', :formats => [:js]) %>
+<div class="container-fluid">
+	<ul class="breadcrumb">
+        <li><p>YOU ARE HERE</p></li> 
+        <li><a href="asset_assignment.html" class="">Asset Assignment</a></li>
+        <li><a href="#" class="active">Show Asset Assignment</a></li>
+    </ul>
+    
+    <div class="page-title">	
+    	<i class="fa fa-puzzle-piece"></i>
+    	<h3>Show <span class="semi-bold">Asset Assignment</span></h3>	
+    </div>
+    	<div class="grid simple">
+       	  <div class="grid-title no-border"></div>
+        	<div class="grid-body no-border">
+                    <div class="col-md-6">
+	                	<div class="form-group row">
+                            <label class="form-label col-sm-2">Name</label>			 
+                            <label class="form-label col-sm-5"><%= @asset_assignment.employee.name %></label>
+                        </div>
+		            </div>
+
+                    <table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th width="10%">Asset Type</th>
+                                <th width="12%">Asset Name</th>
+                                <th width="11%">Serial Number</th>
+                                <th width="11%">Date Of Assignment</th>
+                                <th width="12%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% @asset_assignment.asset_assignment_details.each do |detail| %>
+                            	<tr id="data_<%= detail.id %>">
+                            		<td><%= detail.asset_type %></td>
+                            		<td><%= detail.name %></td>
+                            		<td><%= detail.serial_number %></td>
+                            		<td><%= detail.date %></td>
+                            		<td>
+                            			<% if detail.returned %>
+                            				<span class="badge badge-success"> Returned </span>	
+                            			<% else %>
+                            				<a data-toggle="modal" data-target="#formmodal" onclick="setModalID(<%= detail.id %>);">
+                            					<span class="badge badge-danger"> Borrowed </span>
+                            				</a>
+                            			<% end %>
+                            		</td>
+                            	</tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+
+			</div>
+   		</div> 
+</div>
+
+
+<div class="modal fade" id="formmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Asset Asignment</h4>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <h3>Are you sure return asset ?</h3>
+        </div>
+        <%= hidden_field_tag :id_return %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        
+        <button type="button" class="btn btn-primary" onclick="setReturn();">Return Asset</button>
+      </div>
+    </div>
+  </div>
+</div>

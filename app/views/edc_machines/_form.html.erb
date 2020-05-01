@@ -1,0 +1,77 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Data Master</li><li>Bank</li><li><%= label %></li>
+  </ol>
+</div>
+<div id="content">
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-supplier">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2><%= label %> Bank</h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <%= form_for @edc_machine, html: {class: "smart-form", id: "form-update-verify"} do |f| %>
+              <fieldset>
+                <div class="row">
+
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-3 label">Nama Bank <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box"><%= f.text_field :bank_name, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-3 label">Cabang <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box"><%= f.text_field :branch, :class => "input-sm" %></label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-3 label">Mesin EDC <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.number_field :edc_serial_number, class: "input-sm" %>
+                      </label>
+                    </section>
+                  </section>
+
+                  <section class="col col-md-6">
+                    <section class="form-group">
+                      <label class="col-md-3 label">Toko <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.select :store_id, options_for_select(Branch.all.map{|office|[office.office_name, office.id]}), {}, class: "input-sm form-control" %>
+                      </label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-3 label">No Rekening <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.number_field :account_number, class: "input-sm" %>
+                      </label>
+                    </section>
+                    <section class="form-group">
+                      <label class="col-md-3 label">Nama Pemilik <span class='important'>*</span></label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= f.text_field :owner, class: "input-sm" %>
+                      </label>
+                    </section>
+                  </section>
+
+                </div>
+              </fieldset>
+              <footer>
+                <%= submit_tag 'Submit', class: 'btn btn-primary' %>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+<script type="text/javascript">
+  $( document ).ready(function() {
+    $('#edc_machine_store_id').select2();
+  });
+</script>

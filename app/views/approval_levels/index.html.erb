@@ -1,0 +1,54 @@
+<div class="container-fluid">
+        <ul class="breadcrumb">
+            <li><p>YOU ARE HERE</p></li> 
+            <li><a href="#" class="active">Approval Level</a></li>
+        </ul>
+        
+        <div class="page-title">    
+            <i class="fa fa-check-circle-o"></i>
+            <h3>Approval - <span class="semi-bold">Level</span></h3>    
+        </div>  
+            <div class="grid simple">
+              <div class="grid-title no-border"></div>
+                <div class="grid-body no-border">
+                    
+                    <table class="table no-more-tables table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:9%">Leave Request</th>
+                                <th style="width:22%">Approver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% @approval_levels.each do |approval_level| %>
+                                <tr id="row_<%= approval_level.id %>">
+                                    <td>
+                                      <%= link_to edit_approval_level_path(approval_level.id), id: "_new", remote: true do %>
+                                          <%= approval_level.feature_name %>
+                                      <% end %>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <%= approval_level.approval_level_approvers.map{|x| [x.employee.name]}.join(', ') rescue ' ' %>
+                                    </td>
+                                </tr>
+                            <% end %>
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal -->
+
+<div class="modal fade" id="formmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+</div>
+
+                <div class="footer-panel">
+                    <div class="copyright">Copyright 2015 &copy; <a href="">HRM - Human Resource Management</a></div>
+                    <div class="powered">Powered by <b><a href="" target="_Blank">PT.Pratesis</a></b></div>
+                </div>
+            </div>
+    </div>
+        
+		
+		

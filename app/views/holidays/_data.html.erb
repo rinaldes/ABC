@@ -1,0 +1,17 @@
+<% if params[:action] != "update" %>
+    <tr id="data_<%= holiday.id %>">
+<% end %>
+    <td>
+    	<div class="checkbox check-default">
+            <input id="checkbox<%= holiday.id %>" type="checkbox" value="<%= holiday.id %>" onchange="cek_checkbox();">
+            <label for="checkbox<%= holiday.id %>"></label>
+        </div>
+    </td>
+    <td><%= holiday.name %></td>
+    <td><%= holiday.start %></td>
+    <td><%= holiday.end %></td>
+    <td><%= holiday.annual_leave %></td>
+    <td><%= holiday.mandays %></td>
+<% if params[:action] != "update" %>
+    </tr>
+<% end %>

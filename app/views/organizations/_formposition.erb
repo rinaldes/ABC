@@ -1,0 +1,37 @@
+<% if params[:action] == "position_new"%>
+  <tr>
+<% end %>
+  <%= form_for(position, html: { role: "form", multipart: true}, remote: true) do |f| %>
+    <td>
+      <div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+    </td>
+    <% if params[:action] == "position_new"%>
+        <%= f.hidden_field :company_id, :value => params[:company_id_id]%>
+      <% else %>
+        <%= f.hidden_field :id, :value => params[:id] %>
+      <% end %>
+
+    <td>
+      <%= f.text_field :name, :class => "full-width", :placeholder => "Name" %>
+    </td>
+    <td>
+      <%= f.number_field :leave_time, :class => "full-width", :placeholder => "leave Time" %>
+    </td>
+    <td>
+    </td>
+    <td>
+      <div>
+        <% if params[:action] == "position_new" %>
+                <%= f.submit "Add", class: "btn btn-success", :onclick => "submit_position();"%>
+              <% else %>
+                <%= f.submit "Update", class: "btn btn-success", :onclick => "update_position();"%>
+              <% end %>
+            </div>
+    </td>
+  <% end %>
+<% if params[:action] == "position_new"%>
+  </tr>
+<% end %>

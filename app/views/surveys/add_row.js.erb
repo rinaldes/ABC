@@ -1,0 +1,19 @@
+<% if params[:section] == "radio_button_other" || params[:section] == "checkbox_other" %>
+	$("<%= j(render '/values/'+params[:section], index: (params[:index].to_i + 1), id: params[:id], current_value: session[current_user.id.to_s]['question'][params[:id]]) %>").insertBefore($("#extra_panel"))
+	$("#<%= params[:section] %>_button_0").hide()
+
+<% else %>
+	<%# textbox_text, radio_button %>
+	$("<%= j(render '/values/'+params[:section]+'_item', index: (params[:index].to_i + 1), id: params[:id], current_value: session[current_user.id.to_s]['question'][params[:id]]) %>").insertAfter($("#<%= params[:section] %>_group_<%= params[:index] %>"))
+	total_button = $(".<%= params[:section] %>_button").length
+	$(".<%= params[:section] %>_button").hide()
+	$($(".<%= params[:section] %>_button")[total_button-1]).show()
+<% end %>
+
+<% if params[:section] == "radio_button" || params[:section] == "checkbox" %>
+	if($(".<%= params[:section] %>_button").length == 1){
+		$($("#<%= params[:section] %>_other_button_0").children("span")[0]).show()
+	} else {
+		$($("#<%= params[:section] %>_other_button_0").children("span")[0]).hide()
+	}
+<% end %>

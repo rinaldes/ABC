@@ -1,0 +1,28 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(family, html: { role: "form", multipart: true}, remote: true) do |f| %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+		
+		<td>
+			<%= f.type_number :delay_tolerance, :class => "full-width", %>
+		</td>
+		
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+            		<%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "submit_family();"%>
+            	<% else %>
+            		<%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "update_family();"%>
+            	<% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

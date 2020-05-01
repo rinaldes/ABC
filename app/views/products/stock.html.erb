@@ -1,0 +1,203 @@
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-product">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>Cek Stock All Gudang Per Supplier</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <form class='smart-form' url="/products/stock">
+              <fieldset class="smart-form">
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section class="form-group col col-md-12">
+                      <%= render 'products/supplier_info' %>
+                    </section>
+                    <section class="form-group col col-md-12">
+                      <label class="col-md-4 label">Merk <span class='important'>*</span></label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= text_field_tag "search[brand]", (@brand.name rescue '') , class: "input-sm autocomplete-field search", placeholder: "Select or type to autocomplete", name: 'search[brands.name]' %>
+                      </label>
+                    </section>
+                    <section class="form-group col col-md-12">
+                      <label class="col-md-4 label">Article</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= text_field_tag "search[article]", '' , class: "input-sm autocomplete-field search", placeholder: "Select or type to autocomplete" %>
+                      </label>
+                    </section>
+                    <section class="form-group col col-md-12">
+                      <label class="col-md-4 label">Barcode</label>
+                      <label class="col-md-8 input custom-input-box">
+                        <%= text_field_tag "search[barcode]", '' , class: "input-sm autocomplete-field search", placeholder: "Select or type to autocomplete" %>
+                      </label>
+                    </section>
+                  </section> <!-- col-md-6 -->
+                  <section class="col col-md-12">
+                    <section class="col col-md-3">
+                      <label class="col-md-8 label">Branch</label>
+                      <% @current_offices.each do |branch|%>
+                        <label class="col-md-8 status4">
+                          <%= check_box_tag "search[branch][#{branch.id}]", branch.id, @offices.include?(branch) %><%= branch.office_name %>
+                        </label>
+                      <% end %>
+                    </section>
+                    <section class="col col-md-2">
+                      <label class="col-md-8 label">Status 2</label>
+                      <% Catalog.all.map(&:name).each{|catalog| %>
+                        <label class="col-md-8">
+                          <%= check_box_tag "search[status2][Catalog]", catalog, (params[:search][:status2].keys rescue []).include?(catalog) %><%= catalog %>
+                        </label>
+                      <% } %>
+                    </section>
+                    <section class="col col-md-3">
+                      <section class="form-group">
+                        <label class="col-md-8 label">Status 3</label>
+                        <label class="col-md-8">
+                          <%= check_box_tag "search[status3][konsinyasi]", 'Konsinyasi', (params[:search][:status3].keys rescue []).include?('Konsinyasi') %>Konsinyasi
+                        </label>
+                        <label class="col-md-8">
+                          <%= check_box_tag "search[status3][non konsinyasi]", (params[:search][:status3].keys rescue []).include?('Non-Konsinyasi') %>Non-Konsinyasi
+                        </label>
+                        <label class="col-md-8">
+                          <%= check_box_tag "search[status3][test market]", 'Test-Market', (params[:search][:status3].keys rescue []).include?('Test Market') %>Test Market
+                        </label>
+                      </section>
+                    </section>
+                    <section class="col col-md-2">
+                      <label class="col-md-8 label">Status 4</label>
+                      <label class="col-md-8 status4"><%= check_box_tag "search[status4][fast moving]", 'Fast-Moving' %>Fast Moving</label>
+                      <label class="col-md-8 status4"><%= check_box_tag "search[status4][slow moving]", 'Slow-Moving' %>Slow Moving</label>
+                      <label class="col-md-8 status4"><%= check_box_tag "search[status4][dead moving]", 'Dead-Moving' %>Dead Moving</label>
+                    </section>
+                    <section class="col col-md-2">
+                      <label class="col-md-8 label">Status 5</label>
+                      <label class="col-md-8 status4"><%= check_box_tag "search[status5][Normal Brand]", 'Normal Brand' %>Normal Brand</label>
+                      <label class="col-md-8 status4"><%= check_box_tag "search[status5][Private Brand]", 'Private Brand' %>Private Brand</label>
+                    </section>
+                  </section>
+                  <section class="col col-md-12"><%= link_to 'Search', 'javascript:void(0)', onclick: 'filter_stock()', class: 'btn btn-primary' %></section>
+                </div>
+              </fieldset> <!-- tambah product -->
+            </form> <!-- tambah product -->
+          </div><!-- end widget content -->
+          <div class="widget-body no-padding"><!-- TABEL -->
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped" id='stock'><%= render 'products/stock' %></table>
+            </div>
+          </div><!-- END TABEL -->
+        </div><!-- end widget div -->
+
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->
+
+<SCRIPT>
+  function filter_stock(){
+    $.ajax(
+    {
+      url: "/products/stock",
+      dataType: "script",
+      data: $("form").serialize(),
+      success: function (data){
+        response(data)
+      },
+    });
+  }
+
+  setTimeout(function(){
+    $("#search_brand").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/brands/autocomplete_brand_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#supplier").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+//        collect_brand(ui.item.id)
+        $('#supplier_code').val(ui.item.code)
+      },
+      minLength: 1
+    });
+
+    $("#supplier_code").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_code",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          },
+        });
+      },
+      select: function( event, ui ) {
+//        collect_brand(ui.item.id)
+        $('#supplier_code').val(ui.item.code)
+        $('#supplier').val(ui.item.name)
+      },
+      minLength: 1
+    });
+
+    $("#search_barcode").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/products/autocomplete_goods_barcode?supplier_code="+$('#supplier_code').val(),
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+    $("#supplier_name").autocomplete({
+      search: function () {},
+      source: function (request, response)
+      {
+        $.ajax(
+        {
+          url: "/suppliers/autocomplete_supplier_name",
+          dataType: "json",
+          data: {term: request.term},
+          success: function (data){
+            response(data)
+          }
+        });
+      },
+      minLength: 1
+    });
+  }, 1000);
+</SCRIPT>

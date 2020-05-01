@@ -1,0 +1,68 @@
+<% if params[:action] == "new"%>
+  <tr>
+<% end %>
+  <%= form_for(overtime_request, html: { role: "form", multipart: true}, remote: true) do |f| %>
+    <td>
+      <div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+    </td>
+    <td>
+      <%= f.text_field :name, :class => "full-width", :placeholder => "Name" %>
+    </td>
+    <td width="15%">
+      <div class="input-append success date">
+        <%= f.text_field :date, :class => "full-width" %>
+        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+      </div>
+    </td>
+    <td width="15%">
+      <div class="controls">
+        <div class="input-group clockpicker">
+        <% if params[:action] == "new" %>
+          <%= f.text_field :start_time, class: "form-control", value: "00:00" %>
+        <% else %>
+          <%= f.text_field :start_time, class: "form-control" %>
+        <% end %>
+          <span class="input-group-addon"><span class="arrow"></span><i class="fa fa-clock-o"></i></span>
+        </div>
+      </div>
+    </td>
+    <td width="15%">
+      <div class="controls">
+        <div class="input-group clockpicker">
+        <% if params[:action] == "new" %>
+          <%= f.text_field :end_time, class: "form-control", value: "00:00" %>
+        <% else %>
+          <%= f.text_field :end_time, class: "form-control" %>
+        <% end %>
+          <span class="input-group-addon"><span class="arrow"></span><i class="fa fa-clock-o"></i></span> 
+        </div>
+      </div>
+    </td>
+    <td>
+      <%= f.text_area :reason, :class => "full-width", :placeholder => "Name", :area => 5 %>
+    </td>
+    <td>
+      <% if params[:action] == "new" %>
+        <%= f.hidden_field :status, class: "form-control", :value => "Pending" %>
+        <span class = "badge badge-info">Generate</span>
+      <% else %>
+        <span class = "badge badge-info">Generate</span>
+      <% end %>
+    </td>
+    <td>
+      <div>
+        <% if params[:action] == "new" %>
+          <%= f.submit "Add", class: "btn btn-success", :onclick => "submit_overtime_request();"%>
+        <% else %>
+        <%= f.hidden_field :id, :value => params[:id] %>
+          <%= f.submit "Update", class: "btn btn-success", :onclick => "update_overtime_request();"%>
+        <% end %>
+      </div>
+    </td>
+  <% end %>
+<% if params[:action] == "new"%>
+  </tr>
+<% end %>

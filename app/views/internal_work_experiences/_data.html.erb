@@ -1,0 +1,15 @@
+<%= "<tr id=\"data_#{internal_work_experience.id}\">".html_safe if params[:action] != "update_internal_work_experience" %>  
+<td>
+  <div class="checkbox check-default">
+    <input id="checkbox<%= internal_work_experience.id %>" type="checkbox" value="<%= internal_work_experience.id %>" class="child-internal_work_experience child-box" data-section="internal_work_experience" data-internalworkexperience="child">
+    <label for="checkbox<%= internal_work_experience.id %>"></label>
+  </div>
+</td>
+    <td><%= internal_work_experience.name_of_company %></td>
+    <td><%= internal_work_experience.job_desc %></td>
+    <td><%= internal_work_experience.position %></td>
+    <td><%= internal_work_experience.organization %></td>
+    <td><%= internal_work_experience.start %></td>
+    <td><%= internal_work_experience.end %></td>
+    <td><%= internal_work_experience.achievement %></td>
+    <%= "</tr>".html_safe if params[:action] != "update_internal_work_experience" %>

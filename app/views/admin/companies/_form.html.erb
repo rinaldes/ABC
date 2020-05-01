@@ -1,0 +1,199 @@
+<%= form_for([:admin, @company]) do |f| %>
+  <div class="grid-body no-border">
+    <div class="gen-form full-form">
+      <% if @company.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@company.errors.count, "error") %> prohibited this company from being saved:</h2>
+
+          <ul>
+          <% @company.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group row edit-field">
+        <%= f.label :name, "Company Name", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">
+          <%= f.text_field :name, class: "full-width", placeholder: "Company name", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="form-group row edit-field">
+        <%= f.label :phone, "Phone Number", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">
+          <%= f.text_field :phone, class: "full-width", placeholder: "Phone number", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="form-group row edit-field">
+        <%= f.label :address, "Address", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">
+          <%= f.text_field :address, class: "full-width", placeholder: "Address", autocomplete: "off" %>
+          <br /><br />
+          <div class="row">
+            <div class="col-xs-6">
+              <%= f.select :province_id, options_for_select(@provinces, f.object.province_id), {:prompt => '--select--'},{:onchange => "generateCity();"} %>
+            </div>
+            <div class="col-xs-6">
+              <%= f.select :city_id, options_for_select([]), {:prompt => '--select--'},{:disabled => true }%>
+            </div>
+          </div>
+          <br />
+          <%= f.text_field :postal_code, class: "full-width", placeholder: "Zip code", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="form-group row edit-field">
+        <%= f.label :owner_name, "Owner", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">            
+          <%= f.text_field :owner_name, class: "full-width", placeholder: "Owner", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="form-group row edit-field">
+        <%= f.label :com_email, "Email", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">            
+          <%= f.email_field :com_email, class: "full-width", placeholder: "Email", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="form-group row edit-field">
+        <%= f.label :joined_at, "Joining Date", class: "form-label col-sm-2" %>
+        <div class="controls col-sm-4">
+          <%= f.text_field :joined_at, value: (params[:company].present? ? params[:company][:joined_at] : (f.object.joined_at.present? ? f.object.joined_at.to_date.strftime("%m/%d/%Y") : "")), class: "datepicker_form full-width", placeholder: 'Join date', autocomplete: "off" %>
+        </div>
+      </div>
+
+      <% unless action_name == "new" || action_name == "create" %>
+        <div class="form-group row edit-field">
+          <%= f.label :is_active, "Status", class: "form-label col-sm-2" %>
+          <div class="controls col-sm-4">            
+            <div class="row active-status-chooser">
+              <div class="col-xs-6">
+                <%= f.radio_button :is_active, true %>
+                <%= f.label :is_active_true, "Active" %>
+              </div>
+              <div class="col-xs-6">
+                <%= f.radio_button :is_active, false %>
+                <%= f.label :is_active_false, "Inactive" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <%= f.hidden_field :is_active, value: false %>
+      <% end %>
+
+      <div class="form-group row edit-field">
+        <label class="form-label col-sm-2">Logo</label>
+        <div class="controls col-sm-4">            
+          <div class="def-img row">
+            <div id="preview_image">
+              <%= image_tag f.object.com_logo_url(:thumb), onerror: "this.src='/assets/profiles/user_def.png'", class: "col-xs-6", alt: "logo" %>
+            </div>
+            <div class="col-xs-6">
+              <%= f.file_field :com_logo %>
+            </div>
+
+          </div>         
+        </div>
+      </div>
+
+      <% if action_name == "new" || action_name == "create" %>
+        <hr />
+        <h5 class="bold col-md-12 m-b-40"><i class="fa fa-user"></i> Username Detail</h5>
+        <div class="gen-form alert alert-info" action="">
+          <%= f.fields_for :users, :class => "gen-form alert alert-info" do |ff| %>
+            <div class="clearfix m-b-20"></div>
+            <div class="form-group row edit-field">
+              <%= ff.label :email, "Email", class: "form-label col-sm-2" %>
+              <div class="controls col-sm-4">
+                <%= ff.email_field :email, class: "full-width", placeholder: "Email", autocomplete: "off" %>
+              </div>
+            </div>
+            <div class="form-group row edit-field">
+              <%= ff.label :username, "Username", class: "form-label col-sm-2" %>
+              <div class="controls col-sm-4">
+                <%= ff.text_field :username, class: "full-width", placeholder: "Username", autocomplete: "off" %>
+              </div>
+            </div>
+            <div class="form-group row edit-field">
+              <%= ff.label :password, "Password", class: "form-label col-sm-2" %>
+              <div class="controls col-sm-4">
+                <%= ff.password_field :password, class: "full-width", placeholder: "Password", autocomplete: "off" %>
+              </div>
+            </div>
+            <div class="form-group row edit-field">
+              <%= ff.label :password_confirmation, "Confirm Password", class: "form-label col-sm-2" %>
+              <div class="controls col-sm-4">
+                <%= ff.password_field :password_confirmation, class: "full-width", placeholder: "Confirm password", autocomplete: "off" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <div class="pull-right">
+      <% link = action_name=="edit"||action_name=="update" ? admin_company_path(@company) : admin_companies_path %>
+      <%= link_to link, class: "btn btn-primary btn-cons" do %>
+        <i class="fa fa-arrow-circle-o-left"></i> back
+      <% end %>
+      <%= f.button ((action_name=="edit"||action_name=="update" ? "Update" : "Create") + " Company <i class='fa fa-arrow-circle-o-right'></i>").html_safe, class: "btn btn-success btn-cons", type: "submit" %>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $(function () {
+      $('.datepicker_form').datepicker();
+    });
+
+    function generateCity(){
+      var prov = $('#company_province_id').val();
+      $.ajax({
+        url: '<%= get_city_admin_companies_path %>',
+        type: 'get',
+        data: {
+          prov_id: prov
+        }
+      })
+    }
+
+    if ($('#company_province_id').val() != "") {
+      generateCity()
+      <% if f.object.city_id.present? %>
+      setTimeout(function(){$('#company_city_id').val("<%= f.object.city_id %>")},2000)
+      <% end %>
+    }
+
+    function handleFileSelect(evt) {
+      var files = evt.target.files;
+
+      // Loop through the FileList and render image files as thumbnails.
+      for (var i = 0, f; f = files[i]; i++) {
+
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+          continue;
+        }
+
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+          return function(e) {
+            // Render thumbnail.
+            document.getElementById('preview_image').innerHTML = '<img onerror="this.src=\'/assets/profiles/user_def.png\'" class="col-xs-6" alt="logo" src="' + e.target.result + '" title="' + escape(theFile.name) + '"/>'
+          };
+        })(f);
+
+        reader.readAsDataURL(f);
+      }
+    }
+
+    document.getElementById('company_com_logo').addEventListener('change', handleFileSelect, false);
+  </script>
+<% end %>

@@ -1,0 +1,96 @@
+<div id="ribbon"><!-- RIBBON -->
+  <ol class="breadcrumb"><!-- breadcrumb -->
+    <li>Master Data</li><li>Selling Price</li><li><%#= @selling_price. %></li>
+  </ol><!-- end breadcrumb -->
+</div><!-- END RIBBON -->
+<div id="content"><!-- MAIN CONTENT -->
+  <div class="row">
+    <article class="col-sm-12 col-md-12"><!-- NEW COL START -->
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-department">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>Selling Price</h2>
+        </header>
+        <div><!-- widget div-->
+          <div class="widget-body no-padding"><!-- widget content -->
+            <form class='smart-form'>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Brand</label>
+                      <label class="col-md-8 label">
+                        <label class="col-md-6 input custom-input-box">: <%= @selling_price.product.brand.name %></label>
+                      </label><br>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Start Date</label>
+                      <label class="col col-md-8 input custom-input-box" style="padding: 0px;">: <%= @selling_price.start_date %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">End Date</label>
+                      <label class="col col-md-8 input custom-input-box" style="padding: 0px;">: <%= @selling_price.end_date %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Selling Price</label>
+                      <label class="col-md-7 input custom-input-box">: <%= format_currency @selling_price.product.try(:selling_price) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Purchase Price</label>
+                      <label class="col-md-7 input custom-input-box">: <%= format_currency @selling_price.product.try(:purchase_price) %></label>
+                    </section>
+                  </section> <!-- col-md-12 -->
+                  <section class="col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Percent Bandrol</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:margin_percent4) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Percent Eceran</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:margin_percent3) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Percent Member Eceran</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:margin_percent2) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Percent Kredit</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:margin_percent1) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Margin Percent</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:margin_percent) %></label>
+                    </section>
+                  </section>
+                  <section class="col-md-6">
+                    <section>
+                      <label class="col-md-4 label">Harga Bandrol</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:harga_bandrol) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Harga Eceran</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:harga_eceran) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Harga Member Eceran</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:harga_member_eceran) %></label>
+                    </section>
+                    <section>
+                      <label class="col-md-4 label">Harga Kredit</label>
+                      <label class="col-md-7 input custom-input-box">: <%= @selling_price.product.try(:harga_kredit) %></label>
+                    </section>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">
+                  Back
+                </button>
+              </footer>
+            </form>
+          </div><!-- end widget content -->
+        </div><!-- end widget div -->
+      </div><!-- end widget -->
+    </article><!-- END COL -->
+  </div><!-- end widget div -->
+</div><!-- end widget div -->

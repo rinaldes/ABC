@@ -1,0 +1,76 @@
+<div class="modal-dialog">
+<div class="modal-content">
+                                    <div class="modal-header">
+                                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                                        <h4 class="modal-title">Add Employee</h4>
+
+                                    </div>
+                                    <div class="modal-body">
+                                      <div class="text-center">
+                                        <!-- <form class="form-horizontal" role="form"> -->
+                                          <%= form_for @employee, html: {class: "form-horizontal"} do |f| %>
+                                          <%= f.hidden_field :company_id, value: current_user.company_id %>
+                                            <div class="form-group">
+                                                <%= f.label :nik, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                                <%= f.text_field :nik, class: "form-control" %>
+                                              </div>
+                                            </div>
+                                             <div class="form-group">
+                                                <%= f.label :name, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                                <%= f.text_field :name, class: "form-control" %>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <%= f.label :status, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                              <%= f.select :status, options_for_select(@status), {:prompt => '--select--'},{:class => "form-control"} %>
+                                              </div>
+                                            </div>
+                                             <div class="form-group">
+                                                <%= f.label :duedate, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                                <%= f.text_field :duedate, :class => "form-control", :id => "datepicker" %>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <%= f.label :organization, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                               <%= f.select :organization_id, options_for_select(@organizations), {:prompt => '--select--'},{:class => "form-control"} %>
+                                              </div>
+                                            </div>
+                                             <div class="form-group">
+                                                <%= f.label :position, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                                <%= f.text_field :position, class: "form-control" %>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <%= f.label :shift, class: "col-sm-3 control-label" %>
+                                              <div class="col-md-6">
+                                                <%= f.select :shift_id, options_for_select(@shifts), {:prompt => '--select--'},{:class => "form-control"} %>
+                                              </div>
+                                            </div>
+                                             
+                                            <div  class="form-group">
+    <%= f.submit "Submit", class: "btn btn-success", type: "submit" %>            
+    <%= button_tag "Cancel", :"data-dismiss" => "modal", class: "btn btn-default", type: "button" %>
+  </div>
+                                           <!-- <div class="form-group">
+                                                <div class="col-lg-offset-2 col-lg-10">
+                                                    <button type="submit" class="btn btn-info">Submit</button>
+                                                </div>
+                                            </div>-->
+                                            <% end %>
+                                        <!-- </form> -->
+                                      </div>
+                                    </div>
+
+                                </div>
+                                </div>
+ <script type="text/javascript">
+    $(function () {
+        $('#datepicker').datepicker({format: 'yyyy/mm/dd'});
+    });
+</script>

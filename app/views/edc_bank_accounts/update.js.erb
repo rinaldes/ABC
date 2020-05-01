@@ -1,0 +1,5 @@
+$("#notification").html("<%= j(render 'dashboard/notification') %>");
+<% if @supplier.errors.blank? %>
+	$("#edc_bank_account-list").html("<%= j(render 'edc_bank_account_list') %>");
+<% end %>
+$("#form-edc_bank_account").html("<%= j(render 'form') %>");

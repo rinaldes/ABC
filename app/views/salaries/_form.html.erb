@@ -1,0 +1,53 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(salary, html: { role: "form", multipart: true}, remote: true) do |f| %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+		<td>
+			<%= f.text_field :reason_of_adjustment, :class => "full-width", :placeholder => "Reason Of Adjustment" %>
+			<% if params[:action] == "new"%>
+				<%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+			<% else %>
+				<%= f.hidden_field :id, :value => params[:id] %>
+			<% end %>
+		</td>
+		<td>
+			<%= f.number_field :basic, :class => "full-width", :placeholder => "Basic", :width => "50%", min: 0  %>
+		</td>
+		<td>
+			<%= f.number_field :transport, :class => "full-width", :placeholder => "Transport", min: 0  %>
+		</td>
+		<td>
+			<div class="input-append success date">
+                <%= f.text_field :date_of_performance, :class => "form-control"  %>
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+            </div>
+		</td>
+		<td>
+		<% if @a == true %>
+			<%= f.text_field :from, :class => "full-width", :value => @position, :readonly => true %>
+		<% else %>
+			<%= f.text_field :from, :class => "full-width", :readonly => true %>
+		<% end %>
+		</td>
+		<td>
+			<%= f.collection_select(:to, Position.all, :name, :name,{},{ class: "form-control" }) %>
+		</td>
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+            		<%= f.submit "Add", class: "btn btn-success", :onclick => "submit_salary();"%>
+            	<% else %>
+            		<%= f.submit "Update", class: "btn btn-success", :onclick => "update_salary();"%>
+            	<% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

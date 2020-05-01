@@ -1,0 +1,95 @@
+class VouchersController < ApplicationController
+  skip_before_filter :verify_authenticity_token, only: [:destroy]
+  before_filter :find_by_id, only: [:show, :edit]
+  before_filter :can_view_voucher, only: [:index, :show]
+  before_filter :can_manage_voucher, only: [:new, :create, :edit, :update, :destroy]
+
+  def show
+  end
+
+  def index
+    get_paginated_vouchers
+    respond_to do |format|
+      format.html # index.html.erb
+      format.js
+      format.xls {
+        filename = "Voucher_#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}.xls"
+        send_data(@vouchers.to_xls, :type => "text/xls; charset=utf-8; header=present", :filename => filename)
+      }
+    end
+  end
+
+  def new
+    @voucher = Voucher.new(params[:voucher])
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  def create
+    @voucher = Voucher.new(voucher_params.merge(min_amount: params[:floated_min_amount]))
+    respond_to do |format|
+      if @voucher.save
+        flash[:notice] = 'Voucher berhasil ditambahkan.'
+        format.html{redirect_to vouchers_path}
+      else
+        flash[:error] = @voucher.errors.full_messages.join('<br/>')
+        format.html{render "new"}
+      end
+    end
+  end
+
+  def edit
+    respond_to do |format|
+      format.html
+    end
+  end
+
+  def update
+    @voucher = Voucher.find(params[:id])
+    if @voucher.update_attributes(voucher_params.merge(min_amount: params[:floated_min_amount]))
+      flash[:notice] = 'Voucher berhasil diperbaharui.'
+      redirect_to vouchers_path
+    else
+      flash[:error] = @voucher.errors.full_messages
+      render "edit"
+    end
+  end
+
+  def destroy
+    @voucher = Voucher.find(params[:id])
+    @voucher.destroy
+    get_paginated_vouchers
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  private
+  def get_paginated_vouchers
+    conditions = []
+    params[:search].each{|param|
+      conditions << "LOWER(#{param[0]}) LIKE LOWER('%#{param[1]}%')" if param[1].present?
+    } if params[:search].present?
+    @vouchers = Voucher.joins('LEFT JOIN offices ON vouchers.office_id = offices.id')
+      .select("vouchers.office_id AS office_id, vouchers.id AS id, name, to_char(valid_from, 'DD-MM-YYYY') AS valid_from, to_char(valid_until, 'DD-MM-YYYY') AS valid_until, discount_amount, min_amount, discount,
+      max_voucher, office_name, max_voucher_amt").where(conditions.join(' AND ')).order(params[:sort].to_s.gsub('-', ' ')).paginate(page: params[:page], per_page: 10) || []
+  end
+
+  def voucher_params
+    params.require(:voucher).permit(:name, :valid_from, :valid_until, :min_amount, :discount, :is_percent, :max_voucher, :is_max_pcs, :is_multiple, :term_condition, :is_active,
+      :office_id, :max_voucher_amt, :discount_amount)
+  end
+
+  def find_by_id
+    @voucher = Voucher.find_by_id(params[:id])
+  end
+
+  def can_view_voucher
+    not_authorized unless current_user.can_view_voucher?
+  end
+
+  def can_manage_voucher
+    not_authorized unless current_user.can_manage_voucher?
+  end
+end

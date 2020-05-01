@@ -1,0 +1,195 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<div id="ribbon">
+  <ol class="breadcrumb">
+    <li>Data Master</li><li>Transaction History</li><li><%= @transaction_history.code %></li>
+  </ol>
+</div>
+<div id="content">
+  <%= render 'layouts/errors' %>
+  <div class="row">
+    <article class="col-sm-12 col-md-12">
+      <div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+        <header id="header-supplier">
+          <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+          <h2>Transaction Detail <%= @transaction_history.code %></h2>
+        </header>
+        <div>
+          <div class="widget-body no-padding">
+            <form class='smart-form'>
+              <fieldset>
+                <div class="row">
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Transaction No</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @transaction_history.code %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Date</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @transaction_history.transaction_date.strftime('%d-%m-%Y %H:%M:%S') %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Customer Name</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @transaction_history.member.name rescue '-' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Item Qty</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @transaction_history.total_quantity %>
+                      </label>
+                    </section><br>
+                    </section>
+                    <section class ="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Transaction Amount</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= number_to_currency(@transaction_history.subtotal_price, locale: :id) %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Total Paid</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= number_to_currency(@transaction_history.total_paid, locale: :id) %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Exchange</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= number_to_currency(@transaction_history.total_outstanding, locale: :id) %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Outstanding</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= number_to_currency(@transaction_history.total_outstanding, locale: :id) %>
+                      </label>
+                    </section><br>
+                  </section> <br><br>
+                </div>
+                </fieldset>
+                <header>
+                  Member Detail
+                </header>
+                <fieldset>
+                <div class="row">
+                  <% @member = Member.find_by_id(@transaction_history.member_id) rescue ''%>
+                  <section class="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Member Code</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.code rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">ID Card</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.card_number rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Name</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.name rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Tanggal Lahir</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.birthday rescue '' %>
+                      </label>
+                    </section><br>
+                    </section>
+                    <section class ="col col-md-6">
+                    <section>
+                      <label class="col-md-3 label">Alamat</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.address rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">HP</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.hp rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Email</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.email rescue '' %>
+                      </label>
+                    </section><br>
+                    <section>
+                      <label class="col-md-3 label">Gender</label>
+                      <label class="col-md-9 input custom-input-box">
+                        <%= @member.gender rescue '' %>
+                      </label>
+                    </section><br>
+                  </section>
+                </div> 
+              </fieldset>
+              <fieldset>
+                <div id="content"><!-- MAIN CONTENT -->
+                  <section id="widget-grid" class=""><!-- widget grid -->
+                    <div class="row">
+                      <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><!-- NEW WIDGET START -->
+                        <div class="jarviswidget" id="wid-id-1" data-widget-editbutton="false"><!-- Widget ID (each widget will need unique ID)-->
+                          <div><!-- widget div-->
+                            <div class="widget-body no-padding"><!-- widget content -->
+                              <table class="table table-striped table-brequested table-hover" id="request">
+                                <thead>
+                                  <tr>
+                                    <th>CODE</th>
+                                    <th>MERK</th>
+                                    <th>ARTICLE</th>
+                                    <th>WARNA</th>
+                                    <th>UKURAN</th>
+                                    <th>QUANTITY</th>
+                                    <th>TOTAL PRICE</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% @sales_details.each do |prd| %>
+                                    <% product = prd.product_size.product rescue nil %>
+                                    <% next if product.blank? %>
+                                    <tr>
+                                      <td><%= product.barcode %></td>
+                                      <td><%= product.brand.name rescue '' %></td>
+                                      <td><%= product.article rescue '' %></td>
+                                      <td><%= product.colour.name rescue '' %></td>
+                                      <td><%= prd.product_size.size_detail.size_number %></td>
+                                      <td class='text-right'><%= prd.quantity %></td>
+                                      <td class='text-right'><%= format_currency prd.total_price %></td>
+                                    </tr>
+                                  <% end %>
+                                </tbody>
+                                <tfoot>
+                                  <tr>
+                                    <td colspan=5>Total</td>
+                                    <td class='text-right'><%= @sales_details.map(&:quantity).compact.sum %></td>
+                                    <td class='text-right'><%= format_currency @sales_details.map(&:total_price).compact.sum %></td>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </article>
+                </section>
+                </div>
+              </fieldset>
+              <footer>
+                <button type="button" class="btn btn-default" onclick="window.history.back();">Back</button>
+              </footer>
+            </form>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

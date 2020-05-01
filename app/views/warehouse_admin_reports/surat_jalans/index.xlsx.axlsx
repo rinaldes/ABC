@@ -1,0 +1,29 @@
+wb = xlsx_package.workbook
+wb.use_autowidth = true 
+styles = wb.styles
+title = styles.add_style(:sz => 14, :b => true, :alignment => { :horizontal => :center })
+bold = styles.add_style(:b => true)
+default = styles.add_style(:border => Axlsx::STYLE_THIN_BORDER)
+green = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "93e731")
+orange = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "e79f31")
+yellow = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "FFFF66")
+white_blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "95c7ce")
+blue = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "18d1ec")
+grey = styles.add_style(:b => true, :alignment => { :horizontal => :center, :vertical => :center }, :border => Axlsx::STYLE_THIN_BORDER, :bg_color => "988d7c")
+alp = {}
+('A'..'ZZZ').each_with_index do |alpha, i|
+  alp[i] = alpha
+end
+
+@dates.each{|date|
+  product_mutations = ProductMutation.where("mutation_date BETWEEN '#{params[:year]}-#{params[:month]}-#{date} 00:00:00' AND '#{params[:year]}-#{params[:month]}-#{date} 23:59:59'")
+  wb.add_worksheet(name: date.to_s) { |sheet|
+    product_mutations.each{|pm|
+      sheet.add_row ["NO", "SUPPLIER", "MEREK BARANG", "QTY", "NO. FAKTUR ASLI"]
+      pm.product_mutation_details.where("quantity>0").group_by{|x|x.product_size.product.brand}.each_with_index{|pmd, i|
+        next if pmd[0].blank?
+        sheet.add_row [i+1, pm.supplier.code, "#{pm.supplier.name} #{pmd[0].name}", pmd[1].map(&:quantity).sum, pm.code]
+      }
+    }
+  }
+}

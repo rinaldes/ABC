@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Employee name</Data></Cell>
+        <Cell><Data ss:Type="String">Date of Performance</Data></Cell>
+        <Cell><Data ss:Type="String">Rating</Data></Cell>
+        <Cell><Data ss:Type="String">Area of Strength</Data></Cell>
+        <Cell><Data ss:Type="String">Area of Development</Data></Cell>
+        <Cell><Data ss:Type="String">Rater</Data></Cell>
+        <Cell><Data ss:Type="String">Position Rater</Data></Cell>
+      </Row>
+    <% @performances.each do |performance| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= performance.employee.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.date_of_performance %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.rating %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.area_of_strength %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.area_of_development %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.rater %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= performance.position_rater %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

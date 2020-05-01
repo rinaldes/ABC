@@ -1,0 +1,10 @@
+$("#myModal").html("<%= j( render 'product_list')%>")
+$("#myModal").modal()
+$('.pagination a').bind('click', function(){
+  $.ajax({
+    url: this.href,
+    method: "get",
+    dataType: "script"
+  })
+  return false
+})

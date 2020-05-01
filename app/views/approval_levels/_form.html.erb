@@ -1,0 +1,44 @@
+<style type="text/css">
+	.ui-autocomplete {
+		z-index:2147483647;
+		width: 174px !important;
+	}
+</style>
+<div class="modal-dialog" role="document">
+	<div class="modal-content">
+	<%= form_for(@approval_level, html: { role: "form", multipart: true}, remote: true) do |f| %>
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	    <h4 class="modal-title" id="myModalLabel"><%= @approval_level.feature_name %></h4>
+	  </div>
+	  <div class="modal-body">
+		    <div class="text-center">
+		      <div id="field_new">
+		      	  <% hit = 0 %>
+			      <%= f.fields_for :approval_level_approvers do |approval_level_approver| %>
+			      	<% if hit == 0 %>
+			      		<div class="form-group">
+					        <div class="form-inline">
+					          <%= approval_level_approver.autocomplete_field :employee_id, autocomplete_employee_name_approval_levels_url,:id_element =>"#my_employee_id", class: "form-control", placeholder: "Employee" %>
+					          <%= link_to_add_association f, :approval_level_approvers, :class => "btn btn-primary", :data => {"association-insertion-method" => "after", "association-insertion-node" => "#field_new" } do %>
+					          	<i class="fa fa-plus"></i>
+					          <% end %>
+					        </div>
+					    </div>
+			      	<% else %>
+			      		<%= render 'approval_level_approver_fields', :f => approval_level_approver %>
+			      	<% end %>
+		        	<% hit += 1 %>
+		          <% end %>
+		      </div>
+		      
+		    </div>
+	    
+	  </div>
+	  <div class="modal-footer">
+	    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	    <%= f.submit 'Save changes', class: "btn btn-primary" %>
+	  </div>
+	<% end %>
+	</div>
+</div>

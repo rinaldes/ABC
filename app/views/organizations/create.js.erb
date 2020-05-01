@@ -1,0 +1,7 @@
+	<% if @organization.save %>
+	$('#organization tbody tr:eq(0)').remove();
+	$('#button-new').show();
+	$('#organization tbody').prepend("<%= j(render 'data', :organization => @organization) %>"); 
+<% else %>
+	
+<% end %>

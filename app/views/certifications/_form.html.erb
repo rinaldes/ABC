@@ -1,0 +1,56 @@
+<% if params[:action] == "new"%>
+	<tr>
+<% end %>
+	<%= form_for(certification, html: { role: "form", multipart: true}, remote: true) do |f| %>
+			<% if params[:action] == "new"%>
+				<%= f.hidden_field :employee_id, :value => params[:employee_id]%>
+			<% else %>
+				<%= f.hidden_field :id, :value => params[:id] %>
+			<% end %>
+		<td>
+			<div class="checkbox check-default">
+                <input id="checkbox12" type="checkbox" value="1">
+                <label for="checkbox12"></label>
+            </div>
+		</td>
+
+		<td>
+			<%= f.text_field :institution, :class => "full-width", :placeholder => "Institution" %>
+		</td>
+
+		<td>
+			<%= f.text_field :certification_number, :class => "full-width", :placeholder => "Certification Number" %>
+		</td>
+
+		<td>
+			<%= f.text_field :name_of_certification, :class => "full-width", :placeholder => "Name Of Certification" %>
+		</td>		
+
+		<td>
+			<div class="input-append success date">
+                <%= f.text_field :date_of_certification, :class => "form-control"%>
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+            </div>
+		</td>
+
+		<td>
+			<%= f.text_field :description, :class => "full-width", :placeholder => "Description" %>
+		</td>
+		
+		<td>
+  			<%= f.file_field :attachment %>
+		</td>
+
+		<td>
+			<div>
+				<% if params[:action] == "new" %>
+            		<%= f.submit "Add", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "submit_certification();"%>
+            	<% else %>
+            		<%= f.submit "Update", class: "btn btn-success", :style => "margin: 0 30px;", :onclick => "update_certification();"%>
+            	<% end %>
+            </div>
+		</td>
+	<% end %>
+<% if params[:action] == "new"%>
+	</tr>
+<% end %>

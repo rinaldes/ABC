@@ -1,0 +1,40 @@
+<div class="page-sidebar mini" id="main-menu"> 
+    <div class="page-sidebar-wrapper scrollbar-dynamic" id="main-menu-wrapper">
+      <div class="user-info-wrapper">
+        <div class="profile-wrapper">
+        	<img src="<%= current_admin.image_url(:mini) if current_admin.image? %>" alt="" data-src="<%= current_admin.image_url(:mini) if current_admin.image? %>" data-src-retina="<%= current_admin.image_url(:mini) if current_admin.image? %>" onerror="this.src='/assets/profiles/user_def.png'" width="66" height="66"/>
+        </div>
+        <div class="user-info">
+          <div class="greeting">Welcome</div>
+          <div class="username">
+          	<%= current_admin.first_name %> <span class="semi-bold"><%= current_admin.last_name %></span>
+          </div>
+          <div class="status"></div>
+        </div>
+      </div>
+      
+      <ul>
+      	<li class="start ">
+					<%= link_to admin_dashboard_path, class: (controller_name.downcase=="dashboard" ? "cur" : ""), data: {'toogle' => 'tooltip', 'placement' =>'right', 'original-title' => 'Dashboard'} do %>
+      			<i class="icon-custom-home"></i>
+      			<span class="title">Dashboard</span>
+	        <% end %>
+      	</li>
+        <li class="">
+					<%= link_to admin_companies_path, class: (controller_name.downcase=="companies" ? "cur" : ""), data: {'toogle' => 'tooltip', 'placement' =>'right', 'original-title' => 'Master Company'} do %>
+        		<i class="fa fa-building"></i>
+        		<span class="title">Master Company</span>
+	        <% end %>
+        </li>
+
+        <li class="">
+					<%= link_to admin_blast_messages_path, class: (controller_name.downcase=="blast_messages" ? "cur" : ""), data: {'toogle' => 'tooltip', 'placement' =>'right', 'original-title' => 'Blast Message'} do %>
+        		<i class="fa fa-envelope"></i>
+        		<span class="title">Blast Message</span>
+	        <% end %>
+        </li>
+      </ul>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
